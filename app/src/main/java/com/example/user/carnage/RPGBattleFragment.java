@@ -4,7 +4,9 @@ import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +16,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -29,7 +32,7 @@ import static com.example.user.carnage.MenuChooseFragment.enemy;
 import static com.example.user.carnage.MenuChooseFragment.player;
 
 public class RPGBattleFragment extends Fragment {
-    private final String TAG = "Carnage MAF RPG";
+    public final String TAG = "Carnage MAF RPG";
     //private PlayCharacter player, enemy;
     private AnimateGame animateGame;
 
@@ -44,6 +47,7 @@ public class RPGBattleFragment extends Fragment {
     private ProgressBar player_HP_bar, enemy_HP_bar;
     private ImageView player_img, enemy_img;
     private SecureRandom random;
+    public LinearLayout skillsFragmentContainer;
 
     private String selectedAtk, selectedDef;
     private int defCheckBoxCounter, atkCheckBoxCounter;
@@ -307,10 +311,11 @@ public class RPGBattleFragment extends Fragment {
         skillsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                animateGame.animateDamagePoints(player_points, true);
-                animateGame.animateDamagePoints(enemy_points, false);
+                showSkillsFragment();
             }
         });
+
+        skillsFragmentContainer = view.findViewById(R.id.skillsFragmentContainer);
 
         return view;
     }
@@ -479,11 +484,33 @@ public class RPGBattleFragment extends Fragment {
         //enemy_subtitle.setText(enemyClass);
     }
 
-    private void setButtonsEnabled(boolean set) {
+    public void setButtonsEnabled(boolean set) {
         View[] views = {checkBox_def_head, checkBox_def_body, checkBox_def_waist, checkBox_def_legs,
                 checkBox_atk_head, checkBox_atk_body, checkBox_atk_waist, checkBox_atk_legs,
                 attackButton, skillsButton};
         for (View view : views) view.setEnabled(set);
+    }
+
+    public void setAllEnabled(boolean set) {
+        View[] views = {checkBox_def_head, checkBox_def_body, checkBox_def_waist, checkBox_def_legs,
+                checkBox_atk_head, checkBox_atk_body, checkBox_atk_waist, checkBox_atk_legs,
+                attackButton, skillsButton, battle_textView};
+        for (View view : views) view.setEnabled(set);
+    }
+
+
+    public void showSkillsFragment() {
+        skillsFragmentContainer.setVisibility(View.VISIBLE);
+        animateSkillsFragmentAppearance(true);
+        SkillsFragment fragment = new SkillsFragment();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.skillsFragmentContainer, fragment);
+        transaction.commit();
+        setAllEnabled(false);
+    }
+
+    public void animateSkillsFragmentAppearance(boolean b) {
+        animateGame.animateSkillsFragmentAppearance(skillsFragmentContainer, b);
     }
 
 }

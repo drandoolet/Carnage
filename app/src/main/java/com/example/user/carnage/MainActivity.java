@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import java.util.Arrays;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SkillsFragment.OnSelectedButtonListener {
     public static final String TAG = "CARNAGE";
     public static Context mContext;
     public static final String APP_PREFERENCES = "gameOverSettings";
@@ -280,5 +280,16 @@ public class MainActivity extends AppCompatActivity {
         int[] stats = getInitialStats();
         for (int i=0; i<stats.length; i++) sum += stats[i];
         return sum;
+    }
+
+    @Override
+    public void onButtonSelected(int buttonIndex) {
+        if (buttonIndex == 1) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            RPGBattleFragment fragment = (RPGBattleFragment) fragmentManager.findFragmentByTag("MAIN BATTLE FRAGMENT");
+            fragment.setAllEnabled(true);
+            fragment.animateSkillsFragmentAppearance(false);
+        }
+
     }
 }

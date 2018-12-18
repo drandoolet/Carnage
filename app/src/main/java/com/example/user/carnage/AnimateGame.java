@@ -59,6 +59,8 @@ public class AnimateGame {
     private final float ANIMATE_BLOCK_BREAK_SCALE_1 = 1.0f;
     private final float ANIMATE_BLOCK_BREAK_SCALE_2 = 0.6f;
 
+    private final long ANIMATE_SKILLS_FRAGMENT_DURATION = 600;
+
     AnimateGame() {
         AnimationTypes.ANIMATION_BATTLE_ATTACK.setDuration(ANIMATE_ATTACK_DURATION_TRANSLATION_1 + ANIMATE_ATTACK_DURATION_TRANSLATION_2);
         AnimationTypes.ANIMATION_BATTLE_DODGE.setDuration(ANIMATE_DODGE_DURATION_JUMP_1 + ANIMATE_DODGE_DURATION_JUMP_2 + ANIMATE_DODGE_DURATION_JUMP_BACK);
@@ -80,6 +82,25 @@ public class AnimateGame {
 
     private boolean isAnimating = false;
 
+    public void animateSkillsFragmentAppearance(final View view, boolean b) {
+        AnimatorSet set = new AnimatorSet();
+        float f1 = (b ? 0 : 1);
+        float f2 = (b ? 1 : 0);
+        set.setDuration(ANIMATE_SKILLS_FRAGMENT_DURATION).playTogether(
+                animateChangeScale(view, f1, f2, 0),
+                ObjectAnimator.ofFloat(view, View.ALPHA, f1, f2)
+        );
+        if (!b) {
+            set.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    view.setVisibility(View.GONE);
+                    super.onAnimationEnd(animation);
+                }
+            });
+        }
+        set.start();
+    }
 
     public void animateDamagePoints(final View view, boolean isPlayer) {
         view.setVisibility(View.VISIBLE);

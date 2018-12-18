@@ -110,7 +110,7 @@ public class MenuChooseFragment extends Fragment {
                 player = new PlayCharacter(playerChar, getString(R.string.player_1_name));
                 enemy = new PlayCharacter(enemyChar, getString(R.string.player_2_name));
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.container, fragment);
+                transaction.replace(R.id.container, fragment, "MAIN BATTLE FRAGMENT");
                 transaction.addToBackStack(null);
                 transaction.commit();
             } else {

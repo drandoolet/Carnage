@@ -6,7 +6,7 @@
     <color name="colorDamagePoints">#AA0114</color>
     <color name="colorBattleBackground">#A080AD</color>
     <color name="colorBorders">#421C52</color>
-    <color name="colorBattleTextBackground">#DCD0E1</color>
+    <color name="colorBattleTextBackground">#dcd0e1</color>
 
     <color name="colorProgressBarBackground">#E1D0E5</color>
     <color name="colorProgressBarHP">#FF2300</color>

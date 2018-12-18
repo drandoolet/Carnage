@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rpgBattleFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBattleBackground">
@@ -354,5 +355,20 @@
         app:layout_constraintEnd_toEndOf="@+id/player1TextView"
         app:layout_constraintStart_toStartOf="@+id/player1TextView"
         app:layout_constraintTop_toBottomOf="@+id/player1TextView" />
+
+    <LinearLayout
+        android:id="@+id/skillsFragmentContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/buttonSkills"
+        app:layout_constraintEnd_toStartOf="@+id/player2ProgressBarSP"
+        app:layout_constraintStart_toStartOf="@+id/player1ProgressBarSP"
+        app:layout_constraintTop_toBottomOf="@+id/player1TextView"></LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
