@@ -284,12 +284,10 @@ public class MainActivity extends AppCompatActivity implements SkillsFragment.On
 
     @Override
     public void onButtonSelected(int buttonIndex) {
-        if (buttonIndex == 1) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            RPGBattleFragment fragment = (RPGBattleFragment) fragmentManager.findFragmentByTag("MAIN BATTLE FRAGMENT");
-            fragment.setAllEnabled(true);
-            fragment.animateSkillsFragmentAppearance(false);
-        }
 
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        RPGBattleFragment fragment = (RPGBattleFragment) fragmentManager.findFragmentByTag("MAIN BATTLE FRAGMENT");
+        fragment.setAllEnabled(true);
+        fragment.animateSkillsFragmentAppearance(false);
     }
 }

@@ -59,7 +59,7 @@ public class AnimateGame {
     private final float ANIMATE_BLOCK_BREAK_SCALE_1 = 1.0f;
     private final float ANIMATE_BLOCK_BREAK_SCALE_2 = 0.6f;
 
-    private final long ANIMATE_SKILLS_FRAGMENT_DURATION = 600;
+    private final long ANIMATE_SKILLS_FRAGMENT_DURATION = 400;
 
     AnimateGame() {
         AnimationTypes.ANIMATION_BATTLE_ATTACK.setDuration(ANIMATE_ATTACK_DURATION_TRANSLATION_1 + ANIMATE_ATTACK_DURATION_TRANSLATION_2);

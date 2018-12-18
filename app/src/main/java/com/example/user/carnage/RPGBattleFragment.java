@@ -513,5 +513,6 @@ public class RPGBattleFragment extends Fragment {
         animateGame.animateSkillsFragmentAppearance(skillsFragmentContainer, b);
     }
 
+
 }
 

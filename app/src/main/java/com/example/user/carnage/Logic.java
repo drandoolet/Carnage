@@ -26,6 +26,8 @@ class PlayCharacter {
     private int antiDodgeRate;
     private int defence = 0, magic_defence = 0;
 
+    private int STR, STA, AGI, LUCK, INT;
+
     private int neural_ok_atk_head, neural_ok_atk_body, neural_ok_atk_waist, neural_ok_atk_legs;
     private int neural_attacked_head, neural_attacked_body, neural_attacked_waist, neural_attacked_legs;
 
@@ -94,6 +96,12 @@ class PlayCharacter {
         neural_attacked_body = 0;
         neural_attacked_waist = 0;
         neural_attacked_legs = 0;
+
+        STR = ch.STR;
+        STA = ch.STA;
+        AGI = ch.AGI;
+        LUCK = ch.LUCK;
+        INT = ch.INT;
     }
 
     public void setHP(int hp) {
@@ -331,6 +339,16 @@ class PlayCharacter {
         stats[9] = critical;
         stats[10] = antiCritical;
 
+        return stats;
+    }
+
+    public int[] getMainStats() {
+        int[] stats = new int[5];
+        stats[0] = STA;
+        stats[1] = STR;
+        stats[2] = AGI;
+        stats[3] = LUCK;
+        stats[4] = INT;
         return stats;
     }
 }
@@ -668,7 +686,7 @@ enum Chars {
     };
 
 
-    private int STR, STA, AGI, LUCK, INT;
+     int STR, STA, AGI, LUCK, INT;
 
     Chars(int health, int att1, int att2, int crit1, double crit2, int dodge, int antiDodge, String player_class) {
         HP = health;
