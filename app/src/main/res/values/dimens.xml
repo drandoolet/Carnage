@@ -1,0 +1,9 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="dimen_button_size">50dp</dimen>
+    <dimen name="dimen_img_level_up_size">120dp</dimen>
+    <dimen name="dimen_img_player_size">120dp</dimen>
+    <dimen name="dimen_progress_bar_width">10dp</dimen>
+    <dimen name="dimen_battle_skill_icon_size">50dp</dimen>
+    <item name="battle_text_textview_size" type="dimen">30%</item>
+</resources>

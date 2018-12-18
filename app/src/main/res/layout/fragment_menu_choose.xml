@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:background="@color/colorBattleBackground"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/menuTitleImageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/ic_label" />
+
+    <TextView
+        android:id="@+id/menuTitileTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="serif"
+        android:labelFor="@+id/menuTitleImageView"
+        android:padding="@dimen/fab_margin"
+        android:text="@string/menu_choose_label_text"
+        android:textAlignment="center"
+        android:textAppearance="@android:style/TextAppearance.Material.Title" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <RadioGroup
+            android:id="@+id/playerRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/player_name_textview_border"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/playerRadioButton1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/player_type_balanced" />
+
+            <RadioButton
+                android:id="@+id/playerRadioButton2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/player_type_berserker" />
+
+            <RadioButton
+                android:id="@+id/playerRadioButton3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/player_type_tank" />
+
+            <RadioButton
+                android:id="@+id/playerRadioButton4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/player_type_random" />
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/enemyRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/player_name_textview_border"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/enemyRadioButton1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/player_type_balanced" />
+
+            <RadioButton
+                android:id="@+id/enemyRadioButton2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/player_type_berserker" />
+
+            <RadioButton
+                android:id="@+id/enemyRadioButton3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/player_type_tank" />
+
+            <RadioButton
+                android:id="@+id/enemyRadioButton4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/player_type_random" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/startGameButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="70dp"
+        android:padding="@dimen/fab_margin"
+        android:text="@string/menu_choose_start" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/testButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="TEST: level up" />
+
+    </LinearLayout>
+
+</LinearLayout>

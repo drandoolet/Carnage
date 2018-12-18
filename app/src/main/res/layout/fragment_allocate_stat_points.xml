@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBattleBackground"
+    tools:layout_editor_absoluteY="81dp">
+
+    <Button
+        android:id="@+id/minusButton3"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginEnd="8dp"
+        android:text="-"
+        app:layout_constraintBottom_toBottomOf="@+id/statAmountTextView3"
+        app:layout_constraintEnd_toStartOf="@+id/statAmountTextView3" />
+
+    <Button
+        android:id="@+id/minusButton4"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginEnd="8dp"
+        android:text="-"
+        app:layout_constraintBottom_toBottomOf="@+id/statAmountTextView4"
+        app:layout_constraintEnd_toStartOf="@+id/statAmountTextView4" />
+
+    <Button
+        android:id="@+id/plusButton1"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginStart="8dp"
+        android:text="+"
+        app:layout_constraintBottom_toBottomOf="@+id/statAmountTextView1"
+        app:layout_constraintStart_toEndOf="@+id/statAmountTextView1" />
+
+    <Button
+        android:id="@+id/plusButton2"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginStart="8dp"
+        android:text="+"
+        app:layout_constraintBottom_toBottomOf="@+id/statAmountTextView2"
+        app:layout_constraintStart_toEndOf="@+id/statAmountTextView2" />
+
+    <Button
+        android:id="@+id/plusButton3"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginStart="8dp"
+        android:text="+"
+        app:layout_constraintBottom_toBottomOf="@+id/statAmountTextView3"
+        app:layout_constraintStart_toEndOf="@+id/statAmountTextView3" />
+
+    <Button
+        android:id="@+id/plusButton4"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginStart="8dp"
+        android:text="+"
+        app:layout_constraintBottom_toBottomOf="@+id/statAmountTextView4"
+        app:layout_constraintStart_toEndOf="@+id/statAmountTextView4" />
+
+    <TextView
+        android:id="@+id/levelUpTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:text="@string/allocate_title"
+        android:textAppearance="@android:style/TextAppearance.Material.Large"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/levelUpImageView"
+        android:layout_width="@dimen/dimen_img_level_up_size"
+        android:layout_height="@dimen/dimen_img_level_up_size"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/levelUpTitleTextView"
+        tools:srcCompat="@tools:sample/avatars[10]" />
+
+    <TextView
+        android:id="@+id/statAmountTextView1"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/battle_textview_border"
+        android:gravity="center"
+        android:lines="1"
+        android:text="100"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/levelUpImageView" />
+
+    <TextView
+        android:id="@+id/statAmountTextView2"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/battle_textview_border"
+        android:gravity="center"
+        android:lines="1"
+        android:text="100"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/statAmountTextView1"
+        app:layout_constraintTop_toBottomOf="@+id/statAmountTextView1" />
+
+    <TextView
+        android:id="@+id/statAmountTextView3"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/battle_textview_border"
+        android:gravity="center"
+        android:lines="1"
+        android:text="100"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/statAmountTextView2"
+        app:layout_constraintTop_toBottomOf="@+id/statAmountTextView2" />
+
+    <TextView
+        android:id="@+id/statAmountTextView4"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/battle_textview_border"
+        android:gravity="center"
+        android:lines="1"
+        android:text="100"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/statAmountTextView3"
+        app:layout_constraintTop_toBottomOf="@+id/statAmountTextView3" />
+
+    <Button
+        android:id="@+id/minusButton1"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginEnd="8dp"
+        android:text="-"
+        app:layout_constraintBottom_toBottomOf="@+id/statAmountTextView1"
+        app:layout_constraintEnd_toStartOf="@+id/statAmountTextView1" />
+
+    <Button
+        android:id="@+id/minusButton2"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginEnd="8dp"
+        android:text="-"
+        app:layout_constraintBottom_toBottomOf="@+id/statAmountTextView2"
+        app:layout_constraintEnd_toStartOf="@+id/statAmountTextView2" />
+
+    <TextView
+        android:id="@+id/statTextViewStrength"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginEnd="24dp"
+        android:gravity="center"
+        android:lines="1"
+        android:text="@string/level_up_str"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/minusButton1"
+        app:layout_constraintEnd_toStartOf="@+id/minusButton1" />
+
+    <TextView
+        android:id="@+id/statTextViewStamina"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginEnd="24dp"
+        android:gravity="center"
+        android:lines="1"
+        android:text="@string/level_up_sta"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/minusButton2"
+        app:layout_constraintEnd_toStartOf="@+id/minusButton2" />
+
+    <TextView
+        android:id="@+id/statTextViewAgility"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginEnd="24dp"
+        android:gravity="center"
+        android:lines="1"
+        android:text="@string/level_up_agi"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/minusButton3"
+        app:layout_constraintEnd_toStartOf="@+id/minusButton3" />
+
+    <TextView
+        android:id="@+id/statTextViewLuck"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginEnd="24dp"
+        android:gravity="center"
+        android:lines="1"
+        android:text="@string/level_up_luck"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/minusButton4"
+        app:layout_constraintEnd_toStartOf="@+id/minusButton4" />
+
+    <TextView
+        android:id="@+id/statsLeftTextView"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginStart="32dp"
+        android:background="@drawable/battle_textview_border"
+        android:gravity="center"
+        android:lines="1"
+        android:text="100"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/levelUpImageView"
+        app:layout_constraintStart_toEndOf="@+id/levelUpImageView" />
+
+    <TextView
+        android:id="@+id/statAmountTextView5"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/battle_textview_border"
+        android:gravity="center"
+        android:lines="1"
+        android:text="100"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/statAmountTextView4"
+        app:layout_constraintTop_toBottomOf="@+id/statAmountTextView4" />
+
+    <Button
+        android:id="@+id/minusButton5"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginEnd="8dp"
+        android:text="-"
+        app:layout_constraintEnd_toStartOf="@+id/statAmountTextView5"
+        app:layout_constraintTop_toTopOf="@+id/statAmountTextView5" />
+
+    <Button
+        android:id="@+id/plusButton5"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginStart="8dp"
+        android:text="+"
+        app:layout_constraintStart_toEndOf="@+id/statAmountTextView5"
+        app:layout_constraintTop_toTopOf="@+id/statAmountTextView5" />
+
+    <TextView
+        android:id="@+id/statTextViewIntelligence"
+        android:layout_width="@dimen/dimen_button_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginEnd="24dp"
+        android:gravity="center"
+        android:lines="1"
+        android:text="@string/level_up_int"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/minusButton5"
+        app:layout_constraintTop_toTopOf="@+id/minusButton5" />
+
+    <Button
+        android:id="@+id/okButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OK"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

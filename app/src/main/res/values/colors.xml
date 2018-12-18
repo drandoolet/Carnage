@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="colorDamagePoints">#AA0114</color>
+    <color name="colorBattleBackground">#A080AD</color>
+    <color name="colorBorders">#421C52</color>
+    <color name="colorBattleTextBackground">#DCD0E1</color>
+
+    <color name="colorProgressBarBackground">#E1D0E5</color>
+    <color name="colorProgressBarHP">#FF2300</color>
+    <color name="colorProgressBarMP">#4186D3</color>
+    <color name="colorProgressBarSP">#779E00</color>
+</resources>

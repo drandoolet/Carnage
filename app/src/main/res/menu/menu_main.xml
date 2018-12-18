@@ -1,0 +1,27 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.user.carnage.MainActivity" >
+
+    <item android:id="@+id/menu_new_game"
+        android:title="@string/menu_start_new_game"/>
+    <item android:id="@+id/menu_reset_stats"
+        android:title="@string/menu_reset_stats"/>
+    <item android:id="@+id/menu_track_stats"
+        android:title="@string/menu_track_stats"
+        android:checkable="true"/>
+    <item
+        android:id="@+id/menu_language"
+        android:title="@string/menu_language">
+        <menu>
+            <item
+                android:id="@+id/menu_language_russian"
+                android:checkable="true"
+                android:title="@string/menu_language_russian" />
+            <item
+                android:id="@+id/menu_language_english"
+                android:checkable="true"
+                android:title="@string/menu_language_english" />
+        </menu>
+    </item>
+</menu>

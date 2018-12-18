@@ -1,0 +1,78 @@
+<resources>
+    <string name="app_name" translatable="false">Carnage</string>
+    <string name="action_settings">Settings</string>
+    <string name="player_1_name">Player</string>
+    <string name="player_2_name">Monster</string>
+    <string name="battle_start_1">Fight between</string>
+    <string name="radio_group_title_def">Defend:</string>
+    <string name="radio_group_title_atk">Attack:</string>
+    <string name="radio_head">HEAD</string>
+    <string name="radio_body">BODY</string>
+    <string name="radio_waist">WAIST</string>
+    <string name="radio_legs">LEGS</string>
+    <string name="battle_text_normal">\n%1$s aims at %2$s, doing %3$d points of damage.\n</string>
+    <string name="battle_text_dmg_points">" points of damage."</string>
+    <string name="button_attack">ATTACK</string>
+    <string name="battle_text_aims">" aims at "</string>
+    <string name="battle_and">" and "</string>
+    <string name="battle_start_2">" begins now!"</string>
+    <string name="battle_text_critical">\n%1$s aims at %2$s, performing a critical damage! \n%3$s receives %4$d points of damage.\n</string>
+    <string name="battle_text_block_break">\n%1$s aims at %2$s, breaking block! \n%3$s receives %4$d points of damage.\n</string>
+    <string name="battle_text_receives">" receives "</string>
+    <string name="toast_choose_atk">Please select 2 DEFs and 1 ATK</string>
+    <string name="player_type_balanced">BALANCED</string>
+    <string name="player_type_tank">TANK</string>
+    <string name="player_type_berserker">BERSERKER</string>
+    <string name="player_type_random" translatable="false">RANDOM</string>
+    <string name="menu_choose_label_text">Pick a character for you and for your enemy and let\'s start the fight!</string>
+    <string name="menu_choose_start">I\'m ready!</string>
+    <string name="gameover_dialog_title">Results</string>
+    <string name="gameover_dialog_positive">New game</string>
+    <string name="gameover_dialog_negative">"Close     "</string>
+    <string name="gameover_dialog_neutral">Change settings</string>
+    <string name="battle_text_info_start_fight">"STARTING FIGHT BETWEEN: "</string>
+    <string name="battle_text_info_stars" translatable="false">. ***</string>
+    <string name="battle_text_info_chars_pl">"Player's characteristics: "</string>
+    <string name="battle_text_info_hp" translatable="false">"HP: "</string>
+    <string name="battle_text_info_power">"Power: "</string>
+    <string name="battle_text_info_crit">"Critical chance: "</string>
+    <string name="battle_text_info_crit_dmg">Critical damage: x</string>
+    <string name="battle_text_info_chars_en">"Enemy's characteristics: "</string>
+    <string name="battle_round">\n\n*** ROUND %1$d ***\n</string>
+    <string name="battle_text_stars" translatable="false">***</string>
+    <string name="menu_choose_toast_choose_class">Please choose classes</string>
+    <string name="battle_text_blocked">\n%1$s aims at %2$s, but %3$s blocks the attack.\n</string>
+    <string name="battle_text_but">", but "</string>
+    <string name="battle_text_dodged">\n%1$s aims at %2$s, but %3$s dodges from the attack.\n</string>
+    <string name="gameover_dialog_winner">"The winner is: "</string>
+    <string name="gameover_dialog_hits">"Total hits: "</string>
+    <string name="gameover_dialog_criticals">"Total criticals: "</string>
+    <string name="gameover_dialog_block_breaks">"Total block breaks: "</string>
+    <string name="gameover_dialog_blocks">"Total blocks: "</string>
+    <string name="gameover_dialog_dodges">"Total dodges: "</string>
+    <string name="menu_reset_stats">Reset statistics</string>
+    <string name="menu_track_stats">Track statistics</string>
+    <string name="menu_start_new_game">Start a new game</string>
+    <string name="dialog_exit_title">Exit the game?</string>
+    <string name="common_yes">Yes</string>
+    <string name="common_no">No</string>
+    <string name="dialog_wipe_stats_title">Reset the statistics?</string>
+    <string name="dialog_wipe_stats_message">"Stats wiping will lead to totally randomized behavior of the Computer, who learns on your actions automatically. Current number of entries is: "</string>
+    <string name="dialog_wipe_stats_comfirmation">. Do you wish to wipe that data?</string>
+    <string name="dialog_newgame_title">Do you wish to start a new game?</string>
+    <string name="menu_language">Language</string>
+    <string name="menu_language_russian" translatable="false">Russian</string>
+    <string name="menu_language_english" translatable="false">English</string>
+    <string name="allocate_title">Allocate stats: %1$i of %2$i</string>
+    <string name="level_up_str">STR</string>
+    <string name="level_up_sta">STA</string>
+    <string name="level_up_agi">AGI</string>
+    <string name="level_up_luck">LUCK</string>
+    <string name="level_up_int">INT</string>
+    <string name="battle_text_rpg_info">\nCharacteristics of %1$s : \nHP: %2$d. SP: %3$d. MP: %4$d. \nPower: %5$d - %6$d. \nDefence: %7$d. M-Defence: %8$d. \nDodge: %9$d. A-Dodge: %10$d. \nCritical: %11$d. A-Critical: %12$d. \nCritical damage: %13$s.\n</string>
+    <string name="checkbox_title_vertical_def">D\nE\nF\nE\nN\nD</string>
+    <string name="checkbox_title_vertical_atk">A\nT\nT\nA\nC\nK</string>
+    <string name="battle_points_critical" translatable="false">%1$d\nCritical!</string>
+    <string name="battle_points_block" translatable="false">Block!</string>
+    <string name="battle_points_block_break" translatable="false">%1$d\nBlock break!</string>
+</resources>

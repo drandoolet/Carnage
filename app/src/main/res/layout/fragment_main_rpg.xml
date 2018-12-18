@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBattleBackground">
+
+    <ImageView
+        android:id="@+id/player1ImageView"
+        android:layout_width="@dimen/dimen_img_player_size"
+        android:layout_height="@dimen/dimen_img_player_size"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toEndOf="@+id/player1ProgressBarMP"
+        app:layout_constraintTop_toBottomOf="@+id/player1TextView"
+        tools:srcCompat="@tools:sample/avatars[0]" />
+
+    <ImageView
+        android:id="@+id/player2ImageView"
+        android:layout_width="@dimen/dimen_img_player_size"
+        android:layout_height="@dimen/dimen_img_player_size"
+        app:layout_constraintEnd_toStartOf="@+id/player2ProgressBarMP"
+        app:layout_constraintTop_toBottomOf="@+id/player2TextView"
+        tools:srcCompat="@tools:sample/avatars[10]" />
+
+    <TextView
+        android:id="@+id/player1TextView"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="@+id/player1ImageView"
+        app:layout_constraintStart_toStartOf="@+id/player1ImageView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/player2TextView"
+        android:layout_width="@dimen/dimen_img_player_size"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@+id/player2ProgressBarMP"
+        app:layout_constraintStart_toStartOf="@+id/player2ImageView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/player1ProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="@dimen/dimen_progress_bar_width"
+        android:layout_height="@dimen/dimen_img_player_size"
+        android:layout_marginStart="10dp"
+        android:max="100"
+        android:progress="75"
+        android:progressDrawable="@drawable/progress_bar_hp"
+        app:layout_constraintBottom_toBottomOf="@+id/player1ImageView"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/player1ProgressBarSP"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="@dimen/dimen_progress_bar_width"
+        android:layout_height="@dimen/dimen_img_player_size"
+        android:layout_marginStart="10dp"
+        android:max="100"
+        android:progress="75"
+        android:progressDrawable="@drawable/progress_bar_sp"
+        app:layout_constraintBottom_toBottomOf="@+id/player1ImageView"
+        app:layout_constraintStart_toEndOf="@+id/player1ProgressBar" />
+
+    <ProgressBar
+        android:id="@+id/player1ProgressBarMP"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="@dimen/dimen_progress_bar_width"
+        android:layout_height="@dimen/dimen_img_player_size"
+        android:layout_marginStart="10dp"
+        android:max="100"
+        android:progress="75"
+        android:progressDrawable="@drawable/progress_bar_mp"
+        app:layout_constraintBottom_toBottomOf="@+id/player1ImageView"
+        app:layout_constraintStart_toEndOf="@+id/player1ProgressBarSP" />
+
+    <ProgressBar
+        android:id="@+id/player2ProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="@dimen/dimen_progress_bar_width"
+        android:layout_height="@dimen/dimen_img_player_size"
+        android:layout_marginEnd="10dp"
+        android:max="100"
+        android:progress="75"
+        android:progressDrawable="@drawable/progress_bar_hp"
+        app:layout_constraintBottom_toBottomOf="@+id/player2ImageView"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/player2ProgressBarMP"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="@dimen/dimen_progress_bar_width"
+        android:layout_height="@dimen/dimen_img_player_size"
+        android:max="100"
+        android:progress="75"
+        android:progressDrawable="@drawable/progress_bar_mp"
+        app:layout_constraintBottom_toBottomOf="@+id/player2ImageView"
+        app:layout_constraintEnd_toStartOf="@+id/player2ProgressBarSP" />
+
+    <ProgressBar
+        android:id="@+id/player2ProgressBarSP"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="@dimen/dimen_progress_bar_width"
+        android:layout_height="@dimen/dimen_img_player_size"
+        android:max="100"
+        android:progress="75"
+        android:progressDrawable="@drawable/progress_bar_sp"
+        app:layout_constraintBottom_toBottomOf="@+id/player2ImageView"
+        app:layout_constraintEnd_toStartOf="@+id/player2ProgressBar" />
+
+    <TextView
+        android:id="@+id/player1MaxHPTextView"
+        android:layout_width="20dp"
+        android:layout_height="10dp"
+        android:lines="1"
+        android:text="1000"
+        android:textAlignment="center"
+        android:textSize="8sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/player1ProgressBar"
+        app:layout_constraintEnd_toStartOf="@+id/player1MaxSPTextView" />
+
+    <TextView
+        android:id="@+id/player1HPTextView"
+        android:layout_width="20dp"
+        android:layout_height="10dp"
+        android:lines="1"
+        android:text="1000"
+        android:textAlignment="center"
+        android:textSize="8sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/player1SPTextView"
+        app:layout_constraintTop_toBottomOf="@+id/player1ProgressBar" />
+
+    <TextView
+        android:id="@+id/player1SPTextView"
+        android:layout_width="20dp"
+        android:layout_height="10dp"
+        android:lines="1"
+        android:text="1000"
+        android:textAlignment="center"
+        android:textSize="8sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/player1MPTextView"
+        app:layout_constraintTop_toBottomOf="@+id/player1ProgressBarSP" />
+
+    <TextView
+        android:id="@+id/player1MPTextView"
+        android:layout_width="20dp"
+        android:layout_height="10dp"
+        android:layout_marginEnd="5dp"
+        android:lines="1"
+        android:text="1000"
+        android:textAlignment="center"
+        android:textSize="8sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/player1ImageView"
+        app:layout_constraintTop_toBottomOf="@+id/player1ProgressBarMP" />
+
+    <TextView
+        android:id="@+id/player1MaxSPTextView"
+        android:layout_width="20dp"
+        android:layout_height="10dp"
+        android:lines="1"
+        android:text="1000"
+        android:textAlignment="center"
+        android:textSize="8sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/player1ProgressBarSP"
+        app:layout_constraintEnd_toStartOf="@+id/player1MaxMPTextView" />
+
+    <TextView
+        android:id="@+id/player1MaxMPTextView"
+        android:layout_width="20dp"
+        android:layout_height="10dp"
+        android:layout_marginEnd="5dp"
+        android:lines="1"
+        android:text="1000"
+        android:textAlignment="center"
+        android:textSize="8sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/player1ProgressBarMP"
+        app:layout_constraintEnd_toStartOf="@+id/player1TextView" />
+
+    <TextView
+        android:id="@+id/battleTextView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/battle_textview_border"
+        android:clickable="false"
+        android:gravity="bottom"
+        android:maxLines="13"
+        android:minLines="5"
+        android:padding="5dp"
+        android:scrollbars="vertical"
+        android:scrollHorizontally="false"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/buttonAttack"
+        app:layout_constraintEnd_toEndOf="@+id/player2ProgressBar"
+        app:layout_constraintStart_toStartOf="@+id/player1ProgressBar"
+        app:layout_constraintTop_toBottomOf="@+id/player1ImageView" />
+
+    <Button
+        android:id="@+id/buttonAttack"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/ic_crossed_swords"
+        app:layout_constraintBottom_toBottomOf="@+id/checkBoxAtkBody"
+        app:layout_constraintEnd_toEndOf="@+id/buttonSkills"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/buttonSkills"
+        app:layout_constraintTop_toTopOf="@+id/checkBoxAtkHead" />
+
+    <TextView
+        android:id="@+id/radioGroupDefTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:text="@string/checkbox_title_vertical_def"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="@+id/checkBoxDefLegs"
+        app:layout_constraintStart_toStartOf="@+id/battleTextView"
+        app:layout_constraintTop_toTopOf="@+id/checkBoxDefHead" />
+
+    <TextView
+        android:id="@+id/radioGroupAtkTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:text="@string/checkbox_title_vertical_atk"
+        app:layout_constraintBottom_toBottomOf="@+id/checkBoxAtkLegs"
+        app:layout_constraintEnd_toStartOf="@+id/checkBoxAtkHead"
+        app:layout_constraintTop_toTopOf="@+id/checkBoxAtkHead" />
+
+    <CheckBox
+        android:id="@+id/checkBoxDefHead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/radio_head"
+        app:layout_constraintBottom_toTopOf="@+id/checkBoxDefBody"
+        app:layout_constraintStart_toEndOf="@+id/radioGroupDefTextView" />
+
+    <CheckBox
+        android:id="@+id/checkBoxDefBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/radio_body"
+        app:layout_constraintBottom_toTopOf="@+id/checkBoxDefWaist"
+        app:layout_constraintStart_toEndOf="@+id/radioGroupDefTextView" />
+
+    <CheckBox
+        android:id="@+id/checkBoxDefWaist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/radio_waist"
+        app:layout_constraintBottom_toTopOf="@+id/checkBoxDefLegs"
+        app:layout_constraintStart_toEndOf="@+id/radioGroupDefTextView" />
+
+    <CheckBox
+        android:id="@+id/checkBoxDefLegs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/radio_legs"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/radioGroupDefTextView" />
+
+    <CheckBox
+        android:id="@+id/checkBoxAtkHead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/radio_head"
+        app:layout_constraintBottom_toTopOf="@+id/checkBoxAtkBody"
+        app:layout_constraintEnd_toStartOf="@+id/buttonAttack"
+        app:layout_constraintHorizontal_bias="0.3"
+        app:layout_constraintStart_toEndOf="@+id/checkBoxDefHead" />
+
+    <CheckBox
+        android:id="@+id/checkBoxAtkBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/radio_body"
+        app:layout_constraintBottom_toTopOf="@+id/checkBoxAtkWaist"
+        app:layout_constraintStart_toStartOf="@+id/checkBoxAtkHead" />
+
+    <CheckBox
+        android:id="@+id/checkBoxAtkWaist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/radio_waist"
+        app:layout_constraintBottom_toTopOf="@+id/checkBoxAtkLegs"
+        app:layout_constraintStart_toStartOf="@+id/checkBoxAtkHead" />
+
+    <CheckBox
+        android:id="@+id/checkBoxAtkLegs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/radio_legs"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/checkBoxAtkHead" />
+
+    <Button
+        android:id="@+id/buttonSkills"
+        android:layout_width="70dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/ic_open_book"
+        app:layout_constraintBottom_toBottomOf="@+id/checkBoxAtkLegs"
+        app:layout_constraintEnd_toEndOf="@+id/battleTextView"
+        app:layout_constraintTop_toTopOf="@+id/checkBoxAtkWaist" />
+
+    <TextView
+        android:id="@+id/player2PointsTextView"
+        style="@style/damagePointsStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:lines="2"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/player2ImageView"
+        app:layout_constraintEnd_toEndOf="@+id/player2TextView"
+        app:layout_constraintStart_toStartOf="@+id/player2TextView"
+        app:layout_constraintTop_toBottomOf="@+id/player2TextView" />
+
+    <TextView
+        android:id="@+id/player1PointsTextView"
+        style="@style/damagePointsStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:lines="2"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/player1ImageView"
+        app:layout_constraintEnd_toEndOf="@+id/player1TextView"
+        app:layout_constraintStart_toStartOf="@+id/player1TextView"
+        app:layout_constraintTop_toBottomOf="@+id/player1TextView" />
+
+</android.support.constraint.ConstraintLayout>

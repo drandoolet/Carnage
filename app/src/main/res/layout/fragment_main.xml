@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/battleLinearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBattleBackground"
+    android:orientation="vertical"
+    tools:context=".MainActivityFragment">
+
+    <LinearLayout
+        android:id="@+id/playersNamesLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/player1TextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/player_name_textview_border"
+            android:fontFamily="serif-monospace"
+            android:gravity="center"
+            android:text="@string/player_1_name"
+            android:textAppearance="@android:style/TextAppearance.Material.Subhead"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/player2TextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/player_name_textview_border"
+            android:fontFamily="serif-monospace"
+            android:gravity="center"
+            android:text="@string/player_2_name"
+            android:textAppearance="@android:style/TextAppearance.Material.Subhead"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/playersImagesLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="105dp"
+        android:layout_weight="3">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:background="@drawable/player_name_textview_border"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/player1Subtitile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:gravity="center"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:text="TextView"
+                android:textAppearance="@android:style/TextAppearance.Material.Caption"
+                android:textStyle="italic" />
+
+            <ImageView
+                android:id="@+id/player1ImageView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:scaleType="fitEnd"
+                tools:src="@tools:sample/avatars[0]" />
+
+            <TextView
+                android:id="@+id/player1HPTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:gravity="right"
+                android:labelFor="@+id/player1ImageView"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:text="TextView"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <ProgressBar
+                android:id="@+id/player1ProgressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
+                android:max="100"
+                android:progress="50"
+                android:progressDrawable="@drawable/progress_bar_hp" />
+
+            <ProgressBar
+                android:id="@+id/player1ProgressBarSP"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
+                android:max="100"
+                android:progress="75"
+                android:progressDrawable="@drawable/progress_bar_sp" />
+
+            <ProgressBar
+                android:id="@+id/player1ProgressBarMP"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
+                android:max="100"
+                android:progress="60"
+                android:progressDrawable="@drawable/progress_bar_mp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <ProgressBar
+                android:id="@+id/player2ProgressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
+                android:progressDrawable="@drawable/progress_bar_mp" />
+
+            <ProgressBar
+                android:id="@+id/player2ProgressBarMP"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
+                android:progressDrawable="@drawable/progress_bar_sp" />
+
+            <ProgressBar
+                android:id="@+id/player2ProgressBarSP"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
+                android:progressDrawable="@drawable/progress_bar_hp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:background="@drawable/player_name_textview_border"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/player2Subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:text="TextView"
+                android:textAppearance="@android:style/TextAppearance.Material.Caption"
+                android:textStyle="italic" />
+
+            <ImageView
+                android:id="@+id/player2ImageView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:scaleType="fitStart"
+                tools:src="@tools:sample/avatars[2]" />
+
+            <TextView
+                android:id="@+id/player2HPTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:labelFor="@+id/player2ImageView"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:text="TextView"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/battleTextLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="10"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/battleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:background="@drawable/battle_textview_border"
+            android:clickable="false"
+            android:gravity="bottom"
+            android:maxLines="13"
+            android:minLines="5"
+            android:padding="5dp"
+            android:scrollbars="vertical"
+            android:scrollHorizontally="false"
+            android:text="TextView"
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/choicesLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <RadioGroup
+            android:id="@+id/defenceRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/player_name_textview_border"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/radioGroupDefTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/radio_group_title_def" />
+
+            <CheckBox
+                android:id="@+id/checkBoxDefHead"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_head"
+                android:textStyle="bold" />
+
+            <CheckBox
+                android:id="@+id/checkBoxDefBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_body"
+                android:textStyle="bold" />
+
+            <CheckBox
+                android:id="@+id/checkBoxDefWaist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_waist"
+                android:textStyle="bold" />
+
+            <CheckBox
+                android:id="@+id/checkBoxDefLegs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_legs"
+                android:textStyle="bold" />
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/attackRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/player_name_textview_border"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/radioGroupAtkTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill_horizontal"
+                android:gravity="center"
+                android:text="@string/radio_group_title_atk" />
+
+            <RadioButton
+                android:id="@+id/radioAtkHead"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_head"
+                android:textStyle="bold" />
+
+            <RadioButton
+                android:id="@+id/radioAtkBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_body"
+                android:textStyle="bold" />
+
+            <RadioButton
+                android:id="@+id/radioAtkWaist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_waist"
+                android:textStyle="bold" />
+
+            <RadioButton
+                android:id="@+id/radioAtkLegs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_legs"
+                android:textStyle="bold" />
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonAttack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:text="@string/button_attack" />
+
+    <Button
+        android:id="@+id/animTestButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ANIM TEST" />
+</LinearLayout>
