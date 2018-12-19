@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.AppCompatImageButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,7 @@ import android.widget.Button;
 
 public class SkillsFragment extends Fragment {
     private Button exitButton;
-    private Button skillButton1, skillButton2;
+    private AppCompatImageButton skillButton1, skillButton2;
 
     private int selectedSkillIdx = 0;
 
@@ -32,7 +33,13 @@ public class SkillsFragment extends Fragment {
         skillButton1 = view.findViewById(R.id.skillButton1);
         skillButton2 = view.findViewById(R.id.skillButton2);
         skillButton1.setOnClickListener(skillButtonsListener);
-        skillButton2.setOnClickListener(skillButtonsListener);
+        skillButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FireBall ball = new FireBall(MenuChooseFragment.player, MenuChooseFragment.enemy);
+                ball.use();
+            }
+        });
 
         return view;
     }

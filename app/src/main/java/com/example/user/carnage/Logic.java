@@ -8,6 +8,7 @@ import java.util.Arrays;
 import static java.security.AccessController.getContext;
 
 class PlayCharacter {
+    private int currentExp, targetExp, level;
     private int maxHP;
     private int HP;
     private int MP;
@@ -43,6 +44,16 @@ class PlayCharacter {
     private String roundStatus = "";
 
     private Chars playerChar;
+
+    PlayCharacter(int[] statsFromNeural) {
+        level = statsFromNeural[0];
+        currentExp = statsFromNeural[1];
+        STA = statsFromNeural[2];
+        STR = statsFromNeural[3];
+        AGI = statsFromNeural[4];
+        LUCK = statsFromNeural[5];
+        INT = statsFromNeural[6];
+    }
 
     PlayCharacter(Chars ch, String pl_name) {
         maxHP = ch.getHP();
@@ -313,16 +324,20 @@ class PlayCharacter {
         return stats;
     }
 
-    public void setCustom(int str, int agi, int sta, int intuition) {
-        playerChar.setCustom(str, agi, sta, intuition);
-        maxHP = playerChar.getHP();
-        HP = playerChar.getHP();
-        power[0] = playerChar.getMinAttack();
-        power[1] = playerChar.getMaxAttack();
-        critical = playerChar.getCritChance();
-        criticalDamage = playerChar.getCritDmg();
-        dodgeRate = playerChar.getDodgeRate();
-        antiDodgeRate = playerChar.getAntiDodgeRate();
+    public void setCustom(int str, int agi, int sta, int luck, int intelligence) {
+        Chars statHandler = Chars.CUSTOM;
+        statHandler.setCustom(str, agi, sta, luck, intelligence);
+        maxHP = statHandler.getHP();
+        HP = statHandler.getHP();
+        power[0] = statHandler.getMinAttack();
+        power[1] = statHandler.getMaxAttack();
+        critical = statHandler.getCritChance();
+        antiCritical = statHandler.getAntiCrit();
+        criticalDamage = statHandler.getCritDmg();
+        dodgeRate = statHandler.getDodgeRate();
+        antiDodgeRate = statHandler.getAntiDodgeRate();
+        defence = statHandler.getDefence();
+        magic_defence = statHandler.getMagicDefence();
     }
 
     public int[] getStats() {
@@ -613,7 +628,7 @@ enum Chars {
     DAGGER(30, 20, 60, 60, 20),
     HAMMER(70, 60, 10, 40, 10),
     WIZARD(20, 30, 20, 20, 100),
-    CUSTOM(1, 1, 1, 1, 1);
+    CUSTOM(1, 1, 1, 1, 1000);
     private int attack_from, attack_to;
     private int HP, MP, SP;
     private int crit_chance;
@@ -752,6 +767,16 @@ enum Chars {
         return stats;
     }
 
+    public int getDefence() {
+        return 1;
+    }
+    public int getMagicDefence() {
+        return 1;
+    }
+    public int getAntiCrit() {
+        return 1;
+    }
+
     public int getHP() {return HP;}
     public int getMinAttack() {return attack_from;}
     public int getMaxAttack() {return attack_to;}
@@ -776,11 +801,12 @@ enum Chars {
         notify();
     }
 
-    public void setCustom(int STR, int AGI, int STA, int INT) {
+    public void setCustom(int STR, int AGI, int STA, int LUCK, int INT) {
         if (playerClass == "CUSTOM") {
             this.STR = STR;
             this.AGI = AGI;
             this.STA = STA;
+            this.LUCK = LUCK;
             this.INT = INT;
         } else {
             System.out.println("Attempt to set stats to non-CUSTOM Char denied.");
