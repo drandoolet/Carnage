@@ -4,20 +4,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements SkillsFragment.OnSelectedButtonListener {
     public static final String TAG = "CARNAGE";
@@ -44,11 +38,16 @@ public class MainActivity extends AppCompatActivity implements SkillsFragment.On
     public static final String NEURAL_NET_DEF_ATTACKED_LEGS = "player attacked legs";
 
     public static final String RPG_STATS = "RPG stats";
+    public static final String RPG_PROFILE_1 = "player profile 1";
+    public static final String RPG_PROFILE_2 = "player profile 2";
+    public static final String RPG_PROFILE_IMAGE = "player profile image";
     public static final String RPG_STATS_STR = "strength";
     public static final String RPG_STATS_STA = "stamina";
     public static final String RPG_STATS_AGI = "agility";
     public static final String RPG_STATS_LUCK = "luck";
     public static final String RPG_STATS_INT = "intelligence";
+    public static final String RPG_STATS_LEVEL = "level";
+    public static final String RPG_STATS_CURRENT_EXP = "current exp";
 
     public static boolean trackStatistics;
 
@@ -63,8 +62,9 @@ public class MainActivity extends AppCompatActivity implements SkillsFragment.On
             addStatisticsToNeuralNet(new int[]{1, 1, 1, 1, 1, 1, 1, 1});
         }
         if (getRPGStatsSum() == 0) {
-            addToInitialStats(new int[]{1, 1, 1, 1, 1});
+            updatePlayerStatsSharedPreferences(new int[]{1, 1, 1, 1, 1}, RPG_PROFILE_1);
         }
+        setProfileImage(RPG_PROFILE_1, "player_img/alina_lupit.png");
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -249,6 +249,7 @@ public class MainActivity extends AppCompatActivity implements SkillsFragment.On
     private void setTrackStatistics(boolean track) { // TODO : on start, "track stats" is always true
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putBoolean(APP_PREFERENCES_TRACK_STATS, track);
+        editor.commit();
     }
 
     private static SharedPreferences getRPGPrefs() {
@@ -256,22 +257,26 @@ public class MainActivity extends AppCompatActivity implements SkillsFragment.On
     }
 
     public static int[] getInitialStats() {
-        int stats[] = new int[5];
+        int stats[] = new int[7];
         stats[0] = getRPGPrefs().getInt(RPG_STATS_STR, 1);
         stats[1] = getRPGPrefs().getInt(RPG_STATS_STA, 1);
         stats[2] = getRPGPrefs().getInt(RPG_STATS_AGI, 1);
         stats[3] = getRPGPrefs().getInt(RPG_STATS_LUCK, 1);
         stats[4] = getRPGPrefs().getInt(RPG_STATS_INT, 1);
+        stats[5] = getRPGPrefs().getInt(RPG_STATS_LEVEL, 1);
+        stats[6] = getRPGPrefs().getInt(RPG_STATS_CURRENT_EXP, 1);
         return stats;
     }
 
-    public static void addToInitialStats(int[] stats) {
-        SharedPreferences.Editor editor = getRPGPrefs().edit();
+    public static void updatePlayerStatsSharedPreferences(int[] stats, String profile) {
+        SharedPreferences.Editor editor = mContext.getSharedPreferences(profile, Context.MODE_PRIVATE).edit();
         editor.putInt(RPG_STATS_STR, stats[0]);
         editor.putInt(RPG_STATS_STA, stats[1]);
         editor.putInt(RPG_STATS_AGI, stats[2]);
         editor.putInt(RPG_STATS_LUCK, stats[3]);
         editor.putInt(RPG_STATS_INT, stats[4]);
+        editor.putInt(RPG_STATS_LEVEL, stats[5]);
+        editor.putInt(RPG_STATS_CURRENT_EXP, stats[6]);
         editor.commit();
     }
 
@@ -284,10 +289,19 @@ public class MainActivity extends AppCompatActivity implements SkillsFragment.On
 
     @Override
     public void onButtonSelected(int buttonIndex) {
-
         FragmentManager fragmentManager = getSupportFragmentManager();
         RPGBattleFragment fragment = (RPGBattleFragment) fragmentManager.findFragmentByTag("MAIN BATTLE FRAGMENT");
         fragment.setAllEnabled(true);
         fragment.animateSkillsFragmentAppearance(false);
+    }
+
+    public static String getProfileImage(String profile) {
+        return mContext.getSharedPreferences(profile, Context.MODE_PRIVATE).getString(RPG_PROFILE_IMAGE, "carnage_label.png");
+
+    }
+    public static void setProfileImage(String profile, String image) {
+        SharedPreferences.Editor editor = mContext.getSharedPreferences(profile, Context.MODE_PRIVATE).edit();
+        editor.putString(RPG_PROFILE_IMAGE, image);
+        editor.apply();
     }
 }

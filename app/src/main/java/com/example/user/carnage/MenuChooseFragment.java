@@ -69,7 +69,10 @@ public class MenuChooseFragment extends Fragment {
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LevelUpFragment fragment = new LevelUpFragment();
+                //LevelUpFragment fragment = new LevelUpFragment();
+                //FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                //transaction.replace(R.id.container, fragment).commit();
+                ProfileChooseFragment fragment = new ProfileChooseFragment();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.container, fragment).commit();
             }

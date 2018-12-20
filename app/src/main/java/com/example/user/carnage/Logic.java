@@ -53,6 +53,7 @@ class PlayCharacter {
         AGI = statsFromNeural[4];
         LUCK = statsFromNeural[5];
         INT = statsFromNeural[6];
+        setStatsFromMainStats();
     }
 
     PlayCharacter(Chars ch, String pl_name) {
@@ -324,11 +325,13 @@ class PlayCharacter {
         return stats;
     }
 
-    public void setCustom(int str, int agi, int sta, int luck, int intelligence) {
+    public void setStatsFromMainStats() {
         Chars statHandler = Chars.CUSTOM;
-        statHandler.setCustom(str, agi, sta, luck, intelligence);
-        maxHP = statHandler.getHP();
+        statHandler.setCustom(STA, STR, AGI, LUCK, INT);
+        /*maxHP = statHandler.getHP();
         HP = statHandler.getHP();
+        SP = statHandler.getSP();
+        MP = statHandler.getMP();
         power[0] = statHandler.getMinAttack();
         power[1] = statHandler.getMaxAttack();
         critical = statHandler.getCritChance();
@@ -337,7 +340,21 @@ class PlayCharacter {
         dodgeRate = statHandler.getDodgeRate();
         antiDodgeRate = statHandler.getAntiDodgeRate();
         defence = statHandler.getDefence();
-        magic_defence = statHandler.getMagicDefence();
+        magic_defence = statHandler.getMagicDefence(); */
+        int[] stats = statHandler.getStats();
+        maxHP = stats[3];
+        HP = stats[3];
+        SP = stats[4];
+        MP = stats[5];
+        power[0] = stats[0];
+        power[1] = stats[1];
+        critical = stats[7];
+        antiCritical = stats[8];
+        criticalDamage = stats[11];
+        dodgeRate = stats[9];
+        antiDodgeRate = stats[10];
+        defence = stats[2];
+        magic_defence = stats[6];
     }
 
     public int[] getStats() {
@@ -686,18 +703,18 @@ enum Chars {
     //private final int INCREMENT_PER_POINT_INTELLIGENCE_MDEF = 1;
 
     private int[][] increments = { // increments that [STR, STA, AGI, LUCK, INT] add to stats
-            {2, 0, 0, 0, 0}, // power from
-            {2, 0, 0, 0, 0}, // power to
-            {1, 2, 0, 0, 0}, // def
-            {1, 2, 0, 0, 0}, // HP
-            {1, 2, 1, 0, 0}, // SP
-            {0, 0, 0, 0, 2}, // MP
-            {0, 1, 0, 0, 2}, // MDEF
-            {0, 0, 1, 2, 0}, // crit
-            {1, 1, 0, 2, 0}, // a-crit
-            {0, 0, 2, 0, 0}, // dodge
-            {1, 0, 2, 1, 0}, // a-dodge
-            {2, 0, 2, 0, 0}  // crit dmg
+            {2, 0, 0, 0, 0}, // 0 power from
+            {2, 0, 0, 0, 0}, // 1 power to
+            {1, 2, 0, 0, 0}, // 2 def
+            {1, 2, 0, 0, 0}, // 3 HP
+            {1, 2, 1, 0, 0}, // 4 SP
+            {0, 0, 0, 0, 2}, // 5 MP
+            {0, 1, 0, 0, 2}, // 6 MDEF
+            {0, 0, 1, 2, 0}, // 7 crit
+            {1, 1, 0, 2, 0}, // 8 a-crit
+            {0, 0, 2, 0, 0}, // 9 dodge
+            {1, 0, 2, 1, 0}, // 10 a-dodge
+            {2, 0, 2, 0, 0}  // 11 crit dmg
     };
 
 
@@ -738,32 +755,7 @@ enum Chars {
             stats[i] = stat;
         }
         System.out.println("getStats() stats: "+ Arrays.toString(stats));
-        //
-        //
-        //stats[0] = STR * INCREMENT_PER_POINT_STRENGTH_POWER; // power from
-        //stats[1] = STR * INCREMENT_PER_POINT_STRENGTH_POWER; // power to
-        //stats[2] = STR * INCREMENT_PER_POINT_STRENGTH_DEF
-        //+ STA * INCREMENT_PER_POINT_STAMINA_DEF; // def
-        //stats[3] = STA * INCREMENT_PER_POINT_STAMINA_HP
-        //+ STR * INCREMENT_PER_POINT_STRENGTH_HP; // HP
-        //stats[4] = STA * INCREMENT_PER_POINT_STAMINA_SP
-        //+ STR * INCREMENT_PER_POINT_STRENGTH_SP
-        //+ AGI * INCREMENT_PER_POINT_AGILITY_SP; // SP (stamina)
-        //stats[5] = INT * INCREMENT_PER_POINT_INTELLIGENCE_MP; // MP
-        //stats[6] = INT * INCREMENT_PER_POINT_INTELLIGENCE_MDEF
-        //+ STA * INCREMENT_PER_POINT_STAMINA_MDEF; // m-def
-        //stats[7] = LUCK * INCREMENT_PER_POINT_LUCK_CRIT
-        //+ AGI * INCREMENT_PER_POINT_AGILITY_CRIT; // crit
-        //stats[8] = LUCK * INCREMENT_PER_POINT_LUCK_A_CRIT
-        //+ STR * INCREMENT_PER_POINT_STRENGTH_A_CRIT
-        //+ STA * INCREMENT_PER_POINT_STAMINA_A_CRIT; // a-crit
-        //stats[9] = AGI * INCREMENT_PER_POINT_AGILITY_DODGE; // dodge
-        //stats[10] = AGI * INCREMENT_PER_POINT_AGILITY_A_DODGE
-        //+ LUCK * INCREMENT_PER_POINT_LUCK_A_DODGE
-        //+ STR * INCREMENT_PER_POINT_STRENGTH_A_DODGE; // a-dodge
-        //stats[11] = STR * INCREMENT_PER_POINT_STRENGTH_CRIT_DMG
-        //+ AGI * INCREMENT_PER_POINT_AGILITY_CRIT_DMG; // crit dmg
-        //
+
         return stats;
     }
 
@@ -774,6 +766,12 @@ enum Chars {
         return 1;
     }
     public int getAntiCrit() {
+        return 1;
+    }
+    public int getMP() {
+        return 1;
+    }
+    public int getSP() {
         return 1;
     }
 
@@ -801,7 +799,7 @@ enum Chars {
         notify();
     }
 
-    public void setCustom(int STR, int AGI, int STA, int LUCK, int INT) {
+    public void setCustom(int STA, int STR, int AGI, int LUCK, int INT) {
         if (playerClass == "CUSTOM") {
             this.STR = STR;
             this.AGI = AGI;

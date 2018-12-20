@@ -6,19 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:gravity="center_vertical"
-        android:lines="2"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="@+id/imageButton2"
-        app:layout_constraintEnd_toEndOf="@+id/textView5"
-        app:layout_constraintStart_toEndOf="@+id/imageButton2"
-        app:layout_constraintTop_toTopOf="@+id/imageButton2" />
-
     <ImageView
         android:id="@+id/profileMenuTitleImageView"
         android:layout_width="0dp"
@@ -33,7 +20,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/chooseProfileSubtitleTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -44,35 +31,48 @@
         app:layout_constraintStart_toStartOf="@+id/profileMenuTitleImageView"
         app:layout_constraintTop_toBottomOf="@+id/profileMenuTitleImageView" />
 
+    <ImageButton
+        android:id="@+id/profile1ImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/chooseProfileSubtitleTextView"
+        app:layout_constraintTop_toBottomOf="@+id/chooseProfileSubtitleTextView"
+        tools:srcCompat="@tools:sample/avatars" />
+
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/profile1TextView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:gravity="center_vertical"
         android:lines="2"
         android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="@+id/imageButton3"
-        app:layout_constraintEnd_toEndOf="@+id/textView5"
-        app:layout_constraintStart_toEndOf="@+id/imageButton3"
-        app:layout_constraintTop_toTopOf="@+id/imageButton3" />
+        app:layout_constraintBottom_toBottomOf="@+id/profile1ImageButton"
+        app:layout_constraintEnd_toEndOf="@+id/chooseProfileSubtitleTextView"
+        app:layout_constraintStart_toEndOf="@+id/profile1ImageButton"
+        app:layout_constraintTop_toTopOf="@+id/profile1ImageButton" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/profile2ImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="@+id/textView5"
-        app:layout_constraintTop_toBottomOf="@+id/textView5"
+        app:layout_constraintStart_toStartOf="@+id/profile1ImageButton"
+        app:layout_constraintTop_toBottomOf="@+id/profile1ImageButton"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <ImageButton
-        android:id="@+id/imageButton3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="@+id/imageButton2"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton2"
-        tools:srcCompat="@tools:sample/avatars" />
+    <TextView
+        android:id="@+id/profile2TextView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:gravity="center_vertical"
+        android:lines="2"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="@+id/profile2ImageButton"
+        app:layout_constraintEnd_toEndOf="@+id/chooseProfileSubtitleTextView"
+        app:layout_constraintStart_toEndOf="@+id/profile2ImageButton"
+        app:layout_constraintTop_toTopOf="@+id/profile2ImageButton" />
 
 </android.support.constraint.ConstraintLayout>
