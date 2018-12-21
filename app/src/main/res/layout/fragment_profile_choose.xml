@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/profileChooseConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/profileMenuTitleImageView"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/dimen_img_player_size"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -33,8 +33,8 @@
 
     <ImageButton
         android:id="@+id/profile1ImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/dimen_img_player_size"
+        android:layout_height="@dimen/dimen_img_player_size"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="@+id/chooseProfileSubtitleTextView"
         app:layout_constraintTop_toBottomOf="@+id/chooseProfileSubtitleTextView"
@@ -55,8 +55,8 @@
 
     <ImageButton
         android:id="@+id/profile2ImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/dimen_img_player_size"
+        android:layout_height="@dimen/dimen_img_player_size"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="@+id/profile1ImageButton"
         app:layout_constraintTop_toBottomOf="@+id/profile1ImageButton"

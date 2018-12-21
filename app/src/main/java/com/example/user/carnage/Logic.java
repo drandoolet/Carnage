@@ -8,7 +8,7 @@ import java.util.Arrays;
 import static java.security.AccessController.getContext;
 
 class PlayCharacter {
-    private int currentExp, targetExp, level;
+    private int currentExp, level, availableStatPoints = 0;
     private int maxHP;
     private int HP;
     private int MP;
@@ -119,6 +119,15 @@ class PlayCharacter {
     public void setHP(int hp) {
         HP = hp;
         System.out.println(name+" HP is now: "+hp);
+    }
+
+    public int getLevel() { return level; }
+    public int getCurrentExp() { return currentExp; }
+    public void setExp(int exp) { currentExp = exp; }
+
+    public void levelUp() {
+        level++;
+        availableStatPoints += 3;
     }
 
     public String getName() {return name;}

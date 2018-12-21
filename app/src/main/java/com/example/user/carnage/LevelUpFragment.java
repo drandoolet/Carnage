@@ -61,7 +61,7 @@ public class LevelUpFragment extends Fragment {
 
         okButton = view.findViewById(R.id.okButton);
 
-        handleInitialStats(MainActivity.getInitialStats());
+        handleInitialStats(MainActivity.getInitialStats(MainActivity.RPG_PROFILE_1));
 
         TextView amounts[] = {strAmountTextView, staAmountTextView, agiAmountTextView, luckAmountTextView, intAmountTextView, statsLeftTextView};
         int initials[] = {initStr, initSta, initAgi, initLuck, initIntell};

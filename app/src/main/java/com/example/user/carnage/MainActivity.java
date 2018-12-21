@@ -13,7 +13,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements SkillsFragment.OnSelectedButtonListener {
+public class MainActivity extends AppCompatActivity
+        implements SkillsFragment.OnSelectedButtonListener, ProfileChooseFragment.OnProfileSelectedListener {
+    public static PlayCharacter player, enemy;
+
     public static final String TAG = "CARNAGE";
     public static Context mContext;
     public static final String APP_PREFERENCES = "gameOverSettings";
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements SkillsFragment.On
     public static final String RPG_STATS_INT = "intelligence";
     public static final String RPG_STATS_LEVEL = "level";
     public static final String RPG_STATS_CURRENT_EXP = "current exp";
+    public static final String RPG_STATS_AVAILABLE_STAT_POINTS = "available stat points";
 
     public static boolean trackStatistics;
 
@@ -61,8 +65,8 @@ public class MainActivity extends AppCompatActivity implements SkillsFragment.On
         if (getStatsSum() == 0) {
             addStatisticsToNeuralNet(new int[]{1, 1, 1, 1, 1, 1, 1, 1});
         }
-        if (getRPGStatsSum() == 0) {
-            updatePlayerStatsSharedPreferences(new int[]{1, 1, 1, 1, 1}, RPG_PROFILE_1);
+        if (getRPGStatsSum(RPG_PROFILE_1) == 0) {
+            updatePlayerStatsSharedPreferences(new int[]{1, 1, 1, 1, 1, 1}, RPG_PROFILE_1);
         }
         setProfileImage(RPG_PROFILE_1, "player_img/alina_lupit.png");
 
@@ -256,15 +260,16 @@ public class MainActivity extends AppCompatActivity implements SkillsFragment.On
         return mContext.getSharedPreferences(RPG_STATS, Context.MODE_PRIVATE);
     }
 
-    public static int[] getInitialStats() {
+    public static int[] getInitialStats(String profile) {
+        SharedPreferences preferences = mContext.getSharedPreferences(profile, Context.MODE_PRIVATE);
         int stats[] = new int[7];
-        stats[0] = getRPGPrefs().getInt(RPG_STATS_STR, 1);
-        stats[1] = getRPGPrefs().getInt(RPG_STATS_STA, 1);
-        stats[2] = getRPGPrefs().getInt(RPG_STATS_AGI, 1);
-        stats[3] = getRPGPrefs().getInt(RPG_STATS_LUCK, 1);
-        stats[4] = getRPGPrefs().getInt(RPG_STATS_INT, 1);
-        stats[5] = getRPGPrefs().getInt(RPG_STATS_LEVEL, 1);
-        stats[6] = getRPGPrefs().getInt(RPG_STATS_CURRENT_EXP, 1);
+        stats[0] = preferences.getInt(RPG_STATS_STR, 1);
+        stats[1] = preferences.getInt(RPG_STATS_STA, 1);
+        stats[2] = preferences.getInt(RPG_STATS_AGI, 1);
+        stats[3] = preferences.getInt(RPG_STATS_LUCK, 1);
+        stats[4] = preferences.getInt(RPG_STATS_INT, 1);
+        stats[5] = preferences.getInt(RPG_STATS_LEVEL, 1);
+        stats[6] = preferences.getInt(RPG_STATS_CURRENT_EXP, 1);
         return stats;
     }
 
@@ -277,12 +282,13 @@ public class MainActivity extends AppCompatActivity implements SkillsFragment.On
         editor.putInt(RPG_STATS_INT, stats[4]);
         editor.putInt(RPG_STATS_LEVEL, stats[5]);
         editor.putInt(RPG_STATS_CURRENT_EXP, stats[6]);
+        editor.putInt(RPG_STATS_AVAILABLE_STAT_POINTS, stats[7]);
         editor.commit();
     }
 
-    private int getRPGStatsSum() {
+    private int getRPGStatsSum(String profile) {
         int sum = 0;
-        int[] stats = getInitialStats();
+        int[] stats = getInitialStats(profile);
         for (int i=0; i<stats.length; i++) sum += stats[i];
         return sum;
     }
@@ -303,5 +309,16 @@ public class MainActivity extends AppCompatActivity implements SkillsFragment.On
         SharedPreferences.Editor editor = mContext.getSharedPreferences(profile, Context.MODE_PRIVATE).edit();
         editor.putString(RPG_PROFILE_IMAGE, image);
         editor.apply();
+    }
+
+    @Override
+    public void profileSelected(String profile) {
+        RPGBattleFragment fragment = new RPGBattleFragment(); // TODO: use new constructor PlayCharacter
+        //player = new PlayCharacter(playerChar, getString(R.string.player_1_name));
+        //enemy = new PlayCharacter(enemyChar, getString(R.string.player_2_name));
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, fragment, "MAIN BATTLE FRAGMENT");
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

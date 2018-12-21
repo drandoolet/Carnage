@@ -1,5 +1,7 @@
 package com.example.user.carnage;
 
+import com.example.user.carnage.Logic.*;
+
 public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
     protected PlayCharacter playerChar;
     protected PlayCharacter enemyChar;
@@ -24,7 +26,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
 
     protected int getEffect() {
         //return (int) (playerChar.getMainStats()[statIdx]*magnification + addition);
-        return -1000;
+        return -100;
     }
 }
 

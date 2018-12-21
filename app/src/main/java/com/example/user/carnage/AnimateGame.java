@@ -4,8 +4,13 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Context;
+import android.graphics.Point;
+import android.text.Layout;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 public class AnimateGame {
@@ -61,6 +66,8 @@ public class AnimateGame {
 
     private final long ANIMATE_SKILLS_FRAGMENT_DURATION = 400;
 
+    private final long ANIMATE_PROFILE_CHOOSE_DURATION = 1000;
+
     AnimateGame() {
         AnimationTypes.ANIMATION_BATTLE_ATTACK.setDuration(ANIMATE_ATTACK_DURATION_TRANSLATION_1 + ANIMATE_ATTACK_DURATION_TRANSLATION_2);
         AnimationTypes.ANIMATION_BATTLE_DODGE.setDuration(ANIMATE_DODGE_DURATION_JUMP_1 + ANIMATE_DODGE_DURATION_JUMP_2 + ANIMATE_DODGE_DURATION_JUMP_BACK);
@@ -69,6 +76,7 @@ public class AnimateGame {
         AnimationTypes.ANIMATION_BATTLE_BLOCK.setDuration(ANIMATE_BLOCK_DURATION_SHAKE *3);
         AnimationTypes.ANIMATION_BATTLE_BLOCK_BREAK.setDuration(ANIMATE_BLOCK_BREAK_DURATION_SHAKE *2
                 + ANIMATE_BLOCK_BREAK_DURATION_ROTATE_1 + ANIMATE_BLOCK_BREAK_DURATION_ROTATE_2 + ANIMATE_BLOCK_BREAK_DURATION_BACK);
+        AnimationTypes.ANIMATION_PROFILE_SELECTED.setDuration(ANIMATE_PROFILE_CHOOSE_DURATION);
 
         long minDuration = ANIMATE_ATTACK_DURATION_TRANSLATION_1 + ANIMATE_ATTACK_DURATION_TRANSLATION_2
                 + ANIMATE_ATTACK_DURATION_TRANSLATION_3 + ANIMATE_ATTACK_DURATION_TRANSLATION_4;
@@ -81,6 +89,32 @@ public class AnimateGame {
     }
 
     private boolean isAnimating = false;
+
+    public void animateProfileChoose(View view, View layout, View[] viewsToFade) {
+        AnimatorSet set = new AnimatorSet();
+        AnimatorSet state1 = new AnimatorSet();
+        float translation_x = layout.getRight()/2 - view.getRight() + view.getWidth()/2;
+        float translation_y = layout.getBottom()/2 - view.getBottom() + view.getHeight()/2;
+        float scale = (layout.getWidth() / view.getWidth()) * 0.7F;
+
+        state1.setDuration(ANIMATE_PROFILE_CHOOSE_DURATION).playTogether(
+                animateTranslation(view, translation_x, translation_y, 0),
+                animateChangeScale(view, 1.0F, scale, 0)
+        );
+
+        for (View view1 : viewsToFade) {
+            state1.setDuration(ANIMATE_PROFILE_CHOOSE_DURATION).playTogether(
+                    ObjectAnimator.ofFloat(view1, View.ALPHA, 1, 0)
+            );
+        }
+
+        set.playSequentially(
+                state1,
+                ObjectAnimator.ofFloat(view, View.ALPHA, 1, 1).setDuration(500),
+                animateChangeScale(view, scale, scale*100f, 300)
+        );
+        state1.start();
+    }
 
     public void animateSkillsFragmentAppearance(final View view, boolean b) {
         AnimatorSet set = new AnimatorSet();
@@ -338,7 +372,8 @@ enum AnimationTypes {
     ANIMATION_BATTLE_DODGE(0),
     ANIMATION_BATTLE_CRITICAL(0),
     ANIMATION_BATTLE_BLOCK_BREAK(0),
-    ANIMATION_TEST(0);
+    ANIMATION_TEST(0),
+    ANIMATION_PROFILE_SELECTED(0);
 
     private long duration;
 
