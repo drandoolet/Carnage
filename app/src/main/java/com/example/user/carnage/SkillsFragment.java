@@ -36,7 +36,7 @@ public class SkillsFragment extends Fragment {
         skillButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FireBall ball = new FireBall(MenuChooseFragment.player, MenuChooseFragment.enemy);
+                FireBall ball = new FireBall(MainActivity.player, MainActivity.enemy);
                 ball.use();
             }
         });

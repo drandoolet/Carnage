@@ -16,6 +16,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.io.InputStream;
 
+
 public class LevelUpFragment extends Fragment {
     private TextView titleTextView, statsLeftTextView, strTextView, staTextView, agiTextView,
                         luckTextView, intTextView;
@@ -24,6 +25,7 @@ public class LevelUpFragment extends Fragment {
     private Button button_minus_str, button_minus_sta, button_minus_agi, button_minus_luck, button_minus_int;
     private Button button_plus_str, button_plus_sta, button_plus_agi, button_plus_luck, button_plus_int;
     private Button okButton;
+    private int statsLeft, level;
 
     private int initStr, initSta, initAgi, initLuck, initIntell;
 
@@ -63,12 +65,13 @@ public class LevelUpFragment extends Fragment {
 
         handleInitialStats(MainActivity.getInitialStats(MainActivity.RPG_PROFILE_1));
 
-        TextView amounts[] = {strAmountTextView, staAmountTextView, agiAmountTextView, luckAmountTextView, intAmountTextView, statsLeftTextView};
+        TextView amounts[] = {strAmountTextView, staAmountTextView, agiAmountTextView, luckAmountTextView, intAmountTextView};
         int initials[] = {initStr, initSta, initAgi, initLuck, initIntell};
-        for (int i=0; i<amounts.length; i++) {
+        for (int i=0; i<amounts.length-1; i++) {
             System.out.println("trying: amounts "+i);
-            amounts[i].setText(new Integer(10).toString());
+            amounts[i].setText(Integer.toString(initials[i]));
         }
+        statsLeftTextView.setText(Integer.toString(statsLeft));
 
 
         Button minusButtons[] = {button_minus_str, button_minus_sta, button_minus_agi, button_minus_luck, button_minus_int};
@@ -92,22 +95,40 @@ public class LevelUpFragment extends Fragment {
         @Override
         public void onClick(View view) {
             TextView textView;
+            int initial = 0;
 
             switch (view.getId()) {
-                case R.id.minusButton1: textView = strAmountTextView; break;
-                case R.id.minusButton2: textView = staAmountTextView; break;
-                case R.id.minusButton3: textView = agiAmountTextView; break;
-                case R.id.minusButton4: textView = luckAmountTextView; break;
-                case R.id.minusButton5: textView = intAmountTextView; break;
+                case R.id.minusButton1:
+                    textView = strAmountTextView;
+                    initial = initStr;
+                    break;
+                case R.id.minusButton2:
+                    textView = staAmountTextView;
+                    initial = initSta;
+                    break;
+                case R.id.minusButton3:
+                    textView = agiAmountTextView;
+                    initial = initAgi;
+                    break;
+                case R.id.minusButton4:
+                    textView = luckAmountTextView;
+                    initial = initLuck;
+                    break;
+                case R.id.minusButton5:
+                    textView = intAmountTextView;
+                    initial = initIntell;
+                    break;
                 default: textView = statsLeftTextView;
             }
+            if (Integer.parseInt(textView.getText().toString()) != initial) {
+                int amount = Integer.parseInt(textView.getText().toString());
+                textView.setText(new Integer(amount-1).toString());
 
-            int amount = Integer.parseInt(textView.getText().toString());
-            textView.setText(new Integer(amount-1).toString());
-
-            textView = statsLeftTextView;
-            amount = Integer.parseInt(textView.getText().toString());
-            textView.setText(new Integer(amount+1).toString());
+                textView = statsLeftTextView;
+                amount = Integer.parseInt(textView.getText().toString());
+                textView.setText(new Integer(amount+1).toString());
+                statsLeft++;
+            }
         }
     };
 
@@ -115,30 +136,43 @@ public class LevelUpFragment extends Fragment {
         @Override
         public void onClick(View view) {
             TextView textView;
+            if (statsLeft != 0) {
+                switch (view.getId()) {
+                    case R.id.plusButton1: textView = strAmountTextView; break;
+                    case R.id.plusButton2: textView = staAmountTextView; break;
+                    case R.id.plusButton3: textView = agiAmountTextView; break;
+                    case R.id.plusButton4: textView = luckAmountTextView; break;
+                    case R.id.plusButton5: textView = intAmountTextView; break;
+                    default: textView = statsLeftTextView;
+                }
 
-            switch (view.getId()) {
-                case R.id.plusButton1: textView = strAmountTextView; break;
-                case R.id.plusButton2: textView = staAmountTextView; break;
-                case R.id.plusButton3: textView = agiAmountTextView; break;
-                case R.id.plusButton4: textView = luckAmountTextView; break;
-                case R.id.plusButton5: textView = intAmountTextView; break;
-                default: textView = statsLeftTextView;
+                int amount = Integer.parseInt(textView.getText().toString());
+                textView.setText(new Integer(amount+1).toString());
+
+                TextView textView2 = statsLeftTextView;
+                amount = Integer.parseInt(textView2.getText().toString());
+                textView2.setText(new Integer(amount-1).toString());
+                statsLeft--;
             }
 
-            int amount = Integer.parseInt(textView.getText().toString());
-            textView.setText(new Integer(amount+1).toString());
 
-            TextView textView2 = statsLeftTextView;
-            amount = Integer.parseInt(textView2.getText().toString());
-            textView2.setText(new Integer(amount-1).toString());
         }
     };
 
     private View.OnClickListener okListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            ExitDialog dialog = new ExitDialog();
-            dialog.show(getFragmentManager(), MainActivity.TAG);
+            int[] newStats = new int[7];
+            TextView[] views = {strAmountTextView, staAmountTextView, agiAmountTextView, luckAmountTextView,
+                    intAmountTextView};
+            for (int i=0; i<4; i++) {
+                newStats[i] = Integer.parseInt(views[i].getText().toString());
+            }
+            newStats[5] = MainActivity.player.getLevel();
+            newStats[6] = MainActivity.player.getCurrentExp();
+            newStats[7] = MainActivity.player.getAvailableStatPoints();
+
+            MainActivity.updatePlayerStatsSharedPreferences(newStats, MainActivity.RPG_PROFILE_1);
         }
     };
 
@@ -148,5 +182,7 @@ public class LevelUpFragment extends Fragment {
         initAgi = stats[2];
         initLuck = stats[3];
         initIntell = stats[4];
+        level = stats[5];
+        statsLeft = stats[6];
     }
 }

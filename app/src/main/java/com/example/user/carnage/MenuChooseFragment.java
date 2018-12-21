@@ -37,7 +37,7 @@ public class MenuChooseFragment extends Fragment {
 
     private Button testButton;
 
-    public static PlayCharacter player, enemy; // TODO: replace static from here to MainActivity,  update links
+    //public static PlayCharacter player, enemy; // TODO: replace static from here to MainActivity,  update links
 
     public MenuChooseFragment() {}
 
@@ -110,8 +110,8 @@ public class MenuChooseFragment extends Fragment {
             if (playerGroup.getCheckedRadioButtonId() !=-1 && enemyGroup.getCheckedRadioButtonId() !=-1) {
                 RPGBattleFragment fragment = new RPGBattleFragment();
 
-                player = new PlayCharacter(playerChar, getString(R.string.player_1_name));
-                enemy = new PlayCharacter(enemyChar, getString(R.string.player_2_name));
+                MainActivity.player = new PlayCharacter(playerChar, getString(R.string.player_1_name));
+                MainActivity.enemy = new PlayCharacter(enemyChar, getString(R.string.player_2_name));
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.container, fragment, "MAIN BATTLE FRAGMENT");
                 transaction.addToBackStack(null);

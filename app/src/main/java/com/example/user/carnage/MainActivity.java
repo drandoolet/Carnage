@@ -125,8 +125,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public static void newGame(FragmentManager fragmentManager) {
-        MenuChooseFragment.player.refresh();
-        MenuChooseFragment.enemy.refresh();
+        player.refresh(); // TODO: possible error here on new game call
+        enemy.refresh();
         MenuChooseFragment fragment = new MenuChooseFragment();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.container, fragment);
@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity
 
     public static int[] getInitialStats(String profile) {
         SharedPreferences preferences = mContext.getSharedPreferences(profile, Context.MODE_PRIVATE);
-        int stats[] = new int[7];
+        int stats[] = new int[8];
         stats[0] = preferences.getInt(RPG_STATS_STR, 1);
         stats[1] = preferences.getInt(RPG_STATS_STA, 1);
         stats[2] = preferences.getInt(RPG_STATS_AGI, 1);
@@ -270,6 +270,7 @@ public class MainActivity extends AppCompatActivity
         stats[4] = preferences.getInt(RPG_STATS_INT, 1);
         stats[5] = preferences.getInt(RPG_STATS_LEVEL, 1);
         stats[6] = preferences.getInt(RPG_STATS_CURRENT_EXP, 1);
+        stats[7] = preferences.getInt(RPG_STATS_AVAILABLE_STAT_POINTS, 1);
         return stats;
     }
 
@@ -313,9 +314,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void profileSelected(String profile) {
-        RPGBattleFragment fragment = new RPGBattleFragment(); // TODO: use new constructor PlayCharacter
-        //player = new PlayCharacter(playerChar, getString(R.string.player_1_name));
-        //enemy = new PlayCharacter(enemyChar, getString(R.string.player_2_name));
+        RPGBattleFragment fragment = new RPGBattleFragment();
+        player = new PlayCharacter(RPG_PROFILE_1, getString(R.string.player_1_name));
+        enemy = new PlayCharacter(player, getString(R.string.player_2_name));
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, fragment, "MAIN BATTLE FRAGMENT");
         transaction.addToBackStack(null);

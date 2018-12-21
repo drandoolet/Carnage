@@ -45,15 +45,48 @@ class PlayCharacter {
 
     private Chars playerChar;
 
-    PlayCharacter(int[] statsFromNeural) {
-        level = statsFromNeural[0];
-        currentExp = statsFromNeural[1];
-        STA = statsFromNeural[2];
-        STR = statsFromNeural[3];
-        AGI = statsFromNeural[4];
-        LUCK = statsFromNeural[5];
-        INT = statsFromNeural[6];
+    PlayCharacter(String profile, String name) {
+        int[] stats = MainActivity.getInitialStats(profile);
+        this.name = name;
+        level = stats[0];
+        currentExp = stats[1];
+        STA = stats[2];
+        STR = stats[3];
+        AGI = stats[4];
+        LUCK = stats[5];
+        INT = stats[6];
         setStatsFromMainStats();
+
+        random = new SecureRandom();
+    }
+
+    PlayCharacter(PlayCharacter playCharacter, String name) {
+        this.name = name;
+        int[] stats = playCharacter.getMainStats();
+        int statSum = 0;
+        for (int i=0; i<stats.length; i++) statSum += stats[i];
+
+        STR = 1; STA = 1; AGI = 1; LUCK = 1; INT = 1;
+        random = new SecureRandom();
+        for (int i=1; i<=statSum-5; i++) {
+            switch (1 + random.nextInt(4)) {
+                case 1: STR++; break;
+                case 2: STA++; break;
+                case 3: AGI++; break;
+                case 4: LUCK++; break;
+                default: STA++; break;
+            }
+        }
+        setStatsFromMainStats();
+
+        neural_ok_atk_head = 0;
+        neural_ok_atk_body = 0;
+        neural_ok_atk_waist = 0;
+        neural_ok_atk_legs = 0;
+        neural_attacked_head = 0;
+        neural_attacked_body = 0;
+        neural_attacked_waist = 0;
+        neural_attacked_legs = 0;
     }
 
     PlayCharacter(Chars ch, String pl_name) {
@@ -91,7 +124,7 @@ class PlayCharacter {
         power[1] = stats[1];
         critical = stats[7];
         antiCritical = stats[8];
-        criticalDamage = stats[11];
+        criticalDamage = 1 + stats[11]/100;
         dodgeRate = stats[9];
         antiDodgeRate = stats[10];
         name = pl_name;
@@ -130,6 +163,8 @@ class PlayCharacter {
         availableStatPoints += 3;
     }
 
+    public int getAvailableStatPoints() { return availableStatPoints; }
+
     public String getName() {return name;}
     public int getHP() {return HP;}
     public String getStrPower() {return "("+power[0]+" - "+power[1]+")";}
@@ -138,8 +173,8 @@ class PlayCharacter {
         return formatted;
     }
     public int getKick() {
-        random = new SecureRandom();
-        currKick = power[0] + random.nextInt(power[1]-power[0]);
+        if (power[0] == power[1]) currKick = power[0];
+        else currKick = power[0] + random.nextInt(power[1]-power[0]);
         System.out.println('\n'+name+" aims at "+target.getName());
         //CarnageSwing.addLogText("\n ");
         //CarnageSwing.addLogText('\n'+name+" бьёт в "+target.getPlayerClass());
@@ -153,15 +188,25 @@ class PlayCharacter {
     public double getCriticalDmg() {return criticalDamage;}
 
     public boolean hasDodged(PlayCharacter en) {
-        int rate = ((dodgeRate - en.antiDodgeRate) / dodgeRate);
-        rate = rate *50 /2 +50;
-        if (rate <10) rate = 10;
+        int rate;
+        if (dodgeRate == en.antiDodgeRate) {
+            rate = 10;
+        } else {
+            rate = ((dodgeRate - en.antiDodgeRate) / dodgeRate);
+            rate = rate *50 /2 +50;
+            if (rate <10) rate = 10;
+        }
         return random.nextInt(100) < rate;
     }
     public boolean isCritical(PlayCharacter en) {
-        int rate = ((critical - en.antiCritical) / critical);
-        rate = rate *50 /2 +50;
-        if (rate <10) rate = 10;
+        int rate;
+        if (critical == en.antiCritical) {
+            rate = 10;
+        } else {
+            rate = ((critical - en.antiCritical) / critical);
+            rate = rate *50 /2 +50;
+            if (rate <10) rate = 10;
+        }
         return random.nextInt(100) < rate;
     }
 
@@ -178,12 +223,14 @@ class PlayCharacter {
         } else if(attacked.isAttackSuccessful()) {
             handleSuccessfulAttack(attacked, en);
             if(isCritical) {
-                dmg = (int) (en.getKick()*attacked.getAdjustion()*incomingCriticalDmg);
+                dmg = (int) (en.getKick()*attacked.getAdjustion()*incomingCriticalDmg)-defence;
+                if (dmg <0) dmg = 0;
                 System.out.println("Critical damage!");
                 en.finalKick = dmg;
                 //CarnageSwing.addLogText(" и наносит критический удар!"+'\n'+name+" получает "+dmg+" ед. урона.");
             } else {
-                dmg = (int) (en.getKick()*attacked.getAdjustion());
+                dmg = (int) (en.getKick()*attacked.getAdjustion())-defence;
+                if (dmg <0) dmg = 0;
                 System.out.println(name+" receives damage: "+dmg);
                 en.finalKick = dmg;
                 //CarnageSwing.addLogText(", и "+name+" получает ");
@@ -195,7 +242,8 @@ class PlayCharacter {
         } else if(!attacked.isAttackSuccessful()) {
             isBlockBreak = random.nextInt(100)>50;
             if(isCritical && isBlockBreak) {
-                dmg = (int) (en.getKick()*attacked.getAdjustion()*incomingCriticalDmg*1.5);
+                dmg = (int) (en.getKick()*attacked.getAdjustion()*incomingCriticalDmg*1.5)-defence;
+                if (dmg <0) dmg = 0;
                 System.out.println("Block break!");
                 //CarnageSwing.addLogText(" и пробивает блок!");
                 System.out.println(name+" receives damage: "+dmg);
@@ -359,7 +407,7 @@ class PlayCharacter {
         power[1] = stats[1];
         critical = stats[7];
         antiCritical = stats[8];
-        criticalDamage = stats[11];
+        criticalDamage = statHandler.getCriticalDamage();
         dodgeRate = stats[9];
         antiDodgeRate = stats[10];
         defence = stats[2];
@@ -391,6 +439,11 @@ class PlayCharacter {
         stats[3] = LUCK;
         stats[4] = INT;
         return stats;
+    }
+
+    public String getInfo() {
+        String s = "Main stats: "+ Arrays.toString(getMainStats()) +". SubStats: "+Arrays.toString(getStats());
+        return s;
     }
 }
 
@@ -654,7 +707,7 @@ enum Chars {
     DAGGER(30, 20, 60, 60, 20),
     HAMMER(70, 60, 10, 40, 10),
     WIZARD(20, 30, 20, 20, 100),
-    CUSTOM(1, 1, 1, 1, 1000);
+    CUSTOM(1, 1, 1, 1, 1);
     private int attack_from, attack_to;
     private int HP, MP, SP;
     private int crit_chance;
@@ -712,18 +765,18 @@ enum Chars {
     //private final int INCREMENT_PER_POINT_INTELLIGENCE_MDEF = 1;
 
     private int[][] increments = { // increments that [STR, STA, AGI, LUCK, INT] add to stats
-            {2, 0, 0, 0, 0}, // 0 power from
-            {2, 0, 0, 0, 0}, // 1 power to
-            {1, 2, 0, 0, 0}, // 2 def
-            {1, 2, 0, 0, 0}, // 3 HP
-            {1, 2, 1, 0, 0}, // 4 SP
-            {0, 0, 0, 0, 2}, // 5 MP
-            {0, 1, 0, 0, 2}, // 6 MDEF
-            {0, 0, 1, 2, 0}, // 7 crit
-            {1, 1, 0, 2, 0}, // 8 a-crit
-            {0, 0, 2, 0, 0}, // 9 dodge
-            {1, 0, 2, 1, 0}, // 10 a-dodge
-            {2, 0, 2, 0, 0}  // 11 crit dmg
+            {10, 0, 5, 0, 0}, // 0 power from
+            {20, 0, 10, 0, 0}, // 1 power to
+            {3, 7, 0, 0, 0}, // 2 def
+            {10, 30, 0, 0, 0}, // 3 HP
+            {10, 30, 30, 0, 0}, // 4 SP
+            {0, 0, 0, 0, 50}, // 5 MP
+            {0, 10, 0, 0, 30}, // 6 MDEF
+            {0, 0, 10, 20, 0}, // 7 crit
+            {5, 5, 0, 20, 0}, // 8 a-crit
+            {0, 0, 20, 0, 0}, // 9 dodge
+            {5, 0, 20, 5, 0}, // 10 a-dodge
+            {1, 0, 1, 0, 0}  // 11 crit dmg
     };
 
 
@@ -756,9 +809,9 @@ enum Chars {
         mainStats[3] = LUCK;
         mainStats[4] = INT;
         int[] stats = new int[12];
-        for (int i=0; i<=stats.length; i++) {
+        for (int i=0; i<=stats.length-1; i++) {
             int stat = 0;
-            for (int b=0; b<=mainStats.length; b++) {
+            for (int b=0; b<=mainStats.length-1; b++) {
                 stat += mainStats[b] * increments[i][b];
             }
             stats[i] = stat;
@@ -768,20 +821,18 @@ enum Chars {
         return stats;
     }
 
-    public int getDefence() {
-        return 1;
-    }
-    public int getMagicDefence() {
-        return 1;
-    }
-    public int getAntiCrit() {
-        return 1;
-    }
-    public int getMP() {
-        return 1;
-    }
-    public int getSP() {
-        return 1;
+    public double getCriticalDamage() {
+        int[] mainStats = new int[5];
+        mainStats[0] = STR;
+        mainStats[1] = STA;
+        mainStats[2] = AGI;
+        mainStats[3] = LUCK;
+        mainStats[4] = INT;
+        int critDmg = 0;
+        for (int i=0; i<mainStats.length-1; i++) {
+            critDmg += mainStats[i] * increments[11][i];
+        }
+        return 1.00 + (double) (critDmg/100);
     }
 
     public int getHP() {return HP;}

@@ -27,8 +27,8 @@ import java.io.InputStream;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import static com.example.user.carnage.MenuChooseFragment.enemy;
-import static com.example.user.carnage.MenuChooseFragment.player;
+import static com.example.user.carnage.MainActivity.enemy;
+import static com.example.user.carnage.MainActivity.player;
 
 /**
  * A placeholder fragment containing a simple view.

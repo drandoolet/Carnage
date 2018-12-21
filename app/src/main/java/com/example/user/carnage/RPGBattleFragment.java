@@ -28,8 +28,8 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Locale;
 
-import static com.example.user.carnage.MenuChooseFragment.enemy;
-import static com.example.user.carnage.MenuChooseFragment.player;
+import static com.example.user.carnage.MainActivity.enemy;
+import static com.example.user.carnage.MainActivity.player;
 
 public class RPGBattleFragment extends Fragment {
     public final String TAG = "Carnage MAF RPG";
@@ -144,7 +144,7 @@ public class RPGBattleFragment extends Fragment {
     private View.OnClickListener attackButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            try {
+            //try {
                 if (defCheckBoxCounter != defCounterBound || atkCheckBoxCounter != atkCounterBound) {
                     throw new NullPointerException("thrown by if");
                 } else {
@@ -210,10 +210,10 @@ public class RPGBattleFragment extends Fragment {
                     defCheckBoxCounter = 0;
                     currentAnimationDuration = 0L;
                 }
-            } catch (NullPointerException exc) {
-                Log.e(MainActivity.TAG, "error in inClick: " + exc);
-                Toast.makeText(getContext(), R.string.toast_choose_atk, Toast.LENGTH_SHORT).show();
-            }
+            //} catch (NullPointerException exc) {
+            //    Log.e(MainActivity.TAG, "error in inClick: " + exc);
+            //    Toast.makeText(getContext(), R.string.toast_choose_atk, Toast.LENGTH_SHORT).show();
+            //}
         }
     };
 
@@ -250,6 +250,7 @@ public class RPGBattleFragment extends Fragment {
         enemy_name.setText(R.string.player_2_name);
 
         battle_textView.setText(getInfo(player, enemy));
+        //battle_textView.setText(player.getInfo());
         battle_textView.setMovementMethod(new ScrollingMovementMethod());
         player_hp_view = view.findViewById(R.id.player1HPTextView);
         player_max_hp_view = view.findViewById(R.id.player1MaxHPTextView);
