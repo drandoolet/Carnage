@@ -53,7 +53,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/profile1ImageButton"
         app:layout_constraintEnd_toEndOf="@+id/chooseProfileSubtitleTextView"
         app:layout_constraintStart_toEndOf="@+id/profile1ImageButton"
-        app:layout_constraintTop_toTopOf="@+id/profile1ImageButton" />
+        app:layout_constraintTop_toTopOf="@+id/profile1ImageButton"
+        tools:text="ы" />
 
     <ImageButton
         android:id="@+id/profile2ImageButton"
@@ -77,7 +78,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/profile2ImageButton"
         app:layout_constraintEnd_toEndOf="@+id/chooseProfileSubtitleTextView"
         app:layout_constraintStart_toEndOf="@+id/profile2ImageButton"
-        app:layout_constraintTop_toTopOf="@+id/profile2ImageButton" />
+        app:layout_constraintTop_toTopOf="@+id/profile2ImageButton"
+        tools:text="ы" />
 
     <Button
         android:id="@+id/profileChooseBackButton"
