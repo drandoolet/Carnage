@@ -48,6 +48,8 @@
         android:gravity="center_vertical"
         android:lines="2"
         android:text="TextView"
+        android:textSize="30sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/profile1ImageButton"
         app:layout_constraintEnd_toEndOf="@+id/chooseProfileSubtitleTextView"
         app:layout_constraintStart_toEndOf="@+id/profile1ImageButton"
@@ -70,9 +72,147 @@
         android:gravity="center_vertical"
         android:lines="2"
         android:text="TextView"
+        android:textSize="30sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/profile2ImageButton"
         app:layout_constraintEnd_toEndOf="@+id/chooseProfileSubtitleTextView"
         app:layout_constraintStart_toEndOf="@+id/profile2ImageButton"
         app:layout_constraintTop_toTopOf="@+id/profile2ImageButton" />
+
+    <Button
+        android:id="@+id/profileChooseBackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="16dp"
+        android:text="BACK"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/profileChooseOKButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:text="OK"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/profileChooseTextViewLevel"
+        android:layout_width="@dimen/dimen_skills_fragment_imgbutton_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/battle_textview_border"
+        android:lines="2"
+        android:padding="8dp"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/profileChooseTextViewSta"
+        app:layout_constraintEnd_toStartOf="@+id/profileChooseTextViewSta" />
+
+    <TextView
+        android:id="@+id/profileChooseTextViewExp"
+        android:layout_width="@dimen/dimen_skills_fragment_imgbutton_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/battle_textview_border"
+        android:lines="2"
+        android:padding="8dp"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/profileChooseTextViewSta"
+        app:layout_constraintStart_toEndOf="@+id/profileChooseTextViewSta" />
+
+    <TextView
+        android:id="@+id/profileChooseTextViewStr"
+        android:layout_width="@dimen/dimen_skills_fragment_imgbutton_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/battle_textview_border"
+        android:lines="2"
+        android:padding="8dp"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/profileChooseTextViewSta"
+        app:layout_constraintEnd_toStartOf="@+id/profileChooseTextViewSta" />
+
+    <TextView
+        android:id="@+id/profileChooseTextViewSta"
+        android:layout_width="@dimen/dimen_skills_fragment_imgbutton_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/battle_textview_border"
+        android:lines="2"
+        android:padding="8dp"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/profileChooseBackButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/profile2ImageButton" />
+
+    <TextView
+        android:id="@+id/profileChooseTextViewAgi"
+        android:layout_width="@dimen/dimen_skills_fragment_imgbutton_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginStart="32dp"
+        android:background="@drawable/battle_textview_border"
+        android:lines="2"
+        android:padding="8dp"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/profileChooseTextViewSta"
+        app:layout_constraintStart_toEndOf="@+id/profileChooseTextViewSta" />
+
+    <TextView
+        android:id="@+id/profileChooseTextViewLuck"
+        android:layout_width="@dimen/dimen_skills_fragment_imgbutton_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/battle_textview_border"
+        android:lines="2"
+        android:padding="8dp"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/profileChooseTextViewSta"
+        app:layout_constraintTop_toBottomOf="@+id/profileChooseTextViewSta" />
+
+    <TextView
+        android:id="@+id/profileChooseTextViewInt"
+        android:layout_width="@dimen/dimen_skills_fragment_imgbutton_size"
+        android:layout_height="@dimen/dimen_button_size"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/battle_textview_border"
+        android:lines="2"
+        android:padding="8dp"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/profileChooseTextViewSta"
+        app:layout_constraintTop_toBottomOf="@+id/profileChooseTextViewSta" />
 
 </android.support.constraint.ConstraintLayout>

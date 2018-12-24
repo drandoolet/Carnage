@@ -9,7 +9,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 
 public class GameOverDialogFragment extends DialogFragment {
-    private String message;
+    private String message, winner;
+    private int rounds, damage, exp;
+    private boolean isWinner;
+
+
 
     @NonNull
     @Override
@@ -17,15 +21,29 @@ public class GameOverDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.gameover_dialog_title);
         builder.setCancelable(false);
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                MainActivity.createExitDialog(getFragmentManager());
+            }
+        });
 
+        winner = MainActivity.getSharedWinner();
+        rounds = MainActivity.getSharedRounds();
+        damage = MainActivity.getSharedDamage();
+        isWinner = MainActivity.getSharedBooleanWinner();
+        Levels levels = new Levels(MainActivity.player, rounds, damage, isWinner);
+        exp = levels.getExpReceived();
+/*
         message = getString(R.string.gameover_dialog_winner) + MainActivity.getSharedWinner() +'\n'+
                 getString(R.string.gameover_dialog_hits) + MainActivity.getSharedHits() +'\n'+
                 getString(R.string.gameover_dialog_criticals) + MainActivity.getSharedCriticals() +'\n'+
                 getString(R.string.gameover_dialog_block_breaks) + MainActivity.getSharedBlockBreaks() +'\n'+
                 getString(R.string.gameover_dialog_blocks) + MainActivity.getSharedBlocks() +'\n'+
-                getString(R.string.gameover_dialog_dodges) + MainActivity.getSharedDodges();
+                getString(R.string.gameover_dialog_dodges) + MainActivity.getSharedDodges();  */
+        message = getString(R.string.dialog_fragment_gameover_message, winner, rounds, damage, exp);
         builder.setMessage(message);
-
+/*
         builder.setPositiveButton(R.string.gameover_dialog_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -37,6 +55,20 @@ public class GameOverDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 MainActivity.createExitDialog(getFragmentManager());
+            }
+        });
+        */
+        if (levels.isLevelUp) {
+            builder.setPositiveButton("LEVEL UP!("+MainActivity.player.getLevel()+")", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    MainActivity.levelUp(getFragmentManager());
+                }
+            });
+        } else builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                MainActivity.newGame(getFragmentManager());
             }
         });
 

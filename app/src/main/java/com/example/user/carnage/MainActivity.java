@@ -21,7 +21,9 @@ public class MainActivity extends AppCompatActivity
     public static Context mContext;
     public static final String APP_PREFERENCES = "gameOverSettings";
     public static final String APP_PREFERENCES_WINNER = "winner";
+    public static final String APP_PREFERENCES_WINNER_BOOLEAN = "winner boolean";
     public static final String APP_PREFERENCES_ROUNDS = "rounds";
+    public static final String APP_PREFERENCES_DAMAGE_INFLICTED = "damage inflicted";
     public static final String APP_PREFERENCES_HITS = "hits";
     public static final String APP_PREFERENCES_CRITICALS = "criticals";
     public static final String APP_PREFERENCES_BLOCK_BREAKS = "block breaks";
@@ -73,7 +75,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        MenuChooseFragment firstFragment = new MenuChooseFragment();
+        ProfileChooseFragment firstFragment = new ProfileChooseFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.container, firstFragment).commit();
     }
 
@@ -93,6 +95,7 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.menu_new_game: newGame(getSupportFragmentManager()); return true;
+            case R.id.menu_reset_player: updatePlayerStatsSharedPreferences(new int[]{10,10,10,10,10,1,0,0}, RPG_PROFILE_1); return true;
             case R.id.menu_reset_stats:
                 WipeStatisticsDialogFragment fragment = new WipeStatisticsDialogFragment();
                 fragment.show(getSupportFragmentManager(), MainActivity.TAG);
@@ -133,6 +136,15 @@ public class MainActivity extends AppCompatActivity
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
+    public static void levelUp(FragmentManager fragmentManager) {
+        LevelUpFragment fragment = new LevelUpFragment();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
     private void trackStats(MenuItem item) {
         if (item.isChecked()) {
             trackStatistics = false;
@@ -152,6 +164,9 @@ public class MainActivity extends AppCompatActivity
     public static String getSharedWinner() {
         return getPrefs().getString(APP_PREFERENCES_WINNER, "nobody");
     }
+    public static boolean getSharedBooleanWinner() {
+        return getPrefs().getBoolean(APP_PREFERENCES_WINNER_BOOLEAN, false);
+    }
     public static void setSharedWinner(String winner) {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putString(APP_PREFERENCES_WINNER, winner);
@@ -166,6 +181,9 @@ public class MainActivity extends AppCompatActivity
     public static int getSharedRounds() {
         return getPrefs().getInt(APP_PREFERENCES_ROUNDS, 0);
     }
+    public static int getSharedDamage() {
+        return getPrefs().getInt(APP_PREFERENCES_DAMAGE_INFLICTED, 0);
+    }
 
     public static void setGameOverSharedPref(String winner, int rounds, int hits, int criticals,
                                              int blockBreaks, int blocks, int dodges) {
@@ -177,6 +195,15 @@ public class MainActivity extends AppCompatActivity
         editor.putInt(APP_PREFERENCES_BLOCK_BREAKS, blockBreaks);
         editor.putInt(APP_PREFERENCES_BLOCKS, blocks);
         editor.putInt(APP_PREFERENCES_DODGES, dodges);
+        editor.commit();
+    }
+
+    public static void setGameOverSharedPref(String winner, boolean isWinner, int rounds, int damage) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putString(APP_PREFERENCES_WINNER, winner);
+        editor.putInt(APP_PREFERENCES_ROUNDS, rounds);
+        editor.putInt(APP_PREFERENCES_DAMAGE_INFLICTED, damage);
+        editor.putBoolean(APP_PREFERENCES_WINNER_BOOLEAN, isWinner);
         editor.commit();
     }
 
@@ -284,6 +311,14 @@ public class MainActivity extends AppCompatActivity
         editor.putInt(RPG_STATS_LEVEL, stats[5]);
         editor.putInt(RPG_STATS_CURRENT_EXP, stats[6]);
         editor.putInt(RPG_STATS_AVAILABLE_STAT_POINTS, stats[7]);
+        editor.commit();
+    }
+
+    public static void updatePlayerLevel(String profile, int level, int exp, int statPoints) {
+        SharedPreferences.Editor editor = mContext.getSharedPreferences(profile, Context.MODE_PRIVATE).edit();
+        editor.putInt(RPG_STATS_LEVEL, level);
+        editor.putInt(RPG_STATS_CURRENT_EXP, exp);
+        editor.putInt(RPG_STATS_AVAILABLE_STAT_POINTS, statPoints);
         editor.commit();
     }
 

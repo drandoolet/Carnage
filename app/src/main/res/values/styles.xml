@@ -22,5 +22,9 @@
         <item name="android:shadowDx">1.2</item>
         <item name="android:shadowDy">1.2</item>
     </style>
+    <style name="profileChoose_statsStyle">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/colorProgressBarMP</item>
+    </style>
 
 </resources>

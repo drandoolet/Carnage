@@ -37,14 +37,14 @@ public class RPGBattleFragment extends Fragment {
     private AnimateGame animateGame;
 
     private TextView player_name, enemy_name, player_hp_view, enemy_hp_view,
-            player_subtitle, enemy_subtitle, battle_textView;
-    private TextView player_max_hp_view, enemy_max_hp_view;
+            player_sp_view, player_mp_view, battle_textView;
+    private TextView player_max_hp_view, enemy_max_hp_view, player_max_sp_view, player_max_mp_view;
     private TextView player_points, enemy_points;
     private RadioGroup atk_group, def_group;
     private CheckBox checkBox_def_head, checkBox_def_body, checkBox_def_waist, checkBox_def_legs;
     private CheckBox checkBox_atk_head, checkBox_atk_body, checkBox_atk_waist, checkBox_atk_legs;
     private Button attackButton, skillsButton;
-    private ProgressBar player_HP_bar, enemy_HP_bar;
+    private ProgressBar player_HP_bar, enemy_HP_bar, player_SP_bar, player_MP_bar;
     private ImageView player_img, enemy_img;
     private SecureRandom random;
     public LinearLayout skillsFragmentContainer;
@@ -52,13 +52,13 @@ public class RPGBattleFragment extends Fragment {
     private String selectedAtk, selectedDef;
     private int defCheckBoxCounter, atkCheckBoxCounter;
     private int roundCounter;
-    private int maxHP_pl, maxHP_en;
+    private int maxHP_pl, maxHP_en, maxSP_pl, maxMP_pl;
     private String maxHP_pl_string;
     private boolean isAtkSelected;
 
     private PlayerChoice playerChoice, enemyChoice;
 
-    private int hits, criticals, blockBreaks, blocks, dodges;
+    private int hits, criticals, blockBreaks, blocks, dodges, totalDamage;
 
     private int defCounterBound, atkCounterBound;
     private long currentAnimationDuration = 0L;
@@ -158,9 +158,10 @@ public class RPGBattleFragment extends Fragment {
                     enemy.getChoices(enemyChoice, playerChoice);
 
                     enemy.damageReceived(player);
+                    totalDamage += player.getCurrentKick();
                     addLogText(player, enemy);
                     enemy_HP_bar.setProgress(enemy.getHP()); // animate - true ?!
-                    //enemy_hp_view.setText(enemy.getHP());
+                    enemy_hp_view.setText(Integer.toString(enemy.getHP()));
 
                     if (enemy.getHP() > 0) {
                         new Handler().postDelayed(new Runnable() {
@@ -183,7 +184,7 @@ public class RPGBattleFragment extends Fragment {
                             @Override
                             public void run() {
                                 System.out.println("\n*** GAME OVER. YOU WIN ***");
-                                setGameOver(player.getName());
+                                setGameOver(player.getName(), true);
                             }
                         }, currentAnimationDuration);
                     }
@@ -192,7 +193,7 @@ public class RPGBattleFragment extends Fragment {
                             @Override
                             public void run() {
                                 System.out.println("\n*** GAME OVER. YOU LOSE ***");
-                                setGameOver(enemy.getName());
+                                setGameOver(enemy.getName(), false);
                             }
                         }, currentAnimationDuration);
                     }
@@ -238,10 +239,13 @@ public class RPGBattleFragment extends Fragment {
         isAtkSelected = false;
         defCounterBound = 2;
         atkCounterBound = 1;
+        totalDamage = 0;
 
         maxHP_pl = player.getHP();
         maxHP_pl_string = new Integer(maxHP_pl).toString();
         maxHP_en = enemy.getHP();
+        maxSP_pl = player.getSP();
+        maxMP_pl = player.getMP();
 
         player_name = view.findViewById(R.id.player1TextView);
         enemy_name = view.findViewById(R.id.player2TextView);
@@ -253,18 +257,26 @@ public class RPGBattleFragment extends Fragment {
         //battle_textView.setText(player.getInfo());
         battle_textView.setMovementMethod(new ScrollingMovementMethod());
         player_hp_view = view.findViewById(R.id.player1HPTextView);
+        player_sp_view = view.findViewById(R.id.player1SPTextView);
+        player_mp_view = view.findViewById(R.id.player1MPTextView);
         player_max_hp_view = view.findViewById(R.id.player1MaxHPTextView);
         player_max_hp_view.setText(maxHP_pl_string);
+        player_max_sp_view = view.findViewById(R.id.player1MaxSPTextView);
+        player_max_sp_view.setText(Integer.toString(maxSP_pl));
+        player_max_mp_view = view.findViewById(R.id.player1MaxMPTextView);
+        player_max_mp_view.setText(Integer.toString(maxMP_pl));
         player_points = view.findViewById(R.id.player1PointsTextView);
         enemy_points = view.findViewById(R.id.player2PointsTextView);
-        //enemy_hp_view = view.findViewById(R.id.player2HPTextView);
+        enemy_hp_view = view.findViewById(R.id.player2HPTextView);
         //player_subtitle = view.findViewById(R.id.player1Subtitile);
         //enemy_subtitle = view.findViewById(R.id.player2Subtitle);
 
         //handlePlayerClasses(player, enemy);
 
-        //enemy_hp_view.setText(maxHP_en);
+        enemy_hp_view.setText(Integer.toString(maxHP_en));
         player_hp_view.setText(maxHP_pl_string);
+        player_sp_view.setText(Integer.toString(maxSP_pl));
+        player_mp_view.setText(Integer.toString(maxMP_pl));
 
         player_img = view.findViewById(R.id.player1ImageView);
         enemy_img = view.findViewById(R.id.player2ImageView);
@@ -285,10 +297,16 @@ public class RPGBattleFragment extends Fragment {
 
         player_HP_bar = view.findViewById(R.id.player1ProgressBar);
         enemy_HP_bar = view.findViewById(R.id.player2ProgressBar);
+        player_SP_bar = view.findViewById(R.id.player1ProgressBarSP);
+        player_MP_bar = view.findViewById(R.id.player1ProgressBarMP);
+        player_SP_bar.setMax(maxSP_pl);
+        player_MP_bar.setMax(maxMP_pl);
         player_HP_bar.setMax(maxHP_pl);
         enemy_HP_bar.setMax(maxHP_en);
         player_HP_bar.setProgress(maxHP_pl);
         enemy_HP_bar.setProgress(maxHP_en);
+        player_SP_bar.setProgress(maxSP_pl);
+        player_MP_bar.setProgress(maxMP_pl);
 
         checkBox_atk_head = view.findViewById(R.id.checkBoxAtkHead);
         checkBox_atk_body = view.findViewById(R.id.checkBoxAtkBody);
@@ -326,8 +344,8 @@ public class RPGBattleFragment extends Fragment {
     }
 
 
-    private void setGameOver(String winner) { // TODO: check DialogFragment show() method
-        MainActivity.setGameOverSharedPref(winner, roundCounter, hits, criticals, blockBreaks, blocks, dodges);
+    private void setGameOver(String winner, boolean isWinner) { // TODO: check DialogFragment show() method
+        MainActivity.setGameOverSharedPref(winner, isWinner, roundCounter, totalDamage);
         if (MainActivity.trackStatistics) {
             System.out.println("*** Added to neural: ***\nsuccessful hits (4), received hits (4): " + Arrays.toString(enemy.getStatsForNeuralNet()));
             MainActivity.addStatisticsToNeuralNet(enemy.getStatsForNeuralNet());
@@ -509,6 +527,7 @@ public class RPGBattleFragment extends Fragment {
         transaction.commit();
         setAllEnabled(false);
     }
+
 
     public void animateSkillsFragmentAppearance(boolean b) {
         animateGame.animateSkillsFragmentAppearance(skillsFragmentContainer, b);

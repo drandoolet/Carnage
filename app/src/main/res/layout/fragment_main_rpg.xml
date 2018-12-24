@@ -98,7 +98,7 @@
         android:layout_width="@dimen/dimen_progress_bar_width"
         android:layout_height="@dimen/dimen_img_player_size"
         android:max="100"
-        android:progress="75"
+        android:progress="100"
         android:progressDrawable="@drawable/progress_bar_mp"
         app:layout_constraintBottom_toBottomOf="@+id/player2ImageView"
         app:layout_constraintEnd_toStartOf="@+id/player2ProgressBarSP" />
@@ -109,7 +109,7 @@
         android:layout_width="@dimen/dimen_progress_bar_width"
         android:layout_height="@dimen/dimen_img_player_size"
         android:max="100"
-        android:progress="75"
+        android:progress="100"
         android:progressDrawable="@drawable/progress_bar_sp"
         app:layout_constraintBottom_toBottomOf="@+id/player2ImageView"
         app:layout_constraintEnd_toStartOf="@+id/player2ProgressBar" />
@@ -137,6 +137,19 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/player1SPTextView"
         app:layout_constraintTop_toBottomOf="@+id/player1ProgressBar" />
+
+    <TextView
+        android:id="@+id/player2HPTextView"
+        android:layout_width="20dp"
+        android:layout_height="10dp"
+        android:layout_marginEnd="5dp"
+        android:lines="1"
+        android:text="1000"
+        android:textAlignment="center"
+        android:textSize="8sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/player2ProgressBar" />
 
     <TextView
         android:id="@+id/player1SPTextView"

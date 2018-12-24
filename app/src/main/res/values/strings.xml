@@ -75,4 +75,5 @@
     <string name="battle_points_critical" translatable="false">%1$d\nCritical!</string>
     <string name="battle_points_block" translatable="false">Block!</string>
     <string name="battle_points_block_break" translatable="false">%1$d\nBlock break!</string>
+    <string name="dialog_fragment_gameover_message">The winner is: %1$s.\nRounds: %2$d.\nDamage inflicted: %3$d.\nEXP gained: %4$d.</string>
 </resources>

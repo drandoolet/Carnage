@@ -48,13 +48,14 @@ class PlayCharacter {
     PlayCharacter(String profile, String name) {
         int[] stats = MainActivity.getInitialStats(profile);
         this.name = name;
-        level = stats[0];
-        currentExp = stats[1];
-        STA = stats[2];
-        STR = stats[3];
-        AGI = stats[4];
-        LUCK = stats[5];
-        INT = stats[6];
+        STR = stats[0];
+        STA = stats[1];
+        AGI = stats[2];
+        LUCK = stats[3];
+        INT = stats[4];
+        level = stats[5];
+        currentExp = stats[6];
+        availableStatPoints = stats[7];
         setStatsFromMainStats();
 
         random = new SecureRandom();
@@ -167,6 +168,12 @@ class PlayCharacter {
 
     public String getName() {return name;}
     public int getHP() {return HP;}
+    public int getSP() { return SP; }
+
+    public int getMP() {
+        return MP;
+    }
+
     public String getStrPower() {return "("+power[0]+" - "+power[1]+")";}
     public String getStrCritDmg() {
         String formatted = String.format("%.2f", criticalDamage);
@@ -718,64 +725,19 @@ enum Chars {
     private String playerClass;
     private String[] runames;
     private SecureRandom random;
-//
-
-    //private final int INCREMENT_PER_POINT_STRENGTH_POWER = 2;
-
-    //private final int INCREMENT_PER_POINT_STRENGTH_DEF = 1;
-
-    //private final int INCREMENT_PER_POINT_STRENGTH_A_CRIT = 1;
-
-    //private final int INCREMENT_PER_POINT_STRENGTH_A_DODGE = 1;
-
-    //private final int INCREMENT_PER_POINT_STRENGTH_HP = 1;
-
-    //private final int INCREMENT_PER_POINT_STRENGTH_SP = 1;
-
-    //private final int INCREMENT_PER_POINT_STRENGTH_CRIT_DMG = 2;
-
-    //private final int INCREMENT_PER_POINT_AGILITY_CRIT = 1;
-
-    //private final int INCREMENT_PER_POINT_AGILITY_CRIT_DMG = 2;
-
-    //private final int INCREMENT_PER_POINT_AGILITY_DODGE = 2;
-
-    //private final int INCREMENT_PER_POINT_AGILITY_A_DODGE = 2;
-
-    //private final int INCREMENT_PER_POINT_AGILITY_SP = 1;
-
-    //private final int INCREMENT_PER_POINT_STAMINA_HP = 2;
-
-    //private final int INCREMENT_PER_POINT_STAMINA_DEF = 2;
-
-    //private final int INCREMENT_PER_POINT_STAMINA_MDEF = 1;
-
-    //private final int INCREMENT_PER_POINT_STAMINA_A_CRIT = 1;
-
-    //private final int INCREMENT_PER_POINT_STAMINA_SP = 2;
-
-    //private final int INCREMENT_PER_POINT_LUCK_CRIT = 2;
-
-    //private final int INCREMENT_PER_POINT_LUCK_A_CRIT = 2;
-
-    //private final int INCREMENT_PER_POINT_LUCK_A_DODGE = 1;
-
-    //private final int INCREMENT_PER_POINT_INTELLIGENCE_MP = 1;
-
-    //private final int INCREMENT_PER_POINT_INTELLIGENCE_MDEF = 1;
 
     private int[][] increments = { // increments that [STR, STA, AGI, LUCK, INT] add to stats
-            {10, 0, 5, 0, 0}, // 0 power from
-            {20, 0, 10, 0, 0}, // 1 power to
-            {3, 7, 0, 0, 0}, // 2 def
-            {10, 30, 0, 0, 0}, // 3 HP
-            {10, 30, 30, 0, 0}, // 4 SP
-            {0, 0, 0, 0, 50}, // 5 MP
-            {0, 10, 0, 0, 30}, // 6 MDEF
-            {0, 0, 10, 20, 0}, // 7 crit
-            {5, 5, 0, 20, 0}, // 8 a-crit
-            {0, 0, 20, 0, 0}, // 9 dodge
-            {5, 0, 20, 5, 0}, // 10 a-dodge
+            {3, 0, 0, 0, 0}, // 0 power from
+            {3, 0, 2, 0, 0}, // 1 power to
+            {0, 2, 0, 0, 0}, // 2 def
+            {2, 10, 0, 0, 0}, // 3 HP
+            {2, 10, 2, 0, 0}, // 4 SP
+            {0, 0, 0, 0, 10}, // 5 MP
+            {0, 2, 0, 0, 5}, // 6 MDEF
+            {0, 0, 2, 5, 0}, // 7 crit
+            {1, 2, 0, 7, 0}, // 8 a-crit
+            {0, 0, 5, 0, 0}, // 9 dodge
+            {1, 0, 7, 2, 0}, // 10 a-dodge
             {1, 0, 1, 0, 0}  // 11 crit dmg
     };
 
@@ -832,7 +794,7 @@ enum Chars {
         for (int i=0; i<mainStats.length-1; i++) {
             critDmg += mainStats[i] * increments[11][i];
         }
-        return 1.00 + (double) (critDmg/100);
+        return 1.00 + ((double) critDmg)/1000.00;
     }
 
     public int getHP() {return HP;}
@@ -860,15 +822,11 @@ enum Chars {
     }
 
     public void setCustom(int STA, int STR, int AGI, int LUCK, int INT) {
-        if (playerClass == "CUSTOM") {
-            this.STR = STR;
-            this.AGI = AGI;
-            this.STA = STA;
-            this.LUCK = LUCK;
-            this.INT = INT;
-        } else {
-            System.out.println("Attempt to set stats to non-CUSTOM Char denied.");
-        }
+        this.STR = STR;
+        this.AGI = AGI;
+        this.STA = STA;
+        this.LUCK = LUCK;
+        this.INT = INT;
     }
     public int getAttack_from() {
         return (int) (increments[0][0] * STR);

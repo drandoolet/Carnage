@@ -67,7 +67,7 @@ public class LevelUpFragment extends Fragment {
 
         TextView amounts[] = {strAmountTextView, staAmountTextView, agiAmountTextView, luckAmountTextView, intAmountTextView};
         int initials[] = {initStr, initSta, initAgi, initLuck, initIntell};
-        for (int i=0; i<amounts.length-1; i++) {
+        for (int i=0; i<amounts.length; i++) {
             System.out.println("trying: amounts "+i);
             amounts[i].setText(Integer.toString(initials[i]));
         }
@@ -87,6 +87,8 @@ public class LevelUpFragment extends Fragment {
         } catch (IOException exc) {
             Log.e(MainActivity.TAG, "error loading player 1 img: "+exc);
         }
+
+        titleTextView.setText("Level "+MainActivity.player.getLevel());
 
         return view;
     }
@@ -162,17 +164,18 @@ public class LevelUpFragment extends Fragment {
     private View.OnClickListener okListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            int[] newStats = new int[7];
+            int[] newStats = new int[8];
             TextView[] views = {strAmountTextView, staAmountTextView, agiAmountTextView, luckAmountTextView,
                     intAmountTextView};
-            for (int i=0; i<4; i++) {
+            for (int i=0; i<5; i++) {
                 newStats[i] = Integer.parseInt(views[i].getText().toString());
             }
             newStats[5] = MainActivity.player.getLevel();
             newStats[6] = MainActivity.player.getCurrentExp();
-            newStats[7] = MainActivity.player.getAvailableStatPoints();
+            newStats[7] = statsLeft;
 
             MainActivity.updatePlayerStatsSharedPreferences(newStats, MainActivity.RPG_PROFILE_1);
+            MainActivity.newGame(getFragmentManager());
         }
     };
 
@@ -183,6 +186,6 @@ public class LevelUpFragment extends Fragment {
         initLuck = stats[3];
         initIntell = stats[4];
         level = stats[5];
-        statsLeft = stats[6];
+        statsLeft = stats[7];
     }
 }

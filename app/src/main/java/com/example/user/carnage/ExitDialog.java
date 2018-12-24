@@ -43,8 +43,8 @@ public class ExitDialog extends DialogFragment {
     }
 
     private void goToMainMenu() {
-        MainActivity.player.refresh();
-        MainActivity.enemy.refresh();
+        if (MainActivity.player != null) MainActivity.player.refresh();
+        if (MainActivity.enemy != null) MainActivity.enemy.refresh();
         MenuChooseFragment fragment = new MenuChooseFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.container, fragment);

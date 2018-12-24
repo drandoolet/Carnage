@@ -90,9 +90,20 @@ public class AnimateGame {
 
     private boolean isAnimating = false;
 
+    public void animateFade(boolean fadeOut, long duration, View...views) {
+        AnimatorSet set = new AnimatorSet();
+        for (View view : views) {
+            set.setDuration(duration).playTogether(
+                    ObjectAnimator.ofFloat(view, View.ALPHA, (fadeOut? 0:1), (fadeOut? 1:0)).setDuration(duration)
+            );
+        }
+        set.start();
+    }
+
     public void animateProfileChoose(View view, View layout, View[] viewsToFade) {
         AnimatorSet set = new AnimatorSet();
         AnimatorSet state1 = new AnimatorSet();
+        AnimatorSet state2 = new AnimatorSet();
         float translation_x = layout.getRight()/2 - view.getRight() + view.getWidth()/2;
         float translation_y = layout.getBottom()/2 - view.getBottom() + view.getHeight()/2;
         float scale = (layout.getWidth() / view.getWidth()) * 0.7F;
@@ -110,10 +121,10 @@ public class AnimateGame {
 
         set.playSequentially(
                 state1,
-                ObjectAnimator.ofFloat(view, View.ALPHA, 1, 1).setDuration(500),
-                animateChangeScale(view, scale, scale*100f, 300)
+                ObjectAnimator.ofFloat(view, View.ALPHA, 1, 1).setDuration(300),
+                ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, view.getTop()/(-2)).setDuration(600)
         );
-        state1.start();
+        set.start();
     }
 
     public void animateSkillsFragmentAppearance(final View view, boolean b) {

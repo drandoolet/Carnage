@@ -66,4 +66,5 @@
     <string name="battle_text_rpg_info">\nХарактеристики %1$s :\nHP: %2$d. SP: %3$d. MP: %4$d.\nСила удара: %5$d - %6$d.\nЗащита: %7$d. Маг. защита: %8$d.\nУклонение: %9$d. Анти-уклонение: %10$d.\nКрит: %11$d. Антикрит: %12$d.\nКритический урон: %13$s.\n</string>
     <string name="checkbox_title_vertical_def">З\nА\nЩ\nИ\nТ\nА</string>
     <string name="checkbox_title_vertical_atk">А\nТ\nА\nК\nА</string>
+    <string name="dialog_fragment_gameover_message">Победитель: %1$s.\nПроведено %2$d раундов.\nНанесено урона: %3$d ед.\nПолучено опыта: %4$d.</string>
 </resources>
