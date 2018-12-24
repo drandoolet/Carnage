@@ -65,16 +65,12 @@ public class ProfileChooseFragment extends Fragment {
             Drawable img = Drawable.createFromStream(stream, "carnage label");
             profileChooseTitleImageView.setImageDrawable(img);
 
-            stream = assets.open(MainActivity.getProfileImage(MainActivity.RPG_PROFILE_1));
+            stream = assets.open(MainActivity.getProfileImage(MainActivity.currentProfile));
             img = Drawable.createFromStream(stream, "profile 1 image");
             profile1ImgButton.setImageDrawable(img);
             stream = assets.open("backgrounds/back1.jpg");
             img = Drawable.createFromStream(stream, "profile 1 back");
             profile1ImgButton.setBackground(img);
-
-            stream = assets.open("backgrounds/back2.jpg");
-            img = Drawable.createFromStream(stream, "profile back");
-            layout.setBackground(img);
         } catch (IOException e) {
             Log.e(MainActivity.TAG, "error in profileChooseFrag : "+e);
         } finally {
@@ -85,21 +81,11 @@ public class ProfileChooseFragment extends Fragment {
             }
         }
 
-        profile1TextView.setText("Lv."+MainActivity.getInitialStats(MainActivity.RPG_PROFILE_1)[5]);
+        profile1TextView.setText("Lv."+MainActivity.getInitialStats(MainActivity.currentProfile)[5]);
 
-        final View[] viewsToFade = {profile2ImgButton, profile2TextView, profile1TextView, profileChooseTextView};
-        profile1ImgButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                animateGame.animateProfileChoose(profile1ImgButton, layout, viewsToFade);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        handleChosenProfile(MainActivity.RPG_PROFILE_1);
-                    }
-                }, AnimationTypes.ANIMATION_PROFILE_SELECTED.getDuration());
-            }
-        });
+        profile1ImgButton.setOnClickListener(buttonListener);
+        //profile2ImgButton.setOnClickListener(buttonListener);
+
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -122,6 +108,29 @@ public class ProfileChooseFragment extends Fragment {
 
         return view;
     }
+
+    private View.OnClickListener buttonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(final View view) {
+            final View[] viewsToFade = {profile2ImgButton, profile2TextView, profile1TextView, profileChooseTextView};
+            animateGame.animateProfileChoose(view, layout, viewsToFade);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    String profile;
+                    switch (view.getId()) {
+                        case R.id.profile1ImageButton : profile = MainActivity.RPG_PROFILE_1; break;
+                        case R.id.profile2ImageButton : profile = MainActivity.RPG_PROFILE_2; break;
+                        default: profile = MainActivity.RPG_PROFILE_1;
+                    }
+                    OnProfileSelectedListener listener = (OnProfileSelectedListener) getActivity();
+                    listener.profileSelected(profile);
+                }
+            }, AnimationTypes.ANIMATION_PROFILE_SELECTED.getDuration()+500);
+        }
+    };
+
 
     public interface OnProfileSelectedListener {
         void profileSelected(String profile);

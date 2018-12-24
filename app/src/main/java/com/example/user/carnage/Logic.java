@@ -568,7 +568,7 @@ class PlayerChoice {
 
     PlayerChoice() { // for COMP only
         random = new SecureRandom();
-        handleNeuralNetStatistics(MainActivity.getNeuralNetStatistics());
+        handleNeuralNetStatistics(MainActivity.getNeuralNetStatistics(MainActivity.currentProfile));
 
         int att = random.nextInt(100);
         int def_1 = random.nextInt(100);

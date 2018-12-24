@@ -63,7 +63,7 @@ public class LevelUpFragment extends Fragment {
 
         okButton = view.findViewById(R.id.okButton);
 
-        handleInitialStats(MainActivity.getInitialStats(MainActivity.RPG_PROFILE_1));
+        handleInitialStats(MainActivity.getInitialStats(MainActivity.currentProfile));
 
         TextView amounts[] = {strAmountTextView, staAmountTextView, agiAmountTextView, luckAmountTextView, intAmountTextView};
         int initials[] = {initStr, initSta, initAgi, initLuck, initIntell};
@@ -174,7 +174,7 @@ public class LevelUpFragment extends Fragment {
             newStats[6] = MainActivity.player.getCurrentExp();
             newStats[7] = statsLeft;
 
-            MainActivity.updatePlayerStatsSharedPreferences(newStats, MainActivity.RPG_PROFILE_1);
+            MainActivity.updatePlayerStatsSharedPreferences(newStats, MainActivity.currentProfile);
             MainActivity.newGame(getFragmentManager());
         }
     };

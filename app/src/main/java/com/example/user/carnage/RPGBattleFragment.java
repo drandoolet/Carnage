@@ -28,6 +28,7 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Locale;
 
+import static com.example.user.carnage.MainActivity.currentProfile;
 import static com.example.user.carnage.MainActivity.enemy;
 import static com.example.user.carnage.MainActivity.player;
 
@@ -348,7 +349,7 @@ public class RPGBattleFragment extends Fragment {
         MainActivity.setGameOverSharedPref(winner, isWinner, roundCounter, totalDamage);
         if (MainActivity.trackStatistics) {
             System.out.println("*** Added to neural: ***\nsuccessful hits (4), received hits (4): " + Arrays.toString(enemy.getStatsForNeuralNet()));
-            MainActivity.addStatisticsToNeuralNet(enemy.getStatsForNeuralNet());
+            MainActivity.addStatisticsToNeuralNet(enemy.getStatsForNeuralNet(), currentProfile);
         } else {
             System.out.println("Tracker is set to: " + MainActivity.trackStatistics + ". Tracking not performed.");
         }

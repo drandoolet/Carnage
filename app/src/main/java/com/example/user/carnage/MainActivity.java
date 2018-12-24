@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity
     public static final String RPG_STATS_AVAILABLE_STAT_POINTS = "available stat points";
 
     public static boolean trackStatistics;
+    public static String currentProfile = RPG_PROFILE_1;
 
     public static Drawable player_image;
 
@@ -63,14 +64,15 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
+        trackStatistics = getPrefs().getBoolean(APP_PREFERENCES_TRACK_STATS, true);
 
         if (getStatsSum() == 0) {
-            addStatisticsToNeuralNet(new int[]{1, 1, 1, 1, 1, 1, 1, 1});
+            addStatisticsToNeuralNet(new int[]{1, 1, 1, 1, 1, 1, 1, 1}, currentProfile);
         }
-        if (getRPGStatsSum(RPG_PROFILE_1) == 0) {
-            updatePlayerStatsSharedPreferences(new int[]{1, 1, 1, 1, 1, 1}, RPG_PROFILE_1);
+        if (getRPGStatsSum(currentProfile) == 0) {
+            updatePlayerStatsSharedPreferences(new int[]{1, 1, 1, 1, 1, 1}, currentProfile);
         }
-        setProfileImage(RPG_PROFILE_1, "player_img/alina_lupit.png");
+        setProfileImage(currentProfile, "player_img/alina_lupit.png");
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -225,8 +227,8 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    public static void addStatisticsToNeuralNet(int[] stats) {
-        SharedPreferences.Editor editor = getPrefs().edit();
+    public static void addStatisticsToNeuralNet(int[] stats, String profile) {
+        SharedPreferences.Editor editor = mContext.getSharedPreferences(profile, Context.MODE_PRIVATE).edit();
         editor.putInt(NEURAL_NET_ATK_SUCCESSFUL_HEAD, getPrefs().getInt(NEURAL_NET_ATK_SUCCESSFUL_HEAD, 1)+stats[0]);
         editor.putInt(NEURAL_NET_ATK_SUCCESSFUL_BODY, getPrefs().getInt(NEURAL_NET_ATK_SUCCESSFUL_BODY, 1)+stats[1]);
         editor.putInt(NEURAL_NET_ATK_SUCCESSFUL_WAIST, getPrefs().getInt(NEURAL_NET_ATK_SUCCESSFUL_WAIST, 1)+stats[2]);
@@ -239,17 +241,18 @@ public class MainActivity extends AppCompatActivity
 
         editor.commit();
     }
-    public static int[] getNeuralNetStatistics() {
+    public static int[] getNeuralNetStatistics(String profile) {
         int[] stats = new int[8];
-        stats[0] = getPrefs().getInt(NEURAL_NET_ATK_SUCCESSFUL_HEAD,1);
-        stats[1] = getPrefs().getInt(NEURAL_NET_ATK_SUCCESSFUL_BODY,1);
-        stats[2] = getPrefs().getInt(NEURAL_NET_ATK_SUCCESSFUL_WAIST,1);
-        stats[3] = getPrefs().getInt(NEURAL_NET_ATK_SUCCESSFUL_LEGS,1);
+        SharedPreferences sp = mContext.getSharedPreferences(profile, Context.MODE_PRIVATE);
+        stats[0] = sp.getInt(NEURAL_NET_ATK_SUCCESSFUL_HEAD,1);
+        stats[1] = sp.getInt(NEURAL_NET_ATK_SUCCESSFUL_BODY,1);
+        stats[2] = sp.getInt(NEURAL_NET_ATK_SUCCESSFUL_WAIST,1);
+        stats[3] = sp.getInt(NEURAL_NET_ATK_SUCCESSFUL_LEGS,1);
 
-        stats[4] = getPrefs().getInt(NEURAL_NET_DEF_ATTACKED_HEAD,1);
-        stats[5] = getPrefs().getInt(NEURAL_NET_DEF_ATTACKED_BODY,1);
-        stats[6] = getPrefs().getInt(NEURAL_NET_DEF_ATTACKED_WAIST,1);
-        stats[7] = getPrefs().getInt(NEURAL_NET_DEF_ATTACKED_LEGS,1);
+        stats[4] = sp.getInt(NEURAL_NET_DEF_ATTACKED_HEAD,1);
+        stats[5] = sp.getInt(NEURAL_NET_DEF_ATTACKED_BODY,1);
+        stats[6] = sp.getInt(NEURAL_NET_DEF_ATTACKED_WAIST,1);
+        stats[7] = sp.getInt(NEURAL_NET_DEF_ATTACKED_LEGS,1);
 
         return stats;
     }
@@ -271,7 +274,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public static int getStatsSum() {
-        int[] stats = getNeuralNetStatistics();
+        int[] stats = getNeuralNetStatistics(currentProfile);
         int sum = 0;
         for (int i=0; i<stats.length; i++) sum += stats[i];
         return sum;
@@ -349,8 +352,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void profileSelected(String profile) {
+        currentProfile = profile;
         RPGBattleFragment fragment = new RPGBattleFragment();
-        player = new PlayCharacter(RPG_PROFILE_1, getString(R.string.player_1_name));
+        player = new PlayCharacter(currentProfile, getString(R.string.player_1_name));
         enemy = new PlayCharacter(player, getString(R.string.player_2_name));
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, fragment, "MAIN BATTLE FRAGMENT");

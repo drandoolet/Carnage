@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/profileChooseConstraintLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorBattleBackground">
 
     <ImageView
         android:id="@+id/profileMenuTitleImageView"
@@ -36,6 +37,7 @@
         android:layout_width="@dimen/dimen_img_player_size"
         android:layout_height="@dimen/dimen_img_player_size"
         android:layout_marginTop="8dp"
+        android:foreground="@drawable/profile_choose_border"
         app:layout_constraintStart_toStartOf="@+id/chooseProfileSubtitleTextView"
         app:layout_constraintTop_toBottomOf="@+id/chooseProfileSubtitleTextView"
         tools:srcCompat="@tools:sample/avatars" />
@@ -61,6 +63,7 @@
         android:layout_width="@dimen/dimen_img_player_size"
         android:layout_height="@dimen/dimen_img_player_size"
         android:layout_marginTop="8dp"
+        android:foreground="@drawable/profile_choose_border"
         app:layout_constraintStart_toStartOf="@+id/profile1ImageButton"
         app:layout_constraintTop_toBottomOf="@+id/profile1ImageButton"
         tools:srcCompat="@tools:sample/avatars" />
