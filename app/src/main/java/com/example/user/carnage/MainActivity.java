@@ -1,17 +1,27 @@
 package com.example.user.carnage;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity
         implements SkillsFragment.OnSelectedButtonListener, ProfileChooseFragment.OnProfileSelectedListener {
@@ -55,10 +65,14 @@ public class MainActivity extends AppCompatActivity
     public static final String RPG_STATS_CURRENT_EXP = "current exp";
     public static final String RPG_STATS_AVAILABLE_STAT_POINTS = "available stat points";
 
+    public static final long ANIMATION_WINDOW_CHANGE_DURATION = 2000;
+
     public static boolean trackStatistics;
     public static String currentProfile = RPG_PROFILE_1;
 
     public static Drawable player_image;
+
+    private static ImageView changeImageView, changeImageView2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +91,29 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        changeImageView = findViewById(R.id.changeImageView);
+        changeImageView2 = findViewById(R.id.changeImageView2);
+        AssetManager assets = getAssets();
+        InputStream stream = null;
+        try {
+            stream = assets.open("change1.png");
+            Drawable img = Drawable.createFromStream(stream, "change 1");
+            changeImageView.setImageDrawable(img);
+
+            stream = assets.open("change2.png");
+            img = Drawable.createFromStream(stream, "change 2");
+            changeImageView2.setImageDrawable(img);
+        } catch (IOException e) {
+            Log.e(MainActivity.TAG, "error loading change images : "+e);
+        } finally {
+            try {
+                if (stream != null) stream.close();
+            } catch (IOException e) {
+                Log.e(MainActivity.TAG, "error closing stream - "+e);
+            }
+        }
+
         ProfileChooseFragment firstFragment = new ProfileChooseFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.container, firstFragment).commit();
     }
@@ -130,9 +167,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     public static void newGame(FragmentManager fragmentManager) {
-        player.refresh(); // TODO: possible error here on new game call
-        enemy.refresh();
-        MenuChooseFragment fragment = new MenuChooseFragment();
+        if (player != null) player.refresh();
+        if (enemy != null) enemy.refresh();
+        ProfileChooseFragment fragment = new ProfileChooseFragment();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.container, fragment);
         transaction.addToBackStack(null);
@@ -353,12 +390,46 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void profileSelected(String profile) {
         currentProfile = profile;
-        RPGBattleFragment fragment = new RPGBattleFragment();
-        player = new PlayCharacter(currentProfile, getString(R.string.player_1_name));
-        enemy = new PlayCharacter(player, getString(R.string.player_2_name));
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, fragment, "MAIN BATTLE FRAGMENT");
-        transaction.addToBackStack(null);
-        transaction.commit();
+        player = (profile != null? new PlayCharacter(currentProfile, getString(R.string.player_1_name)) : null);
+        enemy = (profile != null? new PlayCharacter(player, getString(R.string.player_2_name)) : null);
+        //RPGBattleFragment fragment = new RPGBattleFragment();
+        //FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        //transaction.replace(R.id.container, fragment, "MAIN BATTLE FRAGMENT");
+        //transaction.addToBackStack(null);
+        //transaction.commit();
+    }
+
+    public static void animateChangeWindow() {
+        AnimatorSet set = new AnimatorSet();
+        changeImageView.setVisibility(View.VISIBLE);
+        changeImageView2.setVisibility(View.VISIBLE);
+        AnimatorSet state1 = new AnimatorSet();
+        AnimatorSet state2 = new AnimatorSet();
+        state1.setDuration(0).playTogether(
+                ObjectAnimator.ofFloat(changeImageView, View.TRANSLATION_X, changeImageView.getWidth()*(-1)),
+                ObjectAnimator.ofFloat(changeImageView2, View.TRANSLATION_X, changeImageView2.getWidth()*(-2))
+        );
+        state2.setDuration(ANIMATION_WINDOW_CHANGE_DURATION).playTogether(
+                ObjectAnimator.ofFloat(changeImageView, View.TRANSLATION_X, changeImageView.getWidth()*3),
+                ObjectAnimator.ofFloat(changeImageView2, View.TRANSLATION_X, changeImageView2.getWidth()*2)
+        );
+        set.playSequentially(
+                state1,
+                //ObjectAnimator.ofFloat(changeImageView, View.TRANSLATION_X, changeImageView.getWidth()).setDuration(duration),
+                state2
+                //ObjectAnimator.ofFloat(changeImageView2, View.TRANSLATION_X, changeImageView2.getWidth()*2).setDuration(duration)
+        );
+        set.start();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                changeImageView.setVisibility(View.INVISIBLE);
+                changeImageView2.setVisibility(View.INVISIBLE);
+            }
+        }, ANIMATION_WINDOW_CHANGE_DURATION);
+    }
+
+    public static long getChangeAnimationDuration() {
+        return ANIMATION_WINDOW_CHANGE_DURATION/2;
     }
 }

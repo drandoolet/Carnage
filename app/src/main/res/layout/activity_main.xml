@@ -29,4 +29,20 @@
 
     </FrameLayout>
 
+    <ImageView
+        android:id="@+id/changeImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:visibility="invisible"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/changeImageView2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:visibility="invisible"
+        tools:srcCompat="@tools:sample/avatars" />
+
 </android.support.design.widget.CoordinatorLayout>

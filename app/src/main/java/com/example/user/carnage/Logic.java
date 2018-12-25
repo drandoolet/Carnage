@@ -219,6 +219,7 @@ class PlayCharacter {
 
     public void damageReceived(PlayCharacter en) {
         int dmg = 0;
+        finalKick = 0;
         incomingCritical = en.getCritical();
         incomingCriticalDmg = en.getCriticalDmg();
         isCritical = isCritical(en);

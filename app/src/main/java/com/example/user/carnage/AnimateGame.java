@@ -67,6 +67,8 @@ public class AnimateGame {
     private final long ANIMATE_SKILLS_FRAGMENT_DURATION = 400;
 
     private final long ANIMATE_PROFILE_CHOOSE_DURATION = 1000;
+    private final long ANIMATE_PROFILE_CHOOSE_DURATION_WAIT = 300;
+    private final long ANIMATE_PROFILE_CHOOSE_DURATION_UP = 600;
 
     AnimateGame() {
         AnimationTypes.ANIMATION_BATTLE_ATTACK.setDuration(ANIMATE_ATTACK_DURATION_TRANSLATION_1 + ANIMATE_ATTACK_DURATION_TRANSLATION_2);
@@ -76,7 +78,8 @@ public class AnimateGame {
         AnimationTypes.ANIMATION_BATTLE_BLOCK.setDuration(ANIMATE_BLOCK_DURATION_SHAKE *3);
         AnimationTypes.ANIMATION_BATTLE_BLOCK_BREAK.setDuration(ANIMATE_BLOCK_BREAK_DURATION_SHAKE *2
                 + ANIMATE_BLOCK_BREAK_DURATION_ROTATE_1 + ANIMATE_BLOCK_BREAK_DURATION_ROTATE_2 + ANIMATE_BLOCK_BREAK_DURATION_BACK);
-        AnimationTypes.ANIMATION_PROFILE_SELECTED.setDuration(ANIMATE_PROFILE_CHOOSE_DURATION);
+        AnimationTypes.ANIMATION_PROFILE_SELECTED.setDuration(ANIMATE_PROFILE_CHOOSE_DURATION + ANIMATE_PROFILE_CHOOSE_DURATION_WAIT);
+        AnimationTypes.ANIMATION_PROFILE_SELECTED.setFullDuration(ANIMATE_PROFILE_CHOOSE_DURATION + ANIMATE_PROFILE_CHOOSE_DURATION_WAIT + ANIMATE_PROFILE_CHOOSE_DURATION_UP);
 
         long minDuration = ANIMATE_ATTACK_DURATION_TRANSLATION_1 + ANIMATE_ATTACK_DURATION_TRANSLATION_2
                 + ANIMATE_ATTACK_DURATION_TRANSLATION_3 + ANIMATE_ATTACK_DURATION_TRANSLATION_4;
@@ -100,29 +103,45 @@ public class AnimateGame {
         set.start();
     }
 
-    public void animateProfileChoose(View view, View layout, View[] viewsToFade) {
+    public void animateProfileChoose(View view, View layout, View[] viewsToFade, boolean isChosen) {
         AnimatorSet set = new AnimatorSet();
         AnimatorSet state1 = new AnimatorSet();
-        AnimatorSet state2 = new AnimatorSet();
-        float translation_x = layout.getRight()/2 - view.getRight() + view.getWidth()/2;
-        float translation_y = layout.getBottom()/2 - view.getBottom() + view.getHeight()/2;
-        float scale = (layout.getWidth() / view.getWidth()) * 0.7F;
+        float translation_x;
+        float translation_y;
+        float scale1;
+        float scale2;
+        if (isChosen) {
+            translation_x = layout.getRight()/2 - view.getRight() + view.getWidth()/2;
+            translation_y = layout.getBottom()/2 - view.getBottom() + view.getHeight()/2;
+            scale1 = 1f;
+            scale2 = (layout.getWidth() / view.getWidth()) * 0.7F;
+        } else {
+            translation_x = 0;
+            translation_y = 0;
+            scale1 = (layout.getWidth() / view.getWidth()) * 0.7F;
+            scale2 = 1f;
+        }
 
         state1.setDuration(ANIMATE_PROFILE_CHOOSE_DURATION).playTogether(
                 animateTranslation(view, translation_x, translation_y, 0),
-                animateChangeScale(view, 1.0F, scale, 0)
+                animateChangeScale(view, scale1, scale2, 0)
         );
 
         for (View view1 : viewsToFade) {
             state1.setDuration(ANIMATE_PROFILE_CHOOSE_DURATION).playTogether(
-                    ObjectAnimator.ofFloat(view1, View.ALPHA, 1, 0)
+                    ObjectAnimator.ofFloat(view1, View.ALPHA, (isChosen? 1:0), (isChosen? 0:1))
             );
         }
 
-        set.playSequentially(
-                state1,
-                ObjectAnimator.ofFloat(view, View.ALPHA, 1, 1).setDuration(300),
-                ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, view.getTop()/(-2)).setDuration(600)
+        if (isChosen) {
+            set.playSequentially(
+                    state1,
+                    ObjectAnimator.ofFloat(view, View.ALPHA, 1, 1).setDuration(ANIMATE_PROFILE_CHOOSE_DURATION_WAIT),
+                    ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, view.getTop()/(-2)).setDuration(ANIMATE_PROFILE_CHOOSE_DURATION_UP)
+            );
+        }
+        set.playTogether(
+                state1
         );
         set.start();
     }
@@ -387,6 +406,7 @@ enum AnimationTypes {
     ANIMATION_PROFILE_SELECTED(0);
 
     private long duration;
+    private long fullDuration = 0;
 
     AnimationTypes(long dur) {
         duration = dur;
@@ -397,5 +417,14 @@ enum AnimationTypes {
     }
     public long getDuration() {
         return duration;
+    }
+
+    public void setFullDuration(long fullDuration) {
+        this.fullDuration = fullDuration;
+    }
+
+    public long getFullDuration() {
+        if (fullDuration == 0) return duration;
+        return fullDuration;
     }
 }

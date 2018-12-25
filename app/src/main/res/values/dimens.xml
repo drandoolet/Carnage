@@ -6,5 +6,5 @@
     <dimen name="dimen_progress_bar_width">10dp</dimen>
     <dimen name="dimen_battle_skill_icon_size">50dp</dimen>
     <item name="battle_text_textview_size" type="dimen">30%</item>
-    <dimen name="dimen_skills_fragment_imgbutton_size">70sp</dimen>
+    <dimen name="dimen_skills_fragment_imgbutton_size">70dp</dimen>
 </resources>
