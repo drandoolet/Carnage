@@ -20,6 +20,7 @@ public class Levels {
     private void handle() {
         expReceived = (int) ((((double) rounds * 5.0)/100.0 + 1.00) * character.getLevel()) * damage /5;
         expReceived /= (isWinner ? 1: 5);
+        setTargetExp();
         character.setExp(character.getCurrentExp() + expReceived);
         if (character.getCurrentExp() > targetExp) {
             isLevelUp = true;
@@ -34,8 +35,7 @@ public class Levels {
 
     private void setTargetExp() {
         int magnification = 50;
-        targetExp = ((character.getLevel()-1) * (character.getLevel()-1) * magnification)
-                + (character.getLevel() * character.getLevel() * magnification);
+        targetExp = ((character.getLevel()-1)^2 + character.getLevel()^2)*magnification;
     }
 
     public int getTargetExp() { return targetExp; }

@@ -200,7 +200,7 @@ class PlayCharacter {
             rate = 10;
         } else {
             rate = ((dodgeRate - en.antiDodgeRate) / dodgeRate);
-            rate = rate *50 /2 +50;
+            rate = rate *50 /2 +30;
             if (rate <10) rate = 10;
         }
         return random.nextInt(100) < rate;
@@ -211,7 +211,7 @@ class PlayCharacter {
             rate = 10;
         } else {
             rate = ((critical - en.antiCritical) / critical);
-            rate = rate *50 /2 +50;
+            rate = rate *50 /2 +40;
             if (rate <10) rate = 10;
         }
         return random.nextInt(100) < rate;

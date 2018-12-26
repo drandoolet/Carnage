@@ -147,7 +147,8 @@ public class RPGBattleFragment extends Fragment {
         public void onClick(View view) {
             //try {
                 if (defCheckBoxCounter != defCounterBound || atkCheckBoxCounter != atkCounterBound) {
-                    throw new NullPointerException("thrown by if");
+                    //throw new NullPointerException("thrown by if");
+                    Toast.makeText(getContext(), R.string.toast_choose_atk, Toast.LENGTH_SHORT).show();
                 } else {
                     setButtonsEnabled(false);
                     roundCounter++;
@@ -176,6 +177,7 @@ public class RPGBattleFragment extends Fragment {
                                     @Override
                                     public void run() {
                                         setButtonsEnabled(true);
+                                        setArgsReadyForNextRound();
                                     }
                                 }, currentAnimationDuration);
                             }
@@ -199,18 +201,6 @@ public class RPGBattleFragment extends Fragment {
                         }, currentAnimationDuration);
                     }
 
-                    selectedAtk = "";
-                    selectedDef = "";
-
-                    player.clearBodyPartsSelection();
-                    enemy.clearBodyPartsSelection();
-                    CheckBox[] atkboxes = {checkBox_atk_head, checkBox_atk_body, checkBox_atk_waist, checkBox_atk_legs};
-                    for (CheckBox box : atkboxes) box.setChecked(false);
-                    CheckBox[] boxes = {checkBox_def_body, checkBox_def_head, checkBox_def_waist, checkBox_def_legs};
-                    for (CheckBox box : boxes) box.setChecked(false);
-                    atkCheckBoxCounter = 0;
-                    defCheckBoxCounter = 0;
-                    currentAnimationDuration = 0L;
                 }
             //} catch (NullPointerException exc) {
             //    Log.e(MainActivity.TAG, "error in inClick: " + exc);
@@ -218,6 +208,21 @@ public class RPGBattleFragment extends Fragment {
             //}
         }
     };
+
+    private void setArgsReadyForNextRound() {
+        selectedAtk = "";
+        selectedDef = "";
+
+        player.clearBodyPartsSelection();
+        enemy.clearBodyPartsSelection();
+        CheckBox[] atkboxes = {checkBox_atk_head, checkBox_atk_body, checkBox_atk_waist, checkBox_atk_legs};
+        for (CheckBox box : atkboxes) box.setChecked(false);
+        CheckBox[] boxes = {checkBox_def_body, checkBox_def_head, checkBox_def_waist, checkBox_def_legs};
+        for (CheckBox box : boxes) box.setChecked(false);
+        atkCheckBoxCounter = 0;
+        defCheckBoxCounter = 0;
+        currentAnimationDuration = 0L;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
