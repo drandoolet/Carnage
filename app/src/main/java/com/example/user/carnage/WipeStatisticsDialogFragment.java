@@ -16,7 +16,7 @@ public class WipeStatisticsDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.dialog_wipe_stats_title);
         builder.setCancelable(false);
-        builder.setMessage(getString(R.string.dialog_wipe_stats_message)+MainActivity.getStatsSum()
+        builder.setMessage(getString(R.string.dialog_wipe_stats_message)+(MainActivity.getStatsSum()-8)
                 +getString(R.string.dialog_wipe_stats_comfirmation));
 
         builder.setPositiveButton(R.string.common_no, new DialogInterface.OnClickListener() {
@@ -29,7 +29,7 @@ public class WipeStatisticsDialogFragment extends DialogFragment {
         builder.setNegativeButton(R.string.common_yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                MainActivity.wipeNeuralNetStatistics();
+                MainActivity.wipeNeuralNetStatistics(MainActivity.currentProfile);
                 Toast.makeText(getContext(), "Statistics are wiped.", Toast.LENGTH_SHORT).show();
             }
         });

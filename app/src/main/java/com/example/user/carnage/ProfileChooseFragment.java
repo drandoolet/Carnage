@@ -96,18 +96,22 @@ public class ProfileChooseFragment extends Fragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.animateChangeWindow();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        RPGBattleFragment fragment = new RPGBattleFragment();
-                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                        transaction.replace(R.id.container, fragment, "MAIN BATTLE FRAGMENT");
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                    }
-                }, MainActivity.getChangeAnimationDuration());
-
+                if (MainActivity.player.getAvailableStatPoints() > 0) {
+                    AllocateStatsDialogFragment dialogFragment = new AllocateStatsDialogFragment();
+                    dialogFragment.show(getFragmentManager(), "ALLOCATE STATS DIALOG");
+                } else {
+                    MainActivity.animateChangeWindow();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            RPGBattleFragment fragment = new RPGBattleFragment();
+                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.container, fragment, "MAIN BATTLE FRAGMENT");
+                            transaction.addToBackStack(null);
+                            transaction.commit();
+                        }
+                    }, MainActivity.getChangeAnimationDuration());
+                }
             }
         });
 

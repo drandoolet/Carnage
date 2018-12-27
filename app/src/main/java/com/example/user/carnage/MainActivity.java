@@ -293,8 +293,8 @@ public class MainActivity extends AppCompatActivity
 
         return stats;
     }
-    public static void wipeNeuralNetStatistics() {
-        SharedPreferences.Editor editor = getPrefs().edit();
+    public static void wipeNeuralNetStatistics(String profile) {
+        SharedPreferences.Editor editor = mContext.getSharedPreferences(profile, Context.MODE_PRIVATE).edit();
         editor.putInt(NEURAL_NET_ATK_SUCCESSFUL_HEAD, 1);
         editor.putInt(NEURAL_NET_ATK_SUCCESSFUL_BODY, 1);
         editor.putInt(NEURAL_NET_ATK_SUCCESSFUL_WAIST, 1);

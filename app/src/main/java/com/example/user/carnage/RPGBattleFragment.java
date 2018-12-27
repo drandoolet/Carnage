@@ -173,13 +173,24 @@ public class RPGBattleFragment extends Fragment {
                                 addLogText(enemy, player);
                                 player_hp_view.setText(new Integer(player.getHP()).toString());
                                 player_HP_bar.setProgress(player.getHP());
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        setButtonsEnabled(true);
-                                        setArgsReadyForNextRound();
-                                    }
-                                }, currentAnimationDuration);
+
+                                if (player.getHP() <= 0) {
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            System.out.println("\n*** GAME OVER. YOU LOSE ***");
+                                            setGameOver(enemy.getName(), false);
+                                        }
+                                    }, currentAnimationDuration);
+                                } else {
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            setButtonsEnabled(true);
+                                            setArgsReadyForNextRound();
+                                        }
+                                    }, currentAnimationDuration);
+                                }
                             }
                         }, currentAnimationDuration);
                     } else {
@@ -350,13 +361,15 @@ public class RPGBattleFragment extends Fragment {
     }
 
 
-    private void setGameOver(String winner, boolean isWinner) { // TODO: check DialogFragment show() method
+    private void setGameOver(String winner, boolean isWinner) {
         MainActivity.setGameOverSharedPref(winner, isWinner, roundCounter, totalDamage);
         if (MainActivity.trackStatistics) {
-            System.out.println("*** Added to neural: ***\nsuccessful hits (4), received hits (4): " + Arrays.toString(enemy.getStatsForNeuralNet()));
+            //Toast.makeText(getContext(), "*** Added to neural: ***\nsuccessful hits (4), received hits (4): "
+            //        + Arrays.toString(enemy.getStatsForNeuralNet()), Toast.LENGTH_SHORT).show();
             MainActivity.addStatisticsToNeuralNet(enemy.getStatsForNeuralNet(), currentProfile);
         } else {
-            System.out.println("Tracker is set to: " + MainActivity.trackStatistics + ". Tracking not performed.");
+            Toast.makeText(getContext(), "Tracker is set to: " + MainActivity.trackStatistics + ". Tracking not performed.",
+                    Toast.LENGTH_SHORT).show();
         }
 
 

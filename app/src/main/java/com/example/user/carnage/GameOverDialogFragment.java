@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.widget.Toast;
 
 public class GameOverDialogFragment extends DialogFragment {
     private String message, winner;
@@ -34,6 +35,7 @@ public class GameOverDialogFragment extends DialogFragment {
         isWinner = MainActivity.getSharedBooleanWinner();
         Levels levels = new Levels(MainActivity.player, rounds, damage, isWinner);
         exp = levels.getExpReceived();
+        Toast.makeText(getContext(), "target exp: "+levels.getTargetExp(), Toast.LENGTH_SHORT).show();
 /*
         message = getString(R.string.gameover_dialog_winner) + MainActivity.getSharedWinner() +'\n'+
                 getString(R.string.gameover_dialog_hits) + MainActivity.getSharedHits() +'\n'+
@@ -62,12 +64,14 @@ public class GameOverDialogFragment extends DialogFragment {
             builder.setPositiveButton("LEVEL UP!("+MainActivity.player.getLevel()+")", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    MainActivity.updatePlayerStatsSharedPreferences(MainActivity.player.getMainStats(), MainActivity.currentProfile);
                     MainActivity.levelUp(getFragmentManager());
                 }
             });
         } else builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                MainActivity.updatePlayerStatsSharedPreferences(MainActivity.player.getMainStats(), MainActivity.currentProfile);
                 MainActivity.newGame(getFragmentManager());
             }
         });

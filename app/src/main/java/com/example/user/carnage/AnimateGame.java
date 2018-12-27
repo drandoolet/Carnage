@@ -319,7 +319,7 @@ public class AnimateGame {
         set.start();
     }
 
-    private AnimatorSet animateChangeScale(View view, float f1, float f2, long dur) {
+    protected AnimatorSet animateChangeScale(View view, float f1, float f2, long dur) {
         AnimatorSet set = new AnimatorSet();
         set.setDuration(dur).playTogether(
                 ObjectAnimator.ofFloat(view, View.SCALE_X, f1, f2),
@@ -328,7 +328,7 @@ public class AnimateGame {
         return set;
     }
 
-    private AnimatorSet animateRotation(View view, float f1, float f2, long dur) {
+    protected AnimatorSet animateRotation(View view, float f1, float f2, long dur) {
         AnimatorSet set = new AnimatorSet();
         set.setDuration(dur).playTogether(
                 ObjectAnimator.ofFloat(view, View.ROTATION, f1, f2)
@@ -336,7 +336,7 @@ public class AnimateGame {
         return set;
     }
 
-    private AnimatorSet animateTranslation(View view, float x, float y, long dur) {
+    protected AnimatorSet animateTranslation(View view, float x, float y, long dur) {
         AnimatorSet set = new AnimatorSet();
             set.setDuration(dur).playTogether(
                     ObjectAnimator.ofFloat(view, View.TRANSLATION_X, x),

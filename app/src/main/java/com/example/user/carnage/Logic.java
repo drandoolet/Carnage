@@ -65,7 +65,7 @@ class PlayCharacter {
         this.name = name;
         int[] stats = playCharacter.getMainStats();
         int statSum = 0;
-        for (int i=0; i<stats.length; i++) statSum += stats[i];
+        for (int i=0; i<stats.length-3; i++) statSum += stats[i];
 
         STR = 1; STA = 1; AGI = 1; LUCK = 1; INT = 1;
         random = new SecureRandom();
@@ -440,12 +440,15 @@ class PlayCharacter {
     }
 
     public int[] getMainStats() {
-        int[] stats = new int[5];
-        stats[0] = STA;
-        stats[1] = STR;
+        int[] stats = new int[8];
+        stats[0] = STR;
+        stats[1] = STA;
         stats[2] = AGI;
         stats[3] = LUCK;
         stats[4] = INT;
+        stats[5] = level;
+        stats[6] = currentExp;
+        stats[7] = availableStatPoints;
         return stats;
     }
 

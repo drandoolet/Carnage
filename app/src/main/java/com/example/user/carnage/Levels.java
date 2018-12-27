@@ -22,12 +22,12 @@ public class Levels {
         expReceived /= (isWinner ? 1: 5);
         setTargetExp();
         character.setExp(character.getCurrentExp() + expReceived);
-        if (character.getCurrentExp() > targetExp) {
+        if (character.getCurrentExp() >= targetExp) {
             isLevelUp = true;
             do {
                 character.levelUp();
                 setTargetExp();
-            } while (character.getCurrentExp() > targetExp);
+            } while (character.getCurrentExp() >= targetExp);
             MainActivity.updatePlayerLevel(MainActivity.RPG_PROFILE_1, character.getLevel(),
                     character.getCurrentExp(), character.getAvailableStatPoints());
         }
@@ -35,7 +35,8 @@ public class Levels {
 
     private void setTargetExp() {
         int magnification = 50;
-        targetExp = ((character.getLevel()-1)^2 + character.getLevel()^2)*magnification;
+        targetExp = ((character.getLevel()-1)*(character.getLevel()-1) + character.getLevel()*character.getLevel())*magnification;
+        System.out.println("level: "+character.getLevel()+". Target EXP: "+targetExp);
     }
 
     public int getTargetExp() { return targetExp; }

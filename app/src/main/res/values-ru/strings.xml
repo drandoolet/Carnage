@@ -67,4 +67,5 @@
     <string name="checkbox_title_vertical_def">З\nА\nЩ\nИ\nТ\nА</string>
     <string name="checkbox_title_vertical_atk">А\nТ\nА\nК\nА</string>
     <string name="dialog_fragment_gameover_message">Победитель: %1$s.\nПроведено %2$d раундов.\nНанесено урона: %3$d ед.\nПолучено опыта: %4$d.</string>
+    <string name="dialog_fragment_allocate_stats">Нераспределённых очков характеристик: %1$d. Хотите использовать их сейчас?</string>
 </resources>
