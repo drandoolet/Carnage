@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity
 
     public static boolean trackStatistics;
     public static String currentProfile = RPG_PROFILE_1;
+    public static SkillsAnimations currentSkill;
 
     public static Drawable player_image;
 
@@ -370,11 +371,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onButtonSelected(int buttonIndex) {
+    public void onButtonSelected(Skill skill) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         RPGBattleFragment fragment = (RPGBattleFragment) fragmentManager.findFragmentByTag("MAIN BATTLE FRAGMENT");
-        fragment.setAllEnabled(true);
-        fragment.animateSkillsFragmentAppearance(false);
+
+        SkillsAnimator animator = new SkillsAnimator(skill, fragment.skillEffect_img,
+                fragment.enemy_img, (skill.isEffectOnPlayer? fragment.player_points : fragment.enemy_points), fragment);
+
+        try (InputStream stream = getAssets().open(animator.imageFile)) {
+            Drawable img = Drawable.createFromStream(stream, "skill image");
+            fragment.skillEffect_img.setImageDrawable(img);
+        } catch (IOException e) {
+            Log.e(TAG, "error in onButtonSelected loading skill img: "+e);
+        }
+        animator.start();
     }
 
     public static String getProfileImage(String profile) {

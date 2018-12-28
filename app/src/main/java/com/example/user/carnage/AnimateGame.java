@@ -14,14 +14,14 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 public class AnimateGame {
-    private final  long ANIMATE_ATTACK_DURATION_TRANSLATION_1 = 500;
-    private final  long ANIMATE_ATTACK_DURATION_TRANSLATION_2 = 100;
-    private final  long ANIMATE_ATTACK_DURATION_TRANSLATION_3 = 300;
-    private final  long ANIMATE_ATTACK_DURATION_TRANSLATION_4 = 500;
+    protected final  long ANIMATE_ATTACK_DURATION_TRANSLATION_1 = 500;
+    protected final  long ANIMATE_ATTACK_DURATION_TRANSLATION_2 = 100;
+    protected final  long ANIMATE_ATTACK_DURATION_TRANSLATION_3 = 300;
+    protected final  long ANIMATE_ATTACK_DURATION_TRANSLATION_4 = 500;
 
-    private final long ANIMATE_DODGE_DURATION_JUMP_1 = 150;
-    private final long ANIMATE_DODGE_DURATION_JUMP_2 = 200;
-    private final long ANIMATE_DODGE_DURATION_JUMP_BACK = 500;
+    protected final long ANIMATE_DODGE_DURATION_JUMP_1 = 150;
+    protected final long ANIMATE_DODGE_DURATION_JUMP_2 = 200;
+    protected final long ANIMATE_DODGE_DURATION_JUMP_BACK = 500;
     private final  float ANIMATE_DODGE_TRANSLATION_X1 = 0f;
     private final float ANIMATE_DODGE_TRANSLATION_X2 = 40f;
     private final float ANIMATE_DODGE_TRANSLATION_X3 = 80f;
@@ -30,12 +30,12 @@ public class AnimateGame {
     private final float ANIMATE_DODGE_ROTATION_1 = 0.0f;
     private final float ANIMATE_DODGE_ROTATION_2 = 30.0f;
 
-    private final long ANIMATE_HIT_DURATION_1 = 300;
-    private final long ANIMATE_HIT_DURATION_2 = 1000;
+    protected final long ANIMATE_HIT_DURATION_1 = 300;
+    protected final long ANIMATE_HIT_DURATION_2 = 1000;
 
-    private final long ANIMATE_CRIT_DURATION_ROTATE_1 = 500;
-    private final long ANIMATE_CRIT_DURATION_ROTATE_2 = 1000;
-    private final long ANIMATE_CRIT_DURATION_BACK = ANIMATE_CRIT_DURATION_ROTATE_2 / 2;
+    protected final long ANIMATE_CRIT_DURATION_ROTATE_1 = 500;
+    protected final long ANIMATE_CRIT_DURATION_ROTATE_2 = 1000;
+    protected final long ANIMATE_CRIT_DURATION_BACK = ANIMATE_CRIT_DURATION_ROTATE_2 / 2;
     private final float ANIMATE_CRIT_ROTATION_1 = 0.0f;
     private final float ANIMATE_CRIT_ROTATION_2 = 360.0f;
     private final float ANIMATE_CRIT_TRANSLATION_X1 = 50f;
@@ -43,18 +43,18 @@ public class AnimateGame {
     private final float ANIMATE_CRIT_SCALE_1 = 1.0f;
     private final float ANIMATE_CRIT_SCALE_2 = 0.6f;
 
-    private final long ANIMATE_BLOCK_DURATION_SHAKE = 100;
+    protected final long ANIMATE_BLOCK_DURATION_SHAKE = 100;
     private final float ANIMATE_BLOCK_STATE_1 = 0.0f;
     private final float ANIMATE_BLOCK_STATE_2 = 15.0f;
     private final float ANIMATE_BLOCK_STATE_3 = -15.0f;
 
-    private final long ANIMATE_BLOCK_BREAK_DURATION_SHAKE = 100;
+    protected final long ANIMATE_BLOCK_BREAK_DURATION_SHAKE = 100;
     private final float ANIMATE_BLOCK_BREAK_STATE_1 = 0.0f;
     private final float ANIMATE_BLOCK_BREAK_STATE_2 = 15.0f;
     private final float ANIMATE_BLOCK_BREAK_STATE_3 = -15.0f;
-    private final long ANIMATE_BLOCK_BREAK_DURATION_ROTATE_1 = 500;
-    private final long ANIMATE_BLOCK_BREAK_DURATION_ROTATE_2 = 1000;
-    private final long ANIMATE_BLOCK_BREAK_DURATION_BACK = ANIMATE_BLOCK_BREAK_DURATION_ROTATE_2 / 2;
+    protected final long ANIMATE_BLOCK_BREAK_DURATION_ROTATE_1 = 500;
+    protected final long ANIMATE_BLOCK_BREAK_DURATION_ROTATE_2 = 1000;
+    protected final long ANIMATE_BLOCK_BREAK_DURATION_BACK = ANIMATE_BLOCK_BREAK_DURATION_ROTATE_2 / 2;
     private final float ANIMATE_BLOCK_BREAK_ROTATION_1 = 0.0f;
     private final float ANIMATE_BLOCK_BREAK_ROTATION_2 = 360.0f;
     private final float ANIMATE_BLOCK_BREAK_TRANSLATION_X1 = 50f;
@@ -64,11 +64,14 @@ public class AnimateGame {
     private final float ANIMATE_BLOCK_BREAK_SCALE_1 = 1.0f;
     private final float ANIMATE_BLOCK_BREAK_SCALE_2 = 0.6f;
 
-    private final long ANIMATE_SKILLS_FRAGMENT_DURATION = 400;
+    protected final long ANIMATE_SKILLS_FRAGMENT_DURATION = 400;
 
-    private final long ANIMATE_PROFILE_CHOOSE_DURATION = 1000;
-    private final long ANIMATE_PROFILE_CHOOSE_DURATION_WAIT = 300;
-    private final long ANIMATE_PROFILE_CHOOSE_DURATION_UP = 600;
+    protected final long ANIMATE_PROFILE_CHOOSE_DURATION = 1000;
+    protected final long ANIMATE_PROFILE_CHOOSE_DURATION_WAIT = 300;
+    protected final long ANIMATE_PROFILE_CHOOSE_DURATION_UP = 600;
+
+    protected long ANIMATE_POINTS_DURATION_1 = 200;
+    protected long ANIMATE_POINTS_DURATION_2 = 1000;
 
     AnimateGame() {
         AnimationTypes.ANIMATION_BATTLE_ATTACK.setDuration(ANIMATE_ATTACK_DURATION_TRANSLATION_1 + ANIMATE_ATTACK_DURATION_TRANSLATION_2);
@@ -167,11 +170,21 @@ public class AnimateGame {
     }
 
     public void animateDamagePoints(final View view, boolean isPlayer) {
+        AnimatorSet set = getAnimateDamagePointsSet(view, isPlayer);
+        set.start();
+        set.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                view.setVisibility(View.GONE);
+                super.onAnimationEnd(animation);
+            }
+        });
+    }
+
+    protected AnimatorSet getAnimateDamagePointsSet(final View view, boolean isPlayer) {
         view.setVisibility(View.VISIBLE);
         float ANIMATE_POINTS_TRANSLATION_X = 10f * (isPlayer ? -1 : 1);
         float ANIMATE_POINTS_TRANSLATION_Y = -40f;
-        long ANIMATE_POINTS_DURATION_1 = 200;
-        long ANIMATE_POINTS_DURATION_2 = 1000;
         AnimatorSet state1 = new AnimatorSet();
         AnimatorSet state2 = new AnimatorSet();
         AnimatorSet state3 = new AnimatorSet();
@@ -192,14 +205,7 @@ public class AnimateGame {
                 animateTranslation(view, 0f, 0f, 0)
         );
         set.playSequentially(state1, state2, state3);
-        set.start();
-        set.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                view.setVisibility(View.GONE);
-                super.onAnimationEnd(animation);
-            }
-        });
+        return set;
     }
 
     public void animateAttack(View view, View enView, boolean isPlayer) {
@@ -345,7 +351,7 @@ public class AnimateGame {
         return set;
     }
 
-    private AnimatorSet animateHitOnReceivedDmg(View view, long dur, boolean playerOrEnemy) {
+    protected AnimatorSet animateHitOnReceivedDmg(View view, long dur, boolean playerOrEnemy) {
         float rotation1 = 0.0f;
         float rotation2 = 45.0f * (playerOrEnemy ? 1 : -1);
         float scale1 = 1.0f;
@@ -361,7 +367,7 @@ public class AnimateGame {
         return set;
     }
 
-    private AnimatorSet animateHitOnRecoverFromDmg(View view, long dur, boolean playerOrEnemy) {
+    protected AnimatorSet animateHitOnRecoverFromDmg(View view, long dur, boolean playerOrEnemy) {
         float rotation1 = 0.0f;
         float rotation2 = 45.0f * (playerOrEnemy ? 1 : -1);
         float scale1 = 1.0f;

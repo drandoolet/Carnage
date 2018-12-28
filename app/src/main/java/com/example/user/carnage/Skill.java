@@ -1,6 +1,8 @@
 package com.example.user.carnage;
 
 
+import static com.example.user.carnage.MainActivity.currentSkill;
+
 public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
     SkillsAnimator animator;
     protected PlayCharacter playerChar;
@@ -9,15 +11,15 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
     protected int defBoundTaker = 0, atkBoundTaker = 0;
     protected double magnification;
     protected double addition;
-    protected boolean isEffectOnPlayer;
+    public boolean isEffectOnPlayer;
     protected String info;
+    public SkillsAnimations name;
 
     Skill(PlayCharacter playCharacter, PlayCharacter enemyChar, int statIdx, boolean isEffectOnPlayer) {
         playerChar = playCharacter;
         this.enemyChar = enemyChar;
         this.statIdx = statIdx;
         this.isEffectOnPlayer = isEffectOnPlayer;
-        animator = new SkillsAnimator();
     }
 
     protected void use() {
@@ -47,6 +49,8 @@ class SmallHeal extends Skill {
         magnification = 1.0;
         addition = 0;
         defBoundTaker = 1;
+        name = SkillsAnimations.HEAL_SMALL;
+        currentSkill = name;
     }
 }
 
@@ -56,5 +60,7 @@ class FireBall extends Skill {
         magnification = -1.0;
         addition = 0;
         atkBoundTaker = 1;
+        name = SkillsAnimations.FIREBALL;
+        currentSkill = name;
     }
 }

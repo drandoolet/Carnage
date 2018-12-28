@@ -13,6 +13,7 @@ import android.widget.Button;
 public class SkillsFragment extends Fragment {
     private Button exitButton;
     private AppCompatImageButton skillButton1, skillButton2;
+    private Skill skill;
 
     private int selectedSkillIdx = 0;
 
@@ -25,7 +26,7 @@ public class SkillsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 OnSelectedButtonListener listener = (OnSelectedButtonListener) getActivity();
-                listener.onButtonSelected(selectedSkillIdx);
+                listener.onButtonSelected(skill);
                 //container.setVisibility(View.GONE);
             }
         });
@@ -36,8 +37,7 @@ public class SkillsFragment extends Fragment {
         skillButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FireBall ball = new FireBall(MainActivity.player, MainActivity.enemy);
-                ball.use();
+                skill = new FireBall(MainActivity.player, MainActivity.enemy);
             }
         });
 
@@ -45,7 +45,7 @@ public class SkillsFragment extends Fragment {
     }
 
     public interface OnSelectedButtonListener {
-        void onButtonSelected(int buttonIndex);
+        void onButtonSelected(Skill skill);
     }
 
     private View.OnClickListener skillButtonsListener = new View.OnClickListener() {

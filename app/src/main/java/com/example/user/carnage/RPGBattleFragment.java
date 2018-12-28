@@ -40,13 +40,13 @@ public class RPGBattleFragment extends Fragment {
     private TextView player_name, enemy_name, player_hp_view, enemy_hp_view,
             player_sp_view, player_mp_view, battle_textView;
     private TextView player_max_hp_view, enemy_max_hp_view, player_max_sp_view, player_max_mp_view;
-    private TextView player_points, enemy_points;
+    public TextView player_points, enemy_points;
     private RadioGroup atk_group, def_group;
     private CheckBox checkBox_def_head, checkBox_def_body, checkBox_def_waist, checkBox_def_legs;
     private CheckBox checkBox_atk_head, checkBox_atk_body, checkBox_atk_waist, checkBox_atk_legs;
     private Button attackButton, skillsButton;
     private ProgressBar player_HP_bar, enemy_HP_bar, player_SP_bar, player_MP_bar;
-    private ImageView player_img, enemy_img;
+    public ImageView player_img, enemy_img, skillEffect_img;
     private SecureRandom random;
     public LinearLayout skillsFragmentContainer;
 
@@ -297,6 +297,7 @@ public class RPGBattleFragment extends Fragment {
 
         player_img = view.findViewById(R.id.player1ImageView);
         enemy_img = view.findViewById(R.id.player2ImageView);
+        skillEffect_img = view.findViewById(R.id.skillEffectImageView);
 
         AssetManager assets = getActivity().getAssets();
         try (InputStream stream = assets.open("player_img/alina_lupit.png")) {

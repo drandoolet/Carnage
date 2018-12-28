@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorDamagePoints">#AA0114</color>
+    <color name="colorHealPoints">#7DF77B</color>
     <color name="colorBattleBackground">#a080ad</color>
     <color name="colorBorders">#421C52</color>
     <color name="colorBattleTextBackground">#dcd0e1</color>
