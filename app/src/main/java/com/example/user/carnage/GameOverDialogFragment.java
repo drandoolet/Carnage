@@ -35,7 +35,7 @@ public class GameOverDialogFragment extends DialogFragment {
         isWinner = MainActivity.getSharedBooleanWinner();
         Levels levels = new Levels(MainActivity.player, rounds, damage, isWinner);
         exp = levels.getExpReceived();
-        Toast.makeText(getContext(), "target exp: "+levels.getTargetExp(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), "target exp: "+levels.getTargetExp(), Toast.LENGTH_SHORT).show();
 /*
         message = getString(R.string.gameover_dialog_winner) + MainActivity.getSharedWinner() +'\n'+
                 getString(R.string.gameover_dialog_hits) + MainActivity.getSharedHits() +'\n'+
