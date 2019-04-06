@@ -1,4 +1,6 @@
-package com.example.user.carnage;
+package com.example.user.carnage.logic.main;
+
+import com.example.user.carnage.MainActivity;
 
 public class Levels {
     private int targetExp;
@@ -9,7 +11,7 @@ public class Levels {
     private boolean isWinner;
     public boolean isLevelUp = false;
 
-    Levels(PlayCharacter playCharacter, int rounds, int damageInflicted, boolean isPlayerWinner) {
+    public Levels(PlayCharacter playCharacter, int rounds, int damageInflicted, boolean isPlayerWinner) {
         character = playCharacter;
         this.rounds = rounds;
         damage = damageInflicted;

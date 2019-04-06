@@ -1,9 +1,6 @@
-package com.example.user.carnage;
+package com.example.user.carnage.fragments;
 
-import android.animation.ObjectAnimator;
 import android.content.res.AssetManager;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,9 +18,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.user.carnage.animation.AnimateGame;
+import com.example.user.carnage.MainActivity;
+import com.example.user.carnage.R;
+import com.example.user.carnage.fragments.dialogs.AllocateStatsDialogFragment;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 public class ProfileChooseFragment extends Fragment {
     private ImageButton profile1ImgButton, profile2ImgButton;
@@ -110,7 +111,7 @@ public class ProfileChooseFragment extends Fragment {
                             transaction.addToBackStack(null);
                             transaction.commit();
                         }
-                    }, MainActivity.getChangeAnimationDuration());
+                    }, MainActivity.getChangeAnimationDuration()-100);
                 }
             }
         });
@@ -138,7 +139,7 @@ public class ProfileChooseFragment extends Fragment {
                 public void run() {
                     view.setClickable(true);
                 }
-            }, AnimationTypes.ANIMATION_PROFILE_SELECTED.getFullDuration());
+            }, AnimateGame.AnimationTypes.ANIMATION_PROFILE_SELECTED.getFullDuration());
 
             handleChosenProfile(profile);
         }
@@ -173,7 +174,7 @@ public class ProfileChooseFragment extends Fragment {
                     View[] views1 = {strTextView, staTextView, agiTextView, luckTextView, intTextView, levelTextView, expTextView, okButton};
                     animateGame.animateFade(isProfileSelected, 500, views1);
                 }
-            }, AnimationTypes.ANIMATION_PROFILE_SELECTED.getDuration());
+            }, AnimateGame.AnimationTypes.ANIMATION_PROFILE_SELECTED.getDuration());
         } else {
             View[] views1 = {strTextView, staTextView, agiTextView, luckTextView, intTextView, levelTextView, expTextView, okButton};
             animateGame.animateFade(isProfileSelected, 500, views1);

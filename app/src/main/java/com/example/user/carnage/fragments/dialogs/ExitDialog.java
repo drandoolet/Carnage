@@ -1,4 +1,4 @@
-package com.example.user.carnage;
+package com.example.user.carnage.fragments.dialogs;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -8,6 +8,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+
+import com.example.user.carnage.MainActivity;
+import com.example.user.carnage.R;
+import com.example.user.carnage.fragments.MenuChooseFragment;
 
 public class ExitDialog extends DialogFragment {
     //private String message;

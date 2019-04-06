@@ -1,14 +1,18 @@
-package com.example.user.carnage;
+package com.example.user.carnage.fragments;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.AppCompatImageButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.example.user.carnage.MainActivity;
+import com.example.user.carnage.R;
+import com.example.user.carnage.animation.AnimateGame;
+import com.example.user.carnage.logic.skills.Fireball;
+import com.example.user.carnage.logic.skills.Skill;
 
 public class SkillsFragment extends Fragment {
     private Button exitButton;
@@ -37,7 +41,7 @@ public class SkillsFragment extends Fragment {
         skillButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                skill = new FireBall(MainActivity.player, MainActivity.enemy);
+                skill = new Fireball(MainActivity.player, MainActivity.enemy);
             }
         });
 
@@ -58,6 +62,4 @@ public class SkillsFragment extends Fragment {
             }
         }
     };
-
-
 }

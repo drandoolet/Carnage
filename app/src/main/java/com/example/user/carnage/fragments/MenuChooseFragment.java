@@ -1,9 +1,5 @@
-package com.example.user.carnage;
+package com.example.user.carnage.fragments;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -18,14 +14,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.user.carnage.R;
+import com.example.user.carnage.logic.main.PlayerChoice.Chars;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.SecureRandom;
-import java.util.zip.Inflater;
 
+@Deprecated
 public class MenuChooseFragment extends Fragment {
     private final String TAG = "Carnage MCF";
 
@@ -110,8 +108,8 @@ public class MenuChooseFragment extends Fragment {
             if (playerGroup.getCheckedRadioButtonId() !=-1 && enemyGroup.getCheckedRadioButtonId() !=-1) {
                 RPGBattleFragment fragment = new RPGBattleFragment();
 
-                MainActivity.player = new PlayCharacter(playerChar, getString(R.string.player_1_name));
-                MainActivity.enemy = new PlayCharacter(enemyChar, getString(R.string.player_2_name));
+                //MainActivity.player = new PlayCharacter(playerChar, getString(R.string.player_1_name));
+                //MainActivity.enemy = new PlayCharacter(enemyChar, getString(R.string.player_2_name));
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.container, fragment, "MAIN BATTLE FRAGMENT");
                 transaction.addToBackStack(null);

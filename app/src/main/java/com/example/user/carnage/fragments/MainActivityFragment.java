@@ -1,4 +1,4 @@
-package com.example.user.carnage;
+package com.example.user.carnage.fragments;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -21,6 +21,12 @@ import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.user.carnage.MainActivity;
+import com.example.user.carnage.R;
+import com.example.user.carnage.fragments.dialogs.GameOverDialogFragment;
+import com.example.user.carnage.logic.main.PlayCharacter;
+import com.example.user.carnage.logic.main.PlayerChoice;
 
 import java.io.IOException;
 import java.io.InputStream;

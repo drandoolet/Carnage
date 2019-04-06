@@ -20,6 +20,16 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.user.carnage.fragments.dialogs.ExitDialog;
+import com.example.user.carnage.fragments.LevelUpFragment;
+import com.example.user.carnage.fragments.ProfileChooseFragment;
+import com.example.user.carnage.fragments.RPGBattleFragment;
+import com.example.user.carnage.animation.SkillsAnimator;
+import com.example.user.carnage.fragments.SkillsFragment;
+import com.example.user.carnage.fragments.dialogs.WipeStatisticsDialogFragment;
+import com.example.user.carnage.logic.main.PlayCharacter;
+import com.example.user.carnage.logic.skills.Skill;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -69,7 +79,7 @@ public class MainActivity extends AppCompatActivity
 
     public static boolean trackStatistics;
     public static String currentProfile = RPG_PROFILE_1;
-    public static SkillsAnimations currentSkill;
+    public static SkillsAnimator.SkillsAnimations currentSkill;
 
     public static Drawable player_image;
 
@@ -375,8 +385,7 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         RPGBattleFragment fragment = (RPGBattleFragment) fragmentManager.findFragmentByTag("MAIN BATTLE FRAGMENT");
 
-        SkillsAnimator animator = new SkillsAnimator(skill, fragment.skillEffect_img,
-                fragment.enemy_img, (skill.isEffectOnPlayer? fragment.player_points : fragment.enemy_points), fragment);
+        SkillsAnimator animator = new SkillsAnimator(skill, fragment, skill.isEffectOnPlayer);
 
         try (InputStream stream = getAssets().open(animator.imageFile)) {
             Drawable img = Drawable.createFromStream(stream, "skill image");

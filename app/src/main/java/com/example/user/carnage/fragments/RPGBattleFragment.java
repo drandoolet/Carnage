@@ -1,10 +1,9 @@
-package com.example.user.carnage;
+package com.example.user.carnage.fragments;
 
 import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.method.ScrollingMovementMethod;
@@ -22,10 +21,17 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.user.carnage.animation.AnimateGame;
+import com.example.user.carnage.MainActivity;
+import com.example.user.carnage.R;
+import com.example.user.carnage.fragments.dialogs.GameOverDialogFragment;
+import com.example.user.carnage.logic.main.PlayCharacter;
+import com.example.user.carnage.logic.main.PlayerChoice;
+import com.example.user.carnage.animation.AnimateGame.AnimationTypes;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.Locale;
 
 import static com.example.user.carnage.MainActivity.currentProfile;
@@ -389,6 +395,10 @@ public class RPGBattleFragment extends Fragment {
                 stats[5], stats[6], stats[7], stats[8], stats[9], stats[10], String.format(Locale.ENGLISH, "%.2f", en.getCriticalDmg()));
         String s = s1 + s2;
         return s;
+    }
+
+    public void setMagicLogText(PlayCharacter character) {
+
     }
 
     private void addLogText(final PlayCharacter character, PlayCharacter enemy) { // TODO: add placeholders to strings.xml

@@ -1,4 +1,4 @@
-package com.example.user.carnage;
+package com.example.user.carnage.fragments;
 
 import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.user.carnage.MainActivity;
+import com.example.user.carnage.R;
 
 import java.io.IOException;
 import java.io.InputStream;

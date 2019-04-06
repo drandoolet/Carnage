@@ -1,4 +1,4 @@
-package com.example.user.carnage;
+package com.example.user.carnage.animation;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -73,7 +73,7 @@ public class AnimateGame {
     protected long ANIMATE_POINTS_DURATION_1 = 200;
     protected long ANIMATE_POINTS_DURATION_2 = 1000;
 
-    AnimateGame() {
+    public AnimateGame() {
         AnimationTypes.ANIMATION_BATTLE_ATTACK.setDuration(ANIMATE_ATTACK_DURATION_TRANSLATION_1 + ANIMATE_ATTACK_DURATION_TRANSLATION_2);
         AnimationTypes.ANIMATION_BATTLE_DODGE.setDuration(ANIMATE_DODGE_DURATION_JUMP_1 + ANIMATE_DODGE_DURATION_JUMP_2 + ANIMATE_DODGE_DURATION_JUMP_BACK);
         AnimationTypes.ANIMATION_BATTLE_HIT.setDuration(ANIMATE_HIT_DURATION_1 + ANIMATE_HIT_DURATION_2);
@@ -399,38 +399,39 @@ public class AnimateGame {
     public boolean isAnimating() {
         return isAnimating;
     }
+
+    public enum AnimationTypes {
+        ANIMATION_BATTLE_ATTACK(0),
+        ANIMATION_BATTLE_HIT(0),
+        ANIMATION_BATTLE_BLOCK(0),
+        ANIMATION_BATTLE_DODGE(0),
+        ANIMATION_BATTLE_CRITICAL(0),
+        ANIMATION_BATTLE_BLOCK_BREAK(0),
+        ANIMATION_TEST(0),
+        ANIMATION_PROFILE_SELECTED(0);
+
+        private long duration;
+        private long fullDuration = 0;
+
+        AnimationTypes(long dur) {
+            duration = dur;
+        }
+
+        public void setDuration(long duration) {
+            this.duration = duration;
+        }
+        public long getDuration() {
+            return duration;
+        }
+
+        public void setFullDuration(long fullDuration) {
+            this.fullDuration = fullDuration;
+        }
+
+        public long getFullDuration() {
+            if (fullDuration == 0) return duration;
+            return fullDuration;
+        }
+    }
 }
 
-enum AnimationTypes {
-    ANIMATION_BATTLE_ATTACK(0),
-    ANIMATION_BATTLE_HIT(0),
-    ANIMATION_BATTLE_BLOCK(0),
-    ANIMATION_BATTLE_DODGE(0),
-    ANIMATION_BATTLE_CRITICAL(0),
-    ANIMATION_BATTLE_BLOCK_BREAK(0),
-    ANIMATION_TEST(0),
-    ANIMATION_PROFILE_SELECTED(0);
-
-    private long duration;
-    private long fullDuration = 0;
-
-    AnimationTypes(long dur) {
-        duration = dur;
-    }
-
-    public void setDuration(long duration) {
-        this.duration = duration;
-    }
-    public long getDuration() {
-        return duration;
-    }
-
-    public void setFullDuration(long fullDuration) {
-        this.fullDuration = fullDuration;
-    }
-
-    public long getFullDuration() {
-        if (fullDuration == 0) return duration;
-        return fullDuration;
-    }
-}

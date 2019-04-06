@@ -1,18 +1,22 @@
-package com.example.user.carnage;
+package com.example.user.carnage.animation;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.ImageView;
-import android.os.Handler;
 import android.widget.TextView;
 
-import javax.crypto.spec.OAEPParameterSpec;
+import com.example.user.carnage.fragments.RPGBattleFragment;
+import com.example.user.carnage.logic.skills.Skill;
 
 public class SkillsAnimator extends AnimateGame {
+    private final long DURATION_FIREBALL_1 = 800;
+    private final long DURATION_FIREBALL_2 = 200;
+    private final long DURATION_FIREBALL_3 = 70;
+    private final long DURATION_FIREBALL_4 = 300;
+
     private AnimatorSet mainSet;
     private ImageView imageView, enemyImg;
     private TextView points;
@@ -25,19 +29,22 @@ public class SkillsAnimator extends AnimateGame {
         super();
     }
 
-    SkillsAnimator(Skill skill, ImageView imageView, ImageView enemyImageView, TextView points, RPGBattleFragment fragment) {
+    public SkillsAnimator(Skill skill, RPGBattleFragment fragment, boolean isEffectOnPlayer) {
         this.skill = skill;
-        this.imageView = imageView;
-        enemyImg = enemyImageView;
+        this.imageView = fragment.skillEffect_img;
+        if (isEffectOnPlayer) {
+            points = fragment.player_points;
+        } else {
+            points = fragment.enemy_points;
+            enemyImg = fragment.enemy_img;
+        }
         this.fragment = fragment;
-        this.points = points;
 
         switch (skill.name) {
             case FIREBALL: {
                 mainSet = animateFireBall();
                 imageFile = "skill/Fireball.png";
-                animDuration = 3600;
-                animDurationToPoints = 1100;
+                setAnimDurationToPoints(SkillsAnimations.FIREBALL);
                 break;
             } case HEAL_SMALL: {
 
@@ -52,10 +59,12 @@ public class SkillsAnimator extends AnimateGame {
         //animDuration = mainSet.getDuration();
         points.setText(Integer.toString(skill.getEffect()));
         mainSet.start();
+
         mainSet.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 skill.use();
+
                 fragment.setAllEnabled(true);
                 setDefault();
             }
@@ -74,7 +83,7 @@ public class SkillsAnimator extends AnimateGame {
         AnimatorSet state3 = new AnimatorSet();
         AnimatorSet set = new AnimatorSet();
 
-        state1.setDuration(800).playTogether(
+        state1.setDuration(DURATION_FIREBALL_1).playTogether(
                 ObjectAnimator.ofFloat(imageView, View.ALPHA, 0f, 1f),
                 animateChangeScale(imageView, 0f, 1f, 0),
                 animateRotation(imageView, 0f, 720f, 0)
@@ -83,11 +92,11 @@ public class SkillsAnimator extends AnimateGame {
                 animateChangeScale(imageView, 1f, 3f, 200),
                 animateHitOnReceivedDmg(enemyImg, ANIMATE_HIT_DURATION_1, true),
                 getAnimateDamagePointsSet(fragment.enemy_points, true)
-        ); */
+        );
         state3.playTogether(
                 ObjectAnimator.ofFloat(imageView, View.ALPHA, 1, 0).setDuration(300),
                 animateHitOnRecoverFromDmg(enemyImg, ANIMATE_HIT_DURATION_2, true)
-        );
+        ); */
         state2.setDuration(0).playTogether(
                 ObjectAnimator.ofFloat(imageView, View.ALPHA, 1, 0),
                 ObjectAnimator.ofFloat(imageView, View.TRANSLATION_X, 1f, 0f)
@@ -95,9 +104,9 @@ public class SkillsAnimator extends AnimateGame {
 
         set.playSequentially(
                 state1,
-                animateTranslation(imageView, enemyImg.getX()-imageView.getX(), 0, 200),
-                animateChangeScale(imageView, 1f, 2f, 70),
-                ObjectAnimator.ofFloat(imageView, View.ALPHA, 1, 0).setDuration(300),
+                animateTranslation(imageView, enemyImg.getX()-imageView.getX(), 0, DURATION_FIREBALL_2),
+                animateChangeScale(imageView, 1f, 2f, DURATION_FIREBALL_3),
+                ObjectAnimator.ofFloat(imageView, View.ALPHA, 1, 0).setDuration(DURATION_FIREBALL_4),
                 state2
         );
         return set;
@@ -115,9 +124,22 @@ public class SkillsAnimator extends AnimateGame {
         fragment.player_points.setVisibility(View.INVISIBLE);
         fragment.enemy_points.setVisibility(View.INVISIBLE);
     }
+
+    private void setAnimDurationToPoints(SkillsAnimations animation) {
+        long duration;
+        switch (animation) {
+            case FIREBALL:
+                duration = DURATION_FIREBALL_1 + DURATION_FIREBALL_2; break;
+            case HEAL_SMALL: duration = 0; break;
+            default: duration = 0;
+        }
+        animDurationToPoints = duration;
+    }
+
+    public enum SkillsAnimations {
+        HEAL_SMALL,
+        FIREBALL
+    }
 }
 
-enum SkillsAnimations {
-    HEAL_SMALL,
-    FIREBALL
-}
+

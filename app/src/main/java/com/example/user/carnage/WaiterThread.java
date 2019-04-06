@@ -40,15 +40,5 @@ public class WaiterThread extends HandlerThread {
         for (View view : views) view.setEnabled(set);
     }
 
-    boolean calc(int[] phys, int[] rus, int[] math) {
-        int physSum = 0, rusSum = 0, mathSum = 0;
-
-        for (int i=0; i<phys.length; i++) physSum += phys[i];
-        for (int i=0; i<rus.length; i++) rusSum += rus[i];
-        for (int i=0; i<math.length; i++) mathSum += math[i];
-
-        return (physSum >= 8 && rusSum >= 8 && mathSum >= 5);
-    }
-
 
 }

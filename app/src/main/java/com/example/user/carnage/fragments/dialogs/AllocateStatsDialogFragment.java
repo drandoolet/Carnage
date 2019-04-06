@@ -1,7 +1,6 @@
-package com.example.user.carnage;
+package com.example.user.carnage.fragments.dialogs;
 
 import android.app.Dialog;
-import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,7 +8,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.widget.Toast;
+
+import com.example.user.carnage.MainActivity;
+import com.example.user.carnage.R;
+import com.example.user.carnage.fragments.RPGBattleFragment;
 
 public class AllocateStatsDialogFragment extends DialogFragment {
     @NonNull

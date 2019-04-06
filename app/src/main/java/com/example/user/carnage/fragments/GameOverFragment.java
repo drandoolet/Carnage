@@ -1,4 +1,4 @@
-package com.example.user.carnage;
+package com.example.user.carnage.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
