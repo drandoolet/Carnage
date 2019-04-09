@@ -40,6 +40,7 @@ import java.util.Locale;
 
 import static com.example.user.carnage.MainActivity.currentProfile;
 import static com.example.user.carnage.MainActivity.enemy;
+import static com.example.user.carnage.MainActivity.getSharedCriticals;
 import static com.example.user.carnage.MainActivity.player;
 
 public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicCallBack {
@@ -242,6 +243,8 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         for (CheckBox box : boxes) box.setChecked(false);
         atkCheckBoxCounter = 0;
         defCheckBoxCounter = 0;
+        atkCounterBound = 1;
+        defCounterBound = 2;
         currentAnimationDuration = 0L;
     }
 
@@ -552,6 +555,24 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         for (View view : views) view.setEnabled(set);
     }
 
+    private void uncheckButtons() {
+        CheckBox[] defButtons = {checkBox_def_head, checkBox_def_body, checkBox_def_waist, checkBox_def_legs};
+        CheckBox[] atkButtons = {checkBox_atk_head, checkBox_atk_body, checkBox_atk_waist, checkBox_atk_legs};
+
+        for (CheckBox defButton : defButtons) {
+            if (defButton.isChecked()) {
+                defButton.setChecked(false);
+                defCheckBoxCounter--;
+            }
+        }
+        for (CheckBox atkButton : atkButtons) {
+            if (atkButton.isChecked()) {
+                atkButton.setChecked(false);
+                atkCheckBoxCounter--;
+            }
+        }
+    }
+
 
     public void showSkillsFragment() {
         skillsFragmentContainer.setVisibility(View.VISIBLE);
@@ -560,6 +581,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.skillsFragmentContainer, fragment);
         transaction.commit();
+        uncheckButtons();
         setAllEnabled(false);
     }
 
@@ -572,30 +594,37 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
     @Override
     public void magicUsed(final Skill skill, long animDurationToPoints) {
         // this method is used when it is needed to show dmg points
-        final TextView points;
-        if (skill.isEffectOnPlayer()) {
-            points = player_points;
-            points.setText(Integer.toString(skill.getEffect()));
-            battle_textView.append(getString(R.string.magic_heal, player.getName(), skill.getName(), skill.getEffect()));
-            player.receiveMagic(skill);
-            player_HP_bar.setProgress(player.getHP());
-            player_hp_view.setText(Integer.toString(player.getHP()));
-        } else {
-            points = enemy_points;
-            points.setText(Integer.toString(skill.getEffect()));
-            battle_textView.append(getString(R.string.magic_attack, player.getName(), skill.getName(),
-                    enemy.getName(), Math.abs(skill.getEffect())));
-            enemy.receiveMagic(skill);
-            enemy_HP_bar.setProgress(enemy.getHP());
-            enemy_hp_view.setText(Integer.toString(enemy.getHP()));
-        }
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                animateGame.animateDamagePoints(points, skill.isEffectOnPlayer());
+        if (defCounterBound - skill.getBoundTakers()[0] >= 0 &&
+                atkCounterBound - skill.getBoundTakers()[1] >= 0) {
+            final TextView points;
+            if (skill.isEffectOnPlayer()) {
+                points = player_points;
+                points.setText(Integer.toString(skill.getEffect()));
+                battle_textView.append(getString(R.string.magic_heal, player.getName(), skill.getName(), skill.getEffect()));
+                player.receiveMagic(skill);
+                player_HP_bar.setProgress(player.getHP());
+                player_hp_view.setText(Integer.toString(player.getHP()));
+            } else {
+                points = enemy_points;
+                points.setText(Integer.toString(skill.getEffect()));
+                battle_textView.append(getString(R.string.magic_attack, player.getName(), skill.getName(),
+                        enemy.getName(), Math.abs(skill.getEffect())));
+                enemy.receiveMagic(skill);
+                enemy_HP_bar.setProgress(enemy.getHP());
+                enemy_hp_view.setText(Integer.toString(enemy.getHP()));
             }
-        }, animDurationToPoints);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    animateGame.animateDamagePoints(points, skill.isEffectOnPlayer());
+                }
+            }, animDurationToPoints);
+
+            defCounterBound -= skill.getBoundTakers()[0];
+            atkCounterBound -= skill.getBoundTakers()[1];
+
+        } else Toast.makeText(getContext(), "You cannot use this skill now", Toast.LENGTH_SHORT).show();
     }
 }
 

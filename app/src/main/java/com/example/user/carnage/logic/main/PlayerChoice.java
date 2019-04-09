@@ -3,13 +3,18 @@ package com.example.user.carnage.logic.main;
 import com.example.user.carnage.MainActivity;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class PlayerChoice {
     String str_att, str_def;
     BodyPart.BodyPartNames attack;
     BodyPart.BodyPartNames defend_1;
     BodyPart.BodyPartNames defend_2;
+
+    private ArrayList<BodyPart.BodyPartNames> defended = new ArrayList<>(),
+            attacked = new ArrayList<>();
     private SecureRandom random;
 
     private int neural_atk_head, neural_atk_body, neural_atk_waist, neural_atk_legs;
@@ -21,9 +26,28 @@ public class PlayerChoice {
     public BodyPart.BodyPartNames getDefend_1() { return defend_1; }
     public BodyPart.BodyPartNames getDefend_2() { return defend_2; }
 
+    public ArrayList<BodyPart.BodyPartNames> getDefended() {
+        return defended;
+    }
+
+    public ArrayList<BodyPart.BodyPartNames> getAttacked() {
+        return attacked;
+    }
+
     public PlayerChoice(String jcb_name_att, String jcb_name_def) {
         str_att = jcb_name_att;
         str_def = jcb_name_def;
+
+        if (str_def.contains("HEAD")) defended.add(BodyPart.BodyPartNames.HEAD);
+        if (str_def.contains("BODY")) defended.add(BodyPart.BodyPartNames.BODY);
+        if (str_def.contains("WAIST")) defended.add(BodyPart.BodyPartNames.WAIST);
+        if (str_def.contains("LEGS")) defended.add(BodyPart.BodyPartNames.LEGS);
+
+        if (str_att.contains("HEAD")) attacked.add(BodyPart.BodyPartNames.HEAD);
+        if (str_att.contains("BODY")) attacked.add(BodyPart.BodyPartNames.BODY);
+        if (str_att.contains("WAIST")) attacked.add(BodyPart.BodyPartNames.WAIST);
+        if (str_att.contains("LEGS")) attacked.add(BodyPart.BodyPartNames.LEGS);
+        System.out.println("defended list: "+defended.toString());
 
         if(str_att.contains("HEAD")) attack = BodyPart.BodyPartNames.HEAD;
         else if(str_att.contains("BODY")) attack = BodyPart.BodyPartNames.BODY;

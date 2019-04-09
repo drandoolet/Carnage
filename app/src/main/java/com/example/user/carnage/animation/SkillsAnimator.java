@@ -48,7 +48,7 @@ public class SkillsAnimator extends AnimateGame {
         switch (skill.getName()) {
             case FIREBALL: {
                 mainSet = animateFireBall();
-                imageFile = "skill/Fireball.png";
+                imageFile = skill.getIcon();
                 break;
             } case HEAL_SMALL: {
 

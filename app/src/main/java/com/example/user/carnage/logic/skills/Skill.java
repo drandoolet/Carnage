@@ -16,13 +16,14 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
     protected final boolean isEffectOnPlayer;
     protected final String info;
     protected final SkillTypes name;
+    protected final String icon;
 
     @Deprecated
     protected Skill(PlayCharacter playCharacter, PlayCharacter enemyChar,
                     double magnification, double addition,
                     PlayCharacter.Stats magnifiedStat, PlayCharacter.Substats affectedSubstat,
                     int defBoundTaker, int atkBoundTaker, boolean isEffectOnPlayer,
-                    SkillTypes name, String info) {
+                    SkillTypes name, String info, String icon) {
         playerChar = playCharacter;
         this.enemyChar = enemyChar;
         this.magnifiedStat = magnifiedStat;
@@ -34,6 +35,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
         this.defBoundTaker = defBoundTaker;
         this.name = name;
         this.info = info;
+        this.icon = icon;
     }
 
     public void use() {
@@ -58,6 +60,10 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
         return info;
     }
 
+    public String getIcon() {
+        return icon;
+    }
+
     public int[] getBoundTakers() {
         return new int[]{defBoundTaker, atkBoundTaker};
     }
@@ -66,6 +72,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
         private final PlayCharacter player, enemy;
         private final SkillTypes skillType;
 
+        private String icon = "skill/Fireball.png";
         private PlayCharacter.Stats magnifiedStat = Stats.INTELLIGENCE;
         private PlayCharacter.Substats affectedSubstat = Substats.MAGICAL_DEFENCE;
         private int defBoundTaker = 0, atkBoundTaker = 0;
@@ -89,6 +96,11 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
             DEF_BOUND_TAKER, ATK_BOUND_TAKER,
             MAGNIFICATION, ADDITION,
             IS_EFFECT_ON_PLAYER, INFO
+        }
+
+        public Builder setIcon(String s) {
+            icon = s;
+            return this;
         }
 
         public Builder setMagnifiedStat(Stats stat) {
@@ -182,6 +194,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
         defBoundTaker = builder.defBoundTaker;
         name = builder.skillType;
         info = builder.info;
+        icon = builder.icon;
     }
 
     public enum SkillTypes {

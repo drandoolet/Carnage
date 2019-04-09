@@ -322,8 +322,8 @@ public class PlayCharacter {
                 attacked = bpLegs;
                 neural_attacked_legs++;
                 break;
-        }
-        switch (plc.getDefend_1()) {
+        } /*
+        switch (plc.getDefend_1()) { // TODO: make 1 switch for def
             case HEAD : bpHead.setDefended(true); break;
             case BODY : bpBody.setDefended(true); break;
             case WAIST : bpWaist.setDefended(true); break;
@@ -334,12 +334,22 @@ public class PlayCharacter {
             case BODY : bpBody.setDefended(true); break;
             case WAIST : bpWaist.setDefended(true); break;
             case LEGS : bpLegs.setDefended(true); break;
-        }
+        }*/
         switch (plc.getAttack()) {
             case HEAD : target = bpHead; break;
             case BODY : target = bpBody; break;
             case WAIST : target = bpWaist; break;
             case LEGS : target = bpLegs; break;
+        }
+
+        System.out.println("plc getdef: "+plc.getDefended().toString());
+        for (BodyPartNames part : plc.getDefended()) {
+            switch (part) {
+                case HEAD : bpHead.setDefended(true); break;
+                case BODY : bpBody.setDefended(true); break;
+                case WAIST : bpWaist.setDefended(true); break;
+                case LEGS : bpLegs.setDefended(true); break;
+            }
         }
     }
     public void clearBodyPartsSelection() {
