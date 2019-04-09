@@ -4,9 +4,11 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.user.carnage.fragments.RPGBattleFragment;
 import com.example.user.carnage.logic.skills.Skill;
@@ -25,32 +27,35 @@ public class SkillsAnimator extends AnimateGame {
     private Skill skill;
     RPGBattleFragment fragment;
 
+    private MagicCallBack magicCallBack;
+
     private SkillsAnimator() {
         super();
     }
 
-    public SkillsAnimator(Skill skill, RPGBattleFragment fragment, boolean isEffectOnPlayer) {
+    public SkillsAnimator(Skill skill, RPGBattleFragment fragment) {
         this.skill = skill;
         this.imageView = fragment.skillEffect_img;
-        if (isEffectOnPlayer) {
+        if (skill.isEffectOnPlayer()) {
             points = fragment.player_points;
         } else {
             points = fragment.enemy_points;
             enemyImg = fragment.enemy_img;
         }
         this.fragment = fragment;
+        registerMagicCallBack(fragment);
 
         switch (skill.name) {
             case FIREBALL: {
                 mainSet = animateFireBall();
                 imageFile = "skill/Fireball.png";
-                setAnimDurationToPoints(SkillsAnimations.FIREBALL);
                 break;
             } case HEAL_SMALL: {
 
                 break;
             }
         }
+        setAnimDurationToPoints(skill.name);
     }
 
     public void start() {
@@ -63,18 +68,18 @@ public class SkillsAnimator extends AnimateGame {
         mainSet.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                skill.use();
+                //skill.use();  // possibly better to use getEffect() in the fragment
 
                 fragment.setAllEnabled(true);
                 setDefault();
             }
-        }); /*
+        });
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-
+                magicCallBack.magicUsed(skill);
             }
-        }, animDuration); */
+        }, animDurationToPoints);
     }
 
     private AnimatorSet animateFireBall() {
@@ -139,6 +144,14 @@ public class SkillsAnimator extends AnimateGame {
     public enum SkillsAnimations {
         HEAL_SMALL,
         FIREBALL
+    }
+
+    public interface MagicCallBack {
+        void magicUsed(Skill skill);
+    }
+
+    public void registerMagicCallBack(MagicCallBack callBack) {
+        magicCallBack = callBack;
     }
 }
 

@@ -456,4 +456,42 @@ public class PlayCharacter {
         String s = "Main stats: "+ Arrays.toString(getMainStats()) +". SubStats: "+Arrays.toString(getStats());
         return s;
     }
+
+    public enum Stats {
+        STAMINA,
+        STRENGTH,
+        AGILITY,
+        LUCK,
+        INTELLIGENCE
+    }
+
+    public enum Substats {
+        CRITICAL, ANTI_CRITICAL, CRITICAL_DAMAGE,
+        DODGE, ANTI_DODGE,
+        DEFENCE, MAGICAL_DEFENCE
+    }
+
+    public int valueOf(Stats stat) {
+        switch (stat) {
+            case STAMINA: return STA;
+            case STRENGTH: return STR;
+            case AGILITY: return AGI;
+            case LUCK: return LUCK;
+            case INTELLIGENCE: return INT;
+        }
+        return 0;
+    }
+
+    public double valueOf(Substats stat) {
+        switch (stat) {
+            case CRITICAL: return critical;
+            case ANTI_CRITICAL: return antiCritical;
+            case CRITICAL_DAMAGE: return criticalDamage;
+            case DODGE: return dodgeRate;
+            case ANTI_DODGE: return antiDodgeRate;
+            case DEFENCE: return defence;
+            case MAGICAL_DEFENCE: return magic_defence;
+        }
+        return 0;
+    }
 }

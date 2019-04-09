@@ -385,7 +385,7 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         RPGBattleFragment fragment = (RPGBattleFragment) fragmentManager.findFragmentByTag("MAIN BATTLE FRAGMENT");
 
-        SkillsAnimator animator = new SkillsAnimator(skill, fragment, skill.isEffectOnPlayer);
+        SkillsAnimator animator = new SkillsAnimator(skill, fragment);
 
         try (InputStream stream = getAssets().open(animator.imageFile)) {
             Drawable img = Drawable.createFromStream(stream, "skill image");

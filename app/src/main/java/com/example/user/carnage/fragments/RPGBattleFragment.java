@@ -24,10 +24,12 @@ import android.widget.Toast;
 import com.example.user.carnage.animation.AnimateGame;
 import com.example.user.carnage.MainActivity;
 import com.example.user.carnage.R;
+import com.example.user.carnage.animation.SkillsAnimator;
 import com.example.user.carnage.fragments.dialogs.GameOverDialogFragment;
 import com.example.user.carnage.logic.main.PlayCharacter;
 import com.example.user.carnage.logic.main.PlayerChoice;
 import com.example.user.carnage.animation.AnimateGame.AnimationTypes;
+import com.example.user.carnage.logic.skills.Skill;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +40,7 @@ import static com.example.user.carnage.MainActivity.currentProfile;
 import static com.example.user.carnage.MainActivity.enemy;
 import static com.example.user.carnage.MainActivity.player;
 
-public class RPGBattleFragment extends Fragment {
+public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicCallBack {
     public final String TAG = "Carnage MAF RPG";
     //private PlayCharacter player, enemy;
     private AnimateGame animateGame;
@@ -494,6 +496,7 @@ public class RPGBattleFragment extends Fragment {
         battle_textView.append(text);
     }
 
+    @Deprecated
     private void handlePlayerClasses(PlayCharacter character, PlayCharacter enemy) {
         String playerClass, enemyClass;
         switch (character.getPlayerClass()) {
@@ -564,5 +567,10 @@ public class RPGBattleFragment extends Fragment {
     }
 
 
+    @Override
+    public void magicUsed(Skill skill) {
+        // this method is used when it is needed to show dmg points
+
+    }
 }
 
