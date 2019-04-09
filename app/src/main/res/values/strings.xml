@@ -77,4 +77,6 @@
     <string name="battle_points_block_break" translatable="false">%1$d\nBlock break!</string>
     <string name="dialog_fragment_gameover_message">The winner is: %1$s.\nRounds: %2$d.\nDamage inflicted: %3$d.\nEXP gained: %4$d.</string>
     <string name="dialog_fragment_allocate_stats">You have %1$d available stats. Do you wish to allocate them?</string>
+    <string name="magic_attack">\n%1$s uses %2$s. %3$s receives %4$d points of damage.</string>
+    <string name="magic_heal">\n%1$s uses %2$s. The health of %1$s is restored by %3$d points.</string>
 </resources>

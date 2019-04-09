@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity
 
     public static boolean trackStatistics;
     public static String currentProfile = RPG_PROFILE_1;
-    public static SkillsAnimator.SkillsAnimations currentSkill;
+    public static Skill.SkillTypes currentSkill;
 
     public static Drawable player_image;
 

@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import com.example.user.carnage.MainActivity;
 import com.example.user.carnage.R;
 import com.example.user.carnage.fragments.MenuChooseFragment;
+import com.example.user.carnage.fragments.ProfileChooseFragment;
 
 public class ExitDialog extends DialogFragment {
     //private String message;
@@ -49,7 +50,7 @@ public class ExitDialog extends DialogFragment {
     private void goToMainMenu() {
         if (MainActivity.player != null) MainActivity.player.refresh();
         if (MainActivity.enemy != null) MainActivity.enemy.refresh();
-        MenuChooseFragment fragment = new MenuChooseFragment();
+        ProfileChooseFragment fragment = new ProfileChooseFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.container, fragment);
         transaction.addToBackStack(null);

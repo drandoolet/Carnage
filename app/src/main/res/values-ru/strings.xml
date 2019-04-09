@@ -68,4 +68,6 @@
     <string name="checkbox_title_vertical_atk">А\nТ\nА\nК\nА</string>
     <string name="dialog_fragment_gameover_message">Победитель: %1$s.\nПроведено %2$d раундов.\nНанесено урона: %3$d ед.\nПолучено опыта: %4$d.</string>
     <string name="dialog_fragment_allocate_stats">Нераспределённых очков характеристик: %1$d. Хотите использовать их сейчас?</string>
+    <string name="magic_attack">\n%1$s применяет %2$s. %3$s получает %4$d ед. урона.</string>
+    <string name="magic_heal">\n%1$s применяет %2$s. Здоровье %1$s восстановлено на %3$d ед.</string>
 </resources>

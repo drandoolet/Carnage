@@ -7,12 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.user.carnage.MainActivity;
 import com.example.user.carnage.R;
 import com.example.user.carnage.animation.AnimateGame;
 import com.example.user.carnage.logic.skills.Fireball;
 import com.example.user.carnage.logic.skills.Skill;
+import com.example.user.carnage.logic.skills.SmallHeal;
 
 public class SkillsFragment extends Fragment {
     private Button exitButton;
@@ -37,11 +39,18 @@ public class SkillsFragment extends Fragment {
 
         skillButton1 = view.findViewById(R.id.skillButton1);
         skillButton2 = view.findViewById(R.id.skillButton2);
-        skillButton1.setOnClickListener(skillButtonsListener);
+        skillButton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                skill = new SmallHeal(MainActivity.player);
+                Toast.makeText(getContext(), "SmallHeal effect: "+skill.getEffect(), Toast.LENGTH_LONG).show();
+            }
+        });
         skillButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 skill = new Fireball(MainActivity.player, MainActivity.enemy);
+                Toast.makeText(getContext(), "Fireball effect: "+skill.getEffect(), Toast.LENGTH_LONG).show();
             }
         });
 

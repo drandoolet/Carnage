@@ -5,11 +5,17 @@ import com.example.user.carnage.logic.main.PlayCharacter;
 
 import static com.example.user.carnage.MainActivity.currentSkill;
 
-public class Fireball extends AttackingSkill {
-    public Fireball(PlayCharacter playCharacter, PlayCharacter enemy) {
-        super(playCharacter, enemy, 0.2, 50, PlayCharacter.Stats.INTELLIGENCE,
-                PlayCharacter.Substats.MAGICAL_DEFENCE, 1, 1, "fireball info");
-        name = SkillsAnimator.SkillsAnimations.FIREBALL;
-        currentSkill = name;
+public class Fireball extends Skill {
+    public Fireball(PlayCharacter player, PlayCharacter enemy) {
+        super(
+                new Builder(player, enemy, SkillTypes.FIREBALL)
+                        .setAddition(20.0)
+                        .setMagnification(1.5)
+                        .setMagnifiedStat(PlayCharacter.Stats.INTELLIGENCE)
+                        .setAffectedSubstat(PlayCharacter.Substats.MAGICAL_DEFENCE)
+                        .setDefBoundTaker(1)
+                        .setAtkBoundTaker(1)
+                        .setInfo("fireball info")
+        );
     }
 }

@@ -40,6 +40,7 @@ import static com.example.user.carnage.MainActivity.player;
 /**
  * A placeholder fragment containing a simple view.
  */
+@Deprecated
 public class MainActivityFragment extends Fragment {
     private final String TAG = "Carnage MAF";
     //private PlayCharacter player, enemy;

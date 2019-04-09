@@ -6,6 +6,7 @@ import java.util.Arrays;
 import com.example.user.carnage.MainActivity;
 import com.example.user.carnage.logic.main.BodyPart.*;
 import com.example.user.carnage.logic.main.PlayerChoice.*;
+import com.example.user.carnage.logic.skills.Skill;
 
 public class PlayCharacter {
     private int currentExp, level, availableStatPoints = 0;
@@ -153,6 +154,10 @@ public class PlayCharacter {
     public void setHP(int hp) {
         HP = hp;
         System.out.println(name+" HP is now: "+hp);
+    }
+
+    public void receiveMagic(Skill skill) {
+        setHP(getHP() + skill.getEffect());
     }
 
     public int getLevel() { return level; }
@@ -483,6 +488,7 @@ public class PlayCharacter {
     }
 
     public double valueOf(Substats stat) {
+        if (stat == null) return 0;
         switch (stat) {
             case CRITICAL: return critical;
             case ANTI_CRITICAL: return antiCritical;

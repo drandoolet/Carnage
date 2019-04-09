@@ -45,7 +45,7 @@ public class SkillsAnimator extends AnimateGame {
         this.fragment = fragment;
         registerMagicCallBack(fragment);
 
-        switch (skill.name) {
+        switch (skill.getName()) {
             case FIREBALL: {
                 mainSet = animateFireBall();
                 imageFile = "skill/Fireball.png";
@@ -55,7 +55,7 @@ public class SkillsAnimator extends AnimateGame {
                 break;
             }
         }
-        setAnimDurationToPoints(skill.name);
+        setAnimDurationToPoints(skill.getName());
     }
 
     public void start() {
@@ -77,7 +77,7 @@ public class SkillsAnimator extends AnimateGame {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                magicCallBack.magicUsed(skill);
+                magicCallBack.magicUsed(skill, animDurationToPoints);
             }
         }, animDurationToPoints);
     }
@@ -130,9 +130,9 @@ public class SkillsAnimator extends AnimateGame {
         fragment.enemy_points.setVisibility(View.INVISIBLE);
     }
 
-    private void setAnimDurationToPoints(SkillsAnimations animation) {
+    private void setAnimDurationToPoints(Skill.SkillTypes type) {
         long duration;
-        switch (animation) {
+        switch (type) {
             case FIREBALL:
                 duration = DURATION_FIREBALL_1 + DURATION_FIREBALL_2; break;
             case HEAL_SMALL: duration = 0; break;
@@ -141,13 +141,10 @@ public class SkillsAnimator extends AnimateGame {
         animDurationToPoints = duration;
     }
 
-    public enum SkillsAnimations {
-        HEAL_SMALL,
-        FIREBALL
-    }
+
 
     public interface MagicCallBack {
-        void magicUsed(Skill skill);
+        void magicUsed(Skill skill, long animDurationToPoints);
     }
 
     public void registerMagicCallBack(MagicCallBack callBack) {

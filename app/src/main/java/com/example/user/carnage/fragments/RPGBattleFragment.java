@@ -4,6 +4,8 @@ import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.method.ScrollingMovementMethod;
@@ -399,7 +401,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         return s;
     }
 
-    public void setMagicLogText(PlayCharacter character) {
+    public void setMagicLogText(@NonNull PlayCharacter character, @Nullable PlayCharacter enemy, @NonNull Skill skill) {
 
     }
 
@@ -568,9 +570,32 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
 
 
     @Override
-    public void magicUsed(Skill skill) {
+    public void magicUsed(final Skill skill, long animDurationToPoints) {
         // this method is used when it is needed to show dmg points
+        final TextView points;
+        if (skill.isEffectOnPlayer()) {
+            points = player_points;
+            points.setText(Integer.toString(skill.getEffect()));
+            battle_textView.append(getString(R.string.magic_heal, player.getName(), skill.getName(), skill.getEffect()));
+            player.receiveMagic(skill);
+            player_HP_bar.setProgress(player.getHP());
+            player_hp_view.setText(Integer.toString(player.getHP()));
+        } else {
+            points = enemy_points;
+            points.setText(Integer.toString(skill.getEffect()));
+            battle_textView.append(getString(R.string.magic_attack, player.getName(), skill.getName(),
+                    enemy.getName(), Math.abs(skill.getEffect())));
+            enemy.receiveMagic(skill);
+            enemy_HP_bar.setProgress(enemy.getHP());
+            enemy_hp_view.setText(Integer.toString(enemy.getHP()));
+        }
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                animateGame.animateDamagePoints(points, skill.isEffectOnPlayer());
+            }
+        }, animDurationToPoints);
     }
 }
 
