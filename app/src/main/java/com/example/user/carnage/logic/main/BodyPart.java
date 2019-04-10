@@ -31,7 +31,9 @@ public class BodyPart {
         isAttacked = false;
     }
 
-    enum  BodyPartNames {
+
+
+    public enum  BodyPartNames {
         HEAD(1.2, "ГОЛОВУ"), BODY(0.8, "ТЕЛО"), WAIST(0.9, "ПОЯС"), LEGS(1.1, "НОГИ") ;
 
         private double adjustion;
@@ -46,6 +48,10 @@ public class BodyPart {
         }
         String getRuName() {
             return runame;
+        }
+
+        public static BodyPartNames[] getAll() {
+            return new BodyPartNames[] {HEAD, BODY, WAIST, LEGS};
         }
     }
 }

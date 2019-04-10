@@ -28,6 +28,7 @@ import com.example.user.carnage.MainActivity;
 import com.example.user.carnage.R;
 import com.example.user.carnage.animation.SkillsAnimator;
 import com.example.user.carnage.fragments.dialogs.GameOverDialogFragment;
+import com.example.user.carnage.logic.main.BodyPart;
 import com.example.user.carnage.logic.main.PlayCharacter;
 import com.example.user.carnage.logic.main.PlayerChoice;
 import com.example.user.carnage.animation.AnimateGame.AnimationTypes;
@@ -36,6 +37,8 @@ import com.example.user.carnage.logic.skills.Skill;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static com.example.user.carnage.MainActivity.currentProfile;
@@ -69,6 +72,8 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
     private boolean isAtkSelected;
 
     private PlayerChoice playerChoice, enemyChoice;
+    private ArrayList<BodyPart.BodyPartNames> playerAttacked = new ArrayList<>();
+    private ArrayList<BodyPart.BodyPartNames> playerDefended = new ArrayList<>();
 
     private int hits, criticals, blockBreaks, blocks, dodges, totalDamage;
 
@@ -87,18 +92,23 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             int id = compoundButton.getId();
             String text = "";
+            BodyPart.BodyPartNames bodyPart = null;
             switch (id) {
                 case R.id.checkBoxAtkHead:
                     text = "HEAD";
+                    bodyPart = BodyPart.BodyPartNames.HEAD;
                     break;
                 case R.id.checkBoxAtkBody:
                     text = "BODY";
+                    bodyPart = BodyPart.BodyPartNames.BODY;
                     break;
                 case R.id.checkBoxAtkWaist:
                     text = "WAIST";
+                    bodyPart = BodyPart.BodyPartNames.WAIST;
                     break;
                 case R.id.checkBoxAtkLegs:
                     text = "LEGS";
+                    bodyPart = BodyPart.BodyPartNames.LEGS;
                     break;
             }
             if (b) {
@@ -107,12 +117,22 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 } else if (atkCheckBoxCounter < atkCounterBound && defCheckBoxCounter >= 0) {
                     atkCheckBoxCounter++;
                     selectedAtk += text;
+                    try {
+                        playerAttacked.add(bodyPart);
+                    } catch (NullPointerException e) {
+                        Log.e(TAG, "my favourite NPE, in atk checkbox listener add");
+                    }
                 } else {
                     Log.e(MainActivity.TAG, "ERROR in MAF onCheckedChanged true");
                 }
             } else {
                 atkCheckBoxCounter--;
                 selectedAtk = selectedAtk.replace(text, "");
+                try {
+                    playerAttacked.remove(bodyPart);
+                } catch (NullPointerException e) {
+                    Log.e(TAG, "my favourite NPE, in atk checkbox listener remove");
+                }
             }
         }
     };
@@ -122,18 +142,23 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             int id = compoundButton.getId();
             String text = "";
+            BodyPart.BodyPartNames bodyPart = null;
             switch (id) {
                 case R.id.checkBoxDefHead:
                     text = "HEAD";
+                    bodyPart = BodyPart.BodyPartNames.HEAD;
                     break;
                 case R.id.checkBoxDefBody:
                     text = "BODY";
+                    bodyPart = BodyPart.BodyPartNames.BODY;
                     break;
                 case R.id.checkBoxDefWaist:
                     text = "WAIST";
+                    bodyPart = BodyPart.BodyPartNames.WAIST;
                     break;
                 case R.id.checkBoxDefLegs:
                     text = "LEGS";
+                    bodyPart = BodyPart.BodyPartNames.LEGS;
                     break;
             }
             if (b) {
@@ -142,12 +167,22 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 } else if (defCheckBoxCounter < defCounterBound && defCheckBoxCounter >= 0) {
                     defCheckBoxCounter++;
                     selectedDef += text;
+                    try {
+                        playerDefended.add(bodyPart);
+                    } catch (NullPointerException e) {
+                        Log.e(TAG, "my favourite NPE, in atk checkbox listener add");
+                    }
                 } else {
                     Log.e(MainActivity.TAG, "ERROR in MAF onCheckedChanged true");
                 }
             } else {
                 defCheckBoxCounter--;
                 selectedDef = selectedDef.replace(text, "");
+                try {
+                    playerDefended.remove(bodyPart);
+                } catch (NullPointerException e) {
+                    Log.e(TAG, "my favourite NPE, in atk checkbox listener remove");
+                }
             }
         }
     };
@@ -612,6 +647,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 enemy.receiveMagic(skill);
                 enemy_HP_bar.setProgress(enemy.getHP());
                 enemy_hp_view.setText(Integer.toString(enemy.getHP()));
+                totalDamage += skill.getEffect();
             }
 
             new Handler().postDelayed(new Runnable() {

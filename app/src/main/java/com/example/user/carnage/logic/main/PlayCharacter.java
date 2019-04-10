@@ -198,6 +198,15 @@ public class PlayCharacter {
         return critical;
     }
     public double getCriticalDmg() {return criticalDamage;}
+    public int getAntiCritical() {return antiCritical;}
+
+    public int getDodgeRate() {
+        return dodgeRate;
+    }
+
+    public int getAntiDodgeRate() {
+        return antiDodgeRate;
+    }
 
     public boolean hasDodged(PlayCharacter en) {
         int rate;
@@ -298,8 +307,6 @@ public class PlayCharacter {
     }
 
 
-
-
     public void getChoices(PlayerChoice plc, PlayerChoice plc1) { // plc - player, plc1 - enemy
         switch (plc1.getAttack()) {
             case HEAD :
@@ -349,6 +356,14 @@ public class PlayCharacter {
                 case BODY : bpBody.setDefended(true); break;
                 case WAIST : bpWaist.setDefended(true); break;
                 case LEGS : bpLegs.setDefended(true); break;
+            }
+        }
+        for (BodyPartNames part : plc1.getAttacked()) {
+            switch (part) {
+                case HEAD : bpHead.setAttacked(true); break;
+                case BODY : bpBody.setAttacked(true); break;
+                case WAIST : bpWaist.setAttacked(true); break;
+                case LEGS : bpLegs.setAttacked(true); break;
             }
         }
     }

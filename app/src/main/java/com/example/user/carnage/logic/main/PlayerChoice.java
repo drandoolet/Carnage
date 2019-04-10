@@ -34,6 +34,12 @@ public class PlayerChoice {
         return attacked;
     }
 
+    public PlayerChoice(ArrayList<BodyPart.BodyPartNames> playerAttacked,
+                        ArrayList<BodyPart.BodyPartNames> playerDefended) {
+        defended = playerDefended;
+        attacked = playerAttacked;
+    }
+
     public PlayerChoice(String jcb_name_att, String jcb_name_def) {
         str_att = jcb_name_att;
         str_def = jcb_name_def;
@@ -81,6 +87,24 @@ public class PlayerChoice {
         //System.out.println("ATT: "+attack+". DEF_1: "+defend_1+". DEF_2: "+defend_2);
     }
 
+    public PlayerChoice(int i) {
+        ArrayList<BodyPart.BodyPartNames> availableAtk = new ArrayList<>(Arrays.asList(BodyPart.BodyPartNames.getAll()));
+        ArrayList<BodyPart.BodyPartNames> availableDef = new ArrayList<>(Arrays.asList(BodyPart.BodyPartNames.getAll()));
+
+        int attacks = 1; // randomize
+        int defends = 2;
+
+        for (int a=0; a<attacks; a++) {
+            BodyPart.BodyPartNames part = availableAtk.get(random.nextInt(availableAtk.size()));
+            attacked.add(part);
+            availableAtk.remove(part);
+        }
+        for (int d=0; d<defends; d++) {
+            BodyPart.BodyPartNames part = availableDef.get(random.nextInt(availableDef.size()));
+            defended.add(part);
+            availableDef.remove(part);
+        }
+    }
 
     public PlayerChoice() { // for COMP only
         random = new SecureRandom();
