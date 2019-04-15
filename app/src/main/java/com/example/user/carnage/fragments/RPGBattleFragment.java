@@ -33,6 +33,7 @@ import com.example.user.carnage.logic.main.PlayCharacter;
 import com.example.user.carnage.logic.main.PlayerChoice;
 import com.example.user.carnage.animation.AnimateGame.AnimationTypes;
 import com.example.user.carnage.logic.skills.Skill;
+import com.example.user.carnage.logic.main.PlayCharacter.RoundStatus;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -461,7 +462,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
             pointsTextView = player_points;
         }
         switch (character.getRoundStatus()) {
-            case "normal":
+            case NORMAL:
                 text = getString(R.string.battle_text_normal, character.getName(), character.getTarget(), character.getCurrentKick());
                 hits++;
                 animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
@@ -475,7 +476,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
                 currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_HIT.getDuration();
                 break;
-            case "blocked":
+            case BLOCK:
                 text = getString(R.string.battle_text_blocked, character.getName(), character.getTarget(), enemy.getName());
                 blocks++;
                 animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
@@ -489,7 +490,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
                 currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_BLOCK.getDuration();
                 break;
-            case "dodged":
+            case DODGE:
                 text = getString(R.string.battle_text_dodged, character.getName(), character.getTarget(), enemy.getName());
                 dodges++;
                 animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
@@ -501,7 +502,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
                 currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_DODGE.getDuration();
                 break;
-            case "critical":
+            case CRITICAL:
                 text = getString(R.string.battle_text_critical, character.getName(), character.getTarget(), enemy.getName(), character.getCurrentKick());
                 criticals++;
                 animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
@@ -515,7 +516,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
                 currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_CRITICAL.getDuration();
                 break;
-            case "block break":
+            case BLOCK_BREAK:
                 text = getString(R.string.battle_text_block_break, character.getName(), character.getTarget(), enemy.getName(), character.getCurrentKick());
                 blockBreaks++;
                 animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
@@ -534,46 +535,6 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         }
 
         battle_textView.append(text);
-    }
-
-    @Deprecated
-    private void handlePlayerClasses(PlayCharacter character, PlayCharacter enemy) {
-        String playerClass, enemyClass;
-        switch (character.getPlayerClass()) {
-            case "Сбалансированный":
-                playerClass = getString(R.string.player_type_balanced);
-                break;
-            case "Берсеркер":
-                playerClass = getString(R.string.player_type_berserker);
-                break;
-            case "Танк":
-                playerClass = getString(R.string.player_type_tank);
-                break;
-            case "RANDOM":
-                playerClass = getString(R.string.player_type_random);
-                break;
-            default:
-                playerClass = "ERROR";
-        }
-        switch (enemy.getPlayerClass()) {
-            case "Сбалансированный":
-                enemyClass = getString(R.string.player_type_balanced);
-                break;
-            case "Берсеркер":
-                enemyClass = getString(R.string.player_type_berserker);
-                break;
-            case "Танк":
-                enemyClass = getString(R.string.player_type_tank);
-                break;
-            case "RANDOM":
-                enemyClass = getString(R.string.player_type_random);
-                break;
-            default:
-                enemyClass = "ERROR";
-        }
-
-        //player_subtitle.setText(playerClass);
-        //enemy_subtitle.setText(enemyClass);
     }
 
     public void setButtonsEnabled(boolean set) {

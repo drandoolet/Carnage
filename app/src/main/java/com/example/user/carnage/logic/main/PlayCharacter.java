@@ -42,7 +42,7 @@ public class PlayCharacter {
     private BodyPart attacked;
     private BodyPart target;
 
-    private String roundStatus = "";
+    private RoundStatus roundStatus = null;
 
     private Chars playerChar;
 
@@ -158,6 +158,15 @@ public class PlayCharacter {
 
     public void receiveMagic(Skill skill) {
         setHP(getHP() + skill.getEffect());
+    }
+
+    public int[] getPower() {
+        if (power[0] == power[1]) return new int[] {power[0], power[1]+1};
+        else return power;
+    }
+
+    public int getDefence() {
+        return defence;
     }
 
     public int getLevel() { return level; }
@@ -285,15 +294,15 @@ public class PlayCharacter {
         System.out.println(" isCritical: "+isCritical);
 
         if (hasDodged) {
-            en.roundStatus = "dodged";
+            en.roundStatus = RoundStatus.DODGE;
         } else if (attacked.isAttackSuccessful()) {
             if (!isCritical) {
-                en.roundStatus = "normal";
-            } else if (isCritical) en.roundStatus = "critical";
+                en.roundStatus = RoundStatus.NORMAL;
+            } else if (isCritical) en.roundStatus = RoundStatus.CRITICAL;
         } else if (!attacked.isAttackSuccessful()) {
             if (isCritical && isBlockBreak) {
-                en.roundStatus = "block break";
-            } else en.roundStatus = "blocked";
+                en.roundStatus = RoundStatus.BLOCK_BREAK;
+            } else en.roundStatus = RoundStatus.BLOCK;
         }
     }
 
@@ -393,7 +402,7 @@ public class PlayCharacter {
     public int getCurrentKick() { return finalKick; }
     public String getPlayerClass() { return playerClass; }
     public String getTarget() { return target.getName(); }
-    public String getRoundStatus() { return roundStatus; }
+    public RoundStatus getRoundStatus() { return roundStatus; }
 
     private void handleSuccessfulAttack(BodyPart bodyPart, PlayCharacter enemy) {
         switch (bodyPart.getName()) {
@@ -499,6 +508,10 @@ public class PlayCharacter {
         CRITICAL, ANTI_CRITICAL, CRITICAL_DAMAGE,
         DODGE, ANTI_DODGE,
         DEFENCE, MAGICAL_DEFENCE
+    }
+
+    public enum RoundStatus {
+        NORMAL, BLOCK, CRITICAL, BLOCK_BREAK, DODGE
     }
 
     public int valueOf(Stats stat) {
