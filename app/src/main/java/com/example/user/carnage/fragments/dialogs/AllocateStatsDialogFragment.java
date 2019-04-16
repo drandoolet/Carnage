@@ -1,5 +1,6 @@
 package com.example.user.carnage.fragments.dialogs;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -26,12 +27,13 @@ public class AllocateStatsDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 MainActivity.animateChangeWindow();
+                MainActivity.levelUp(getFragmentManager()); /*
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         MainActivity.levelUp(getFragmentManager());
                     }
-                }, MainActivity.getChangeAnimationDuration());
+                }, MainActivity.getChangeAnimationDuration()); */
             }
         });
 

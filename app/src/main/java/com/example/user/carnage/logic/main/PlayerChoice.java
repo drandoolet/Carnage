@@ -13,9 +13,10 @@ public class PlayerChoice {
     BodyPart.BodyPartNames defend_1;
     BodyPart.BodyPartNames defend_2;
 
-    private ArrayList<BodyPart.BodyPartNames> defended = new ArrayList<>(),
-            attacked = new ArrayList<>();
-    private SecureRandom random;
+    //private ArrayList<BodyPart.BodyPartNames> defended = new ArrayList<>(),
+    //        attacked = new ArrayList<>();
+    private ArrayList<BodyPart.BodyPartNames> defended, attacked;
+    private SecureRandom random = new SecureRandom();
 
     private int neural_atk_head, neural_atk_body, neural_atk_waist, neural_atk_legs;
     private int neural_def_head, neural_def_body, neural_def_waist, neural_def_legs;
@@ -88,6 +89,8 @@ public class PlayerChoice {
     }
 
     public PlayerChoice(int i) {
+        attacked = new ArrayList<>();
+        defended = new ArrayList<>();
         ArrayList<BodyPart.BodyPartNames> availableAtk = new ArrayList<>(Arrays.asList(BodyPart.BodyPartNames.getAll()));
         ArrayList<BodyPart.BodyPartNames> availableDef = new ArrayList<>(Arrays.asList(BodyPart.BodyPartNames.getAll()));
 

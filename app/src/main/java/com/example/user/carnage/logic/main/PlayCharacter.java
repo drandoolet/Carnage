@@ -156,6 +156,10 @@ public class PlayCharacter {
         System.out.println(name+" HP is now: "+hp);
     }
 
+    public void reduceHPby(int by) {
+        HP = (HP - by) > 0 ? (HP - by) : 0;
+    }
+
     public void receiveMagic(Skill skill) {
         setHP(getHP() + skill.getEffect());
     }

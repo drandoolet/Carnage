@@ -86,8 +86,12 @@ public class PlayCharacterHelper {
             case BLOCK_BREAK: criticalMag = enemy_crit_dmg * 1.5; break;
         }
 
-        return (int) ((enemy_power[0] + random.nextInt(enemy_power[1] - enemy_power[0]))
-                * criticalMag * bodyPart.getAdjustion());
+        int kick = (int) ((enemy_power[0] + random.nextInt(enemy_power[1] - enemy_power[0]))
+                * criticalMag * bodyPart.getAdjustion() - defence);
+
+        playerChar.reduceHPby(kick);
+
+        return kick;
     }
 
     private boolean hasDodged() {
@@ -101,10 +105,22 @@ public class PlayCharacterHelper {
         return defended.contains(attack);
     }
 
-    private static class Result {
+    public static class Result {
         private final int attack;
         private final PlayCharacter.RoundStatus roundStatus;
         private final BodyPart.BodyPartNames bodyPart;
+
+        public BodyPart.BodyPartNames getBodyPart() {
+            return bodyPart;
+        }
+
+        public int getAttack() {
+            return attack;
+        }
+
+        public PlayCharacter.RoundStatus getRoundStatus() {
+            return roundStatus;
+        }
 
         private Result (Builder builder) {
             attack = builder.result;

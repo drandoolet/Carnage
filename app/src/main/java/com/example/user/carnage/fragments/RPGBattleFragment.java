@@ -30,6 +30,7 @@ import com.example.user.carnage.animation.SkillsAnimator;
 import com.example.user.carnage.fragments.dialogs.GameOverDialogFragment;
 import com.example.user.carnage.logic.main.BodyPart;
 import com.example.user.carnage.logic.main.PlayCharacter;
+import com.example.user.carnage.logic.main.PlayCharacterHelper;
 import com.example.user.carnage.logic.main.PlayerChoice;
 import com.example.user.carnage.animation.AnimateGame.AnimationTypes;
 import com.example.user.carnage.logic.skills.Skill;
@@ -80,6 +81,8 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
 
     private int defCounterBound, atkCounterBound;
     private long currentAnimationDuration = 0L;
+
+    private PlayCharacterHelper playerHelper, enemyHelper;
 
 
     private Button testAnimButton;
@@ -188,6 +191,59 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         }
     };
 
+    private View.OnClickListener attackButtonListener2 = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (defCheckBoxCounter != defCounterBound || atkCheckBoxCounter != atkCounterBound) {
+                //throw new NullPointerException("thrown by if");
+                Toast.makeText(getContext(), R.string.toast_choose_atk, Toast.LENGTH_SHORT).show(); // TODO add placeh for 2/2 atk
+            } else {
+                setButtonsEnabled(false);
+                addRound(++roundCounter); // TODO check
+                final PlayerChoice plCh = new PlayerChoice(playerAttacked, playerDefended);
+                final PlayerChoice enCh = new PlayerChoice(1);
+                ArrayList<PlayCharacterHelper.Result> enemyResult = enemyHelper.handle(enCh, plCh);
+
+                for (PlayCharacterHelper.Result result : enemyResult) {
+                    totalDamage += result.getAttack();
+                    addLogText2(enemy, player, enemyResult);
+                    enemy_HP_bar.setProgress(enemy.getHP());
+                    enemy_hp_view.setText(Integer.toString(enemy.getHP()));
+
+                    if (enemy.getHP() > 0) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                ArrayList<PlayCharacterHelper.Result> playerResult
+                                        = playerHelper.handle(plCh, enCh);
+                                addLogText2(player, enemy, playerResult);
+                                player_hp_view.setText(new Integer(player.getHP()).toString());
+                                player_HP_bar.setProgress(player.getHP());
+
+                                if (player.getHP() <= 0) {
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            System.out.println("\n*** GAME OVER. YOU LOSE ***");
+                                            setGameOver(enemy.getName(), false);
+                                        }
+                                    }, currentAnimationDuration);
+                                } else {
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            setButtonsEnabled(true);
+                                            setArgsReadyForNextRound();
+                                        }
+                                    }, currentAnimationDuration);
+                                }
+                            }
+                        }, currentAnimationDuration);
+                    }
+                }
+            }
+        }
+    };
 
     private View.OnClickListener attackButtonListener = new View.OnClickListener() {
         @Override
@@ -270,6 +326,8 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
     private void setArgsReadyForNextRound() {
         selectedAtk = "";
         selectedDef = "";
+        playerAttacked.clear();
+        playerDefended.clear();
 
         player.clearBodyPartsSelection();
         enemy.clearBodyPartsSelection();
@@ -390,7 +448,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         for (CheckBox x : boxes) x.setOnCheckedChangeListener(defCheckBoxListener);
 
         attackButton = view.findViewById(R.id.buttonAttack);
-        attackButton.setOnClickListener(attackButtonListener);
+        attackButton.setOnClickListener(attackButtonListener2);
 
         skillsButton = view.findViewById(R.id.buttonSkills);
         //skillsButton.setOnClickListener(skillsListener); // TODO: create skills fragment
@@ -402,6 +460,9 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         });
 
         skillsFragmentContainer = view.findViewById(R.id.skillsFragmentContainer);
+
+        playerHelper = new PlayCharacterHelper(player, enemy);
+        enemyHelper = new PlayCharacterHelper(enemy, player);
 
         return view;
     }
@@ -436,12 +497,107 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         stats = en.getStats();
         String s2 = getString(R.string.battle_text_rpg_info, en.getName(), stats[0], stats[1], stats[2], stats[3], stats[4],
                 stats[5], stats[6], stats[7], stats[8], stats[9], stats[10], String.format(Locale.ENGLISH, "%.2f", en.getCriticalDmg()));
-        String s = s1 + s2;
-        return s;
+        return s1 + s2;
     }
 
-    public void setMagicLogText(@NonNull PlayCharacter character, @Nullable PlayCharacter enemy, @NonNull Skill skill) {
+    // character receives damage
+    // enemy attacks
+    // results are hits taken by character
+    private void addLogText2(final PlayCharacter character, PlayCharacter enemy, ArrayList<PlayCharacterHelper.Result> results) {
+        String text = "";
+        final ImageView imgToAnimate, playerImage;
+        final boolean isPlayer;
+        final TextView pointsTextView;
+        if (character == player) {
+            imgToAnimate = player_img;
+            playerImage = enemy_img;
+            isPlayer = false;
+            pointsTextView = player_points;
+        }
+        else {
+            imgToAnimate = enemy_img;
+            playerImage = player_img;
+            isPlayer = true;
+            pointsTextView = enemy_points;
+        }
 
+        for (final PlayCharacterHelper.Result result : results) {
+            switch (result.getRoundStatus()) {
+                case NORMAL:
+                    text = getString(R.string.battle_text_normal, enemy.getName(), result.getBodyPart(), result.getAttack());
+                    hits++;
+                    animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            animateGame.animateHit(imgToAnimate, isPlayer);
+                            pointsTextView.setText(String.format(Locale.ENGLISH, Integer.toString(-result.getAttack())));
+                            animateGame.animateDamagePoints(pointsTextView, isPlayer);
+                        }
+                    }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
+                    currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_HIT.getDuration();
+                    break;
+                case BLOCK:
+                    text = getString(R.string.battle_text_blocked, enemy.getName(), result.getBodyPart(), character.getName());
+                    blocks++;
+                    animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            animateGame.animateBlock(imgToAnimate, isPlayer);
+                            pointsTextView.setText(getString(R.string.battle_points_block));
+                            animateGame.animateDamagePoints(pointsTextView, isPlayer);
+                        }
+                    }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
+                    currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_BLOCK.getDuration();
+                    break;
+                case DODGE:
+                    text = getString(R.string.battle_text_dodged, enemy.getName(), result.getBodyPart(), character.getName());
+                    dodges++;
+                    animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            animateGame.animateDodge(imgToAnimate, isPlayer);
+                        }
+                    }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
+                    currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_DODGE.getDuration();
+                    break;
+                case CRITICAL:
+                    text = getString(R.string.battle_text_critical, enemy.getName(), result.getBodyPart(),
+                            character.getName(), result.getAttack());
+                    criticals++;
+                    animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            animateGame.animateCriticalHit(imgToAnimate, isPlayer);
+                            pointsTextView.setText(getString(R.string.battle_points_critical, -result.getAttack()));
+                            animateGame.animateDamagePoints(pointsTextView, isPlayer);
+                        }
+                    }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
+                    currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_CRITICAL.getDuration();
+                    break;
+                case BLOCK_BREAK:
+                    text = getString(R.string.battle_text_block_break, enemy.getName(), result.getBodyPart(),
+                            character.getName(), result.getAttack());
+                    blockBreaks++;
+                    animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            animateGame.animateBlockBreak(imgToAnimate, isPlayer);
+                            pointsTextView.setText(getString(R.string.battle_points_block_break, -result.getAttack()));
+                            animateGame.animateDamagePoints(pointsTextView, isPlayer);
+                        }
+                    }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
+                    currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_BLOCK_BREAK.getDuration();
+                    break;
+                default:
+                    text = '\n' + '\n' + "  ERROR in round " + roundCounter;
+            }
+            battle_textView.append(text);
+        }
     }
 
     private void addLogText(final PlayCharacter character, PlayCharacter enemy) { // TODO: add placeholders to strings.xml
@@ -615,6 +771,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 @Override
                 public void run() {
                     animateGame.animateDamagePoints(points, skill.isEffectOnPlayer());
+                    if (!skill.isEffectOnPlayer()) animateGame.animateHit(enemy_img, true);
                 }
             }, animDurationToPoints);
 
