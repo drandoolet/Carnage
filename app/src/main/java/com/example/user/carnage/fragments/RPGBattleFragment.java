@@ -169,6 +169,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 if (defCheckBoxCounter == defCounterBound) {
                     compoundButton.setChecked(false);
                 } else if (defCheckBoxCounter < defCounterBound && defCheckBoxCounter >= 0) {
+                    Toast.makeText(getContext(), "defCheckBoxCounter = "+defCheckBoxCounter, Toast.LENGTH_SHORT).show();
                     defCheckBoxCounter++;
                     selectedDef += text;
                     try {
@@ -204,19 +205,24 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 final PlayerChoice enCh = new PlayerChoice(1);
                 ArrayList<PlayCharacterHelper.Result> enemyResult = enemyHelper.handle(enCh, plCh);
 
+                int count = 0;
                 for (PlayCharacterHelper.Result result : enemyResult) {
+                    count++;
+                    System.out.println("starting Result#"+count);
                     totalDamage += result.getAttack();
-                    addLogText2(enemy, player, enemyResult);
+                    addLogText2(enemy, player, result);
                     enemy_HP_bar.setProgress(enemy.getHP());
                     enemy_hp_view.setText(Integer.toString(enemy.getHP()));
+                }
+                if (enemy.getHP() > 0) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ArrayList<PlayCharacterHelper.Result> playerResult
+                                    = playerHelper.handle(plCh, enCh);
 
-                    if (enemy.getHP() > 0) {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                ArrayList<PlayCharacterHelper.Result> playerResult
-                                        = playerHelper.handle(plCh, enCh);
-                                addLogText2(player, enemy, playerResult);
+                            for (PlayCharacterHelper.Result result : playerResult) {
+                                addLogText2(player, enemy, result);
                                 player_hp_view.setText(new Integer(player.getHP()).toString());
                                 player_HP_bar.setProgress(player.getHP());
 
@@ -228,18 +234,21 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                                             setGameOver(enemy.getName(), false);
                                         }
                                     }, currentAnimationDuration);
-                                } else {
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            setButtonsEnabled(true);
-                                            setArgsReadyForNextRound();
-                                        }
-                                    }, currentAnimationDuration);
+                                    break;
                                 }
                             }
-                        }, currentAnimationDuration);
-                    }
+                            if (player.getHP() > 0) {
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        setButtonsEnabled(true);
+                                        setArgsReadyForNextRound();
+                                    }
+                                }, currentAnimationDuration);
+                            }
+
+                        }
+                    }, currentAnimationDuration);
                 }
             }
         }
@@ -503,7 +512,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
     // character receives damage
     // enemy attacks
     // results are hits taken by character
-    private void addLogText2(final PlayCharacter character, PlayCharacter enemy, ArrayList<PlayCharacterHelper.Result> results) {
+    private void addLogText2(final PlayCharacter character, PlayCharacter enemy, final PlayCharacterHelper.Result result) {
         String text = "";
         final ImageView imgToAnimate, playerImage;
         final boolean isPlayer;
@@ -521,7 +530,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
             pointsTextView = enemy_points;
         }
 
-        for (final PlayCharacterHelper.Result result : results) {
+        //for (final PlayCharacterHelper.Result result : results) {
             switch (result.getRoundStatus()) {
                 case NORMAL:
                     text = getString(R.string.battle_text_normal, enemy.getName(), result.getBodyPart(), result.getAttack());
@@ -598,7 +607,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
             }
             battle_textView.append(text);
         }
-    }
+    //}
 
     private void addLogText(final PlayCharacter character, PlayCharacter enemy) { // TODO: add placeholders to strings.xml
         String text;
@@ -714,15 +723,22 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         for (CheckBox defButton : defButtons) {
             if (defButton.isChecked()) {
                 defButton.setChecked(false);
-                defCheckBoxCounter--;
             }
         }
         for (CheckBox atkButton : atkButtons) {
             if (atkButton.isChecked()) {
                 atkButton.setChecked(false);
-                atkCheckBoxCounter--;
             }
         }
+
+        defCheckBoxCounter = 0;
+        atkCheckBoxCounter = 0;
+
+        playerAttacked.clear();
+        playerDefended.clear();
+
+        System.out.println("checkbox counters after uncheck: "+defCheckBoxCounter+", "+atkCheckBoxCounter);
+        System.out.println("chb bounds: "+defCounterBound+", "+atkCounterBound);
     }
 
 

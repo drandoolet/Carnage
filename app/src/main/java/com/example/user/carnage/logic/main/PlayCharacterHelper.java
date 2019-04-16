@@ -44,6 +44,7 @@ public class PlayCharacterHelper {
     }
 
     public ArrayList<Result> handle(PlayerChoice plc, PlayerChoice enc) {
+        results.clear();
         for (BodyPart.BodyPartNames attack : enc.getAttacked()) {
             PlayCharacter.RoundStatus roundStatus;
 
@@ -80,14 +81,18 @@ public class PlayCharacterHelper {
     private int calculateKick(PlayCharacter.RoundStatus status, BodyPart.BodyPartNames bodyPart) {
         double criticalMag = 1.0;
 
+        System.out.println();
+
         switch (status) {
             case DODGE: criticalMag = 0.0; break;
+            case BLOCK: criticalMag = 0.0; break;
             case CRITICAL: criticalMag = enemy_crit_dmg; break;
             case BLOCK_BREAK: criticalMag = enemy_crit_dmg * 1.5; break;
         }
 
-        int kick = (int) ((enemy_power[0] + random.nextInt(enemy_power[1] - enemy_power[0]))
-                * criticalMag * bodyPart.getAdjustion() - defence);
+        int kick = (int) (((enemy_power[0] + random.nextInt(enemy_power[1] - enemy_power[0]))
+                * bodyPart.getAdjustion() - defence) * criticalMag);
+        System.out.println(enemyChar.getName()+" kicks: "+kick);
 
         playerChar.reduceHPby(kick);
 
