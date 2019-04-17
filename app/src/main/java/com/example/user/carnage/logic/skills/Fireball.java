@@ -9,8 +9,8 @@ public class Fireball extends Skill {
     public Fireball(PlayCharacter player, PlayCharacter enemy) {
         super(
                 new Builder(player, enemy, SkillTypes.FIREBALL)
-                        .setAddition(20.0)
-                        .setMagnification(3.0)
+                        .setAddition(5.0)
+                        .setMagnification(3.5)
                         .setMagnifiedStat(PlayCharacter.Stats.INTELLIGENCE)
                         .setAffectedSubstat(PlayCharacter.Substats.MAGICAL_DEFENCE)
                         .setDefBoundTaker(1)
