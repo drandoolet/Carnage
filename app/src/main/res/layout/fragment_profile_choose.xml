@@ -75,14 +75,13 @@
         android:layout_marginStart="8dp"
         android:gravity="center_vertical"
         android:lines="2"
-        android:text="TextView"
+        android:text="(unavailable)"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/profile2ImageButton"
         app:layout_constraintEnd_toEndOf="@+id/chooseProfileSubtitleTextView"
         app:layout_constraintStart_toEndOf="@+id/profile2ImageButton"
-        app:layout_constraintTop_toTopOf="@+id/profile2ImageButton"
-        tools:text="ы" />
+        app:layout_constraintTop_toTopOf="@+id/profile2ImageButton" />
 
     <Button
         android:id="@+id/profileChooseOKButton"

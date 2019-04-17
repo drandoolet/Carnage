@@ -387,15 +387,20 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         RPGBattleFragment fragment = (RPGBattleFragment) fragmentManager.findFragmentByTag("MAIN BATTLE FRAGMENT");
 
-        SkillsAnimator animator = new SkillsAnimator(skill, fragment);
+        if (skill == null) {
+            fragment.animateSkillsFragmentAppearance(false);
+            fragment.setAllEnabled(true);
+        } else {
+            SkillsAnimator animator = new SkillsAnimator(skill, fragment);
 
-        try (InputStream stream = getAssets().open(animator.imageFile)) {
-            Drawable img = Drawable.createFromStream(stream, "skill image");
-            fragment.skillEffect_img.setImageDrawable(img);
-        } catch (IOException e) {
-            Log.e(TAG, "error in onButtonSelected loading skill img: "+e);
+            try (InputStream stream = getAssets().open(animator.imageFile)) {
+                Drawable img = Drawable.createFromStream(stream, "skill image");
+                fragment.skillEffect_img.setImageDrawable(img);
+            } catch (IOException e) {
+                Log.e(TAG, "error in onButtonSelected loading skill img: "+e);
+            }
+            animator.start();
         }
-        animator.start();
     }
 
     public static String getProfileImage(String profile) {

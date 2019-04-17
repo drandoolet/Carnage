@@ -36,6 +36,8 @@ public class SkillsAnimator extends AnimateGame {
     public SkillsAnimator(Skill skill, RPGBattleFragment fragment) {
         this.skill = skill;
         this.imageView = fragment.skillEffect_img;
+        setAnimDurationToPoints(skill.getName());
+
         if (skill.isEffectOnPlayer()) {
             points = fragment.player_points;
         } else {
@@ -55,7 +57,6 @@ public class SkillsAnimator extends AnimateGame {
                 break;
             }
         }
-        setAnimDurationToPoints(skill.getName());
     }
 
     public void start() {
@@ -104,13 +105,14 @@ public class SkillsAnimator extends AnimateGame {
         ); */
         state2.setDuration(0).playTogether(
                 ObjectAnimator.ofFloat(imageView, View.ALPHA, 1, 0),
-                ObjectAnimator.ofFloat(imageView, View.TRANSLATION_X, 1f, 0f)
+                ObjectAnimator.ofFloat(imageView, View.TRANSLATION_X, 1f, 0f),
+                ObjectAnimator.ofFloat(imageView, View.TRANSLATION_Y, 1f, 0f)
         );
 
         set.playSequentially(
                 state1,
                 animateTranslation(imageView, enemyImg.getX()-imageView.getX(),
-                        (enemyImg.getBottom() - enemyImg.getTop())/(-2), DURATION_FIREBALL_2),
+                        (enemyImg.getBottom() - enemyImg.getTop())/(-2) + imageView.getHeight()/2, DURATION_FIREBALL_2),
                 animateChangeScale(imageView, 1f, 2f, DURATION_FIREBALL_3),
                 ObjectAnimator.ofFloat(imageView, View.ALPHA, 1, 0).setDuration(DURATION_FIREBALL_4),
                 state2

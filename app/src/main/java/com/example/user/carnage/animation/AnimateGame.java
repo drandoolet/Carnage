@@ -161,7 +161,7 @@ public class AnimateGame {
             set.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    view.setVisibility(View.GONE);
+                    view.setVisibility(View.INVISIBLE);
                     super.onAnimationEnd(animation);
                 }
             });

@@ -1,24 +1,29 @@
 package com.example.user.carnage.fragments;
 
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatImageButton;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.ImageButton;
 
 import com.example.user.carnage.MainActivity;
 import com.example.user.carnage.R;
-import com.example.user.carnage.animation.AnimateGame;
 import com.example.user.carnage.logic.skills.Fireball;
 import com.example.user.carnage.logic.skills.Skill;
 import com.example.user.carnage.logic.skills.SmallHeal;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 public class SkillsFragment extends Fragment {
-    private Button exitButton;
-    private AppCompatImageButton skillButton1, skillButton2;
+    private Button useSkillButton;
+    private AppCompatImageButton skillButton1, skillButton2, closeButton;
     private Skill skill;
 
     private int selectedSkillIdx = 0;
@@ -27,13 +32,22 @@ public class SkillsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_skills, container, false);
 
-        exitButton = view.findViewById(R.id.exitButton);
-        exitButton.setOnClickListener(new View.OnClickListener() {
+        useSkillButton = view.findViewById(R.id.exitButton);
+        useSkillButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 OnSelectedButtonListener listener = (OnSelectedButtonListener) getActivity();
                 listener.onButtonSelected(skill);
                 //container.setVisibility(View.GONE);
+            }
+        });
+
+        closeButton = view.findViewById(R.id.closeSkillsButton);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OnSelectedButtonListener listener = (OnSelectedButtonListener) getActivity();
+                listener.onButtonSelected(null);
             }
         });
 
@@ -54,6 +68,9 @@ public class SkillsFragment extends Fragment {
             }
         });
 
+        AsyncFileLoader loader = new AsyncFileLoader();
+        loader.execute(skillButton2);
+
         return view;
     }
 
@@ -71,4 +88,22 @@ public class SkillsFragment extends Fragment {
             }
         }
     };
+
+    private class AsyncFileLoader extends AsyncTask<ImageButton, Void, Drawable> {
+        @Override
+        protected void onPostExecute(Drawable drawable) {
+            skillButton2.setImageDrawable(drawable);
+        }
+
+        @Override
+        protected Drawable doInBackground(ImageButton ... buttons) {
+            try (InputStream stream = getActivity().getAssets().open("skill/Fireball.png")) {
+
+                return Drawable.createFromStream(stream, "skill image");
+            } catch (IOException e) {
+                Log.e("SKILLS FRAGMENT", "error loading skill img: "+e);
+            }
+            return null;
+        }
+    }
 }

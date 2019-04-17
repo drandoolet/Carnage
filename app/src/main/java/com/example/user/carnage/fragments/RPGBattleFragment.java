@@ -248,6 +248,14 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
 
                         }
                     }, currentAnimationDuration);
+                } else {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            System.out.println("\n*** GAME OVER. YOU WIN ***");
+                            setGameOver(player.getName(), true);
+                        }
+                    }, currentAnimationDuration);
                 }
             }
         }
@@ -785,10 +793,10 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    animateGame.animateDamagePoints(points, skill.isEffectOnPlayer());
                     if (!skill.isEffectOnPlayer()) animateGame.animateHit(enemy_img, true);
+                    animateGame.animateDamagePoints(points, skill.isEffectOnPlayer());
                 }
-            }, animDurationToPoints);
+            }, 0);
 
             defCounterBound -= skill.getBoundTakers()[0];
             atkCounterBound -= skill.getBoundTakers()[1];
