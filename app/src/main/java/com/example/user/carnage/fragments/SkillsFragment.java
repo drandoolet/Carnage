@@ -43,14 +43,14 @@ public class SkillsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 skill = new SmallHeal(MainActivity.player);
-                Toast.makeText(getContext(), "SmallHeal effect: "+skill.getEffect(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getContext(), "SmallHeal effect: "+skill.getEffect(), Toast.LENGTH_LONG).show();
             }
         });
         skillButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 skill = new Fireball(MainActivity.player, MainActivity.enemy);
-                Toast.makeText(getContext(), "Fireball effect: "+skill.getEffect(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getContext(), "Fireball effect: "+skill.getEffect(), Toast.LENGTH_LONG).show();
             }
         });
 

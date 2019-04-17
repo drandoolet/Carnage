@@ -46,7 +46,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
         if (enemyChar == null)
             return (int) (playerChar.valueOf(magnifiedStat) * magnification + addition);
 
-        return (int) (-playerChar.valueOf(magnifiedStat) * magnification + addition
+        return (int) -(playerChar.valueOf(magnifiedStat) * magnification + addition
                 - enemyChar.valueOf(affectedSubstat));
     }
 

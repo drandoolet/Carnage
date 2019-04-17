@@ -110,7 +110,7 @@ public class SkillsAnimator extends AnimateGame {
         set.playSequentially(
                 state1,
                 animateTranslation(imageView, enemyImg.getX()-imageView.getX(),
-                        (enemyImg.getBottom() - enemyImg.getTop())/2, DURATION_FIREBALL_2),
+                        (enemyImg.getBottom() - enemyImg.getTop())/(-2), DURATION_FIREBALL_2),
                 animateChangeScale(imageView, 1f, 2f, DURATION_FIREBALL_3),
                 ObjectAnimator.ofFloat(imageView, View.ALPHA, 1, 0).setDuration(DURATION_FIREBALL_4),
                 state2

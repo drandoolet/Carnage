@@ -169,7 +169,6 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 if (defCheckBoxCounter == defCounterBound) {
                     compoundButton.setChecked(false);
                 } else if (defCheckBoxCounter < defCounterBound && defCheckBoxCounter >= 0) {
-                    Toast.makeText(getContext(), "defCheckBoxCounter = "+defCheckBoxCounter, Toast.LENGTH_SHORT).show();
                     defCheckBoxCounter++;
                     selectedDef += text;
                     try {
@@ -780,7 +779,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 enemy.receiveMagic(skill);
                 enemy_HP_bar.setProgress(enemy.getHP());
                 enemy_hp_view.setText(Integer.toString(enemy.getHP()));
-                totalDamage += skill.getEffect();
+                totalDamage -= skill.getEffect(); // getEffect() returns negative int if damage and positive if heal
             }
 
             new Handler().postDelayed(new Runnable() {
@@ -794,6 +793,15 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
             defCounterBound -= skill.getBoundTakers()[0];
             atkCounterBound -= skill.getBoundTakers()[1];
 
+            if (enemy.getHP() <= 0) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("\n*** GAME OVER. YOU WIN ***");
+                        setGameOver(player.getName(), true);
+                    }
+                }, currentAnimationDuration);
+            }
         } else Toast.makeText(getContext(), "You cannot use this skill now", Toast.LENGTH_SHORT).show();
     }
 }
