@@ -10,7 +10,7 @@ import com.example.user.carnage.logic.skills.Skill;
 
 public class PlayCharacter {
     private int currentExp, level, availableStatPoints = 0;
-    private int maxHP;
+    private int maxHP, maxMP, maxSP;
     private int HP;
     private int MP;
     private int SP;
@@ -187,9 +187,27 @@ public class PlayCharacter {
     public String getName() {return name;}
     public int getHP() {return HP;}
     public int getSP() { return SP; }
-
     public int getMP() {
         return MP;
+    }
+
+    public int getMaxHP() {
+        return maxHP;
+    }
+
+    public int getMaxSP() {
+        return maxSP;
+    }
+
+    public int getMaxMP() {
+        return maxMP;
+    }
+
+    public int getMPPercent(int percent) {
+        return (int) (maxMP * percent/100);
+    }
+    public int getHPPercent(int percent) {
+        return (int) (maxHP * percent/100);
     }
 
     public String getStrPower() {return "("+power[0]+" - "+power[1]+")";}
@@ -452,7 +470,9 @@ public class PlayCharacter {
         int[] stats = statHandler.getStats();
         maxHP = stats[3];
         HP = stats[3];
+        maxSP = stats[4];
         SP = stats[4];
+        maxMP = stats[5];
         MP = stats[5];
         power[0] = stats[0];
         power[1] = stats[1];

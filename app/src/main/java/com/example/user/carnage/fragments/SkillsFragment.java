@@ -20,11 +20,16 @@ import com.example.user.carnage.logic.skills.SmallHeal;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
 
 public class SkillsFragment extends Fragment {
     private Button useSkillButton;
     private AppCompatImageButton skillButton1, skillButton2, closeButton;
     private Skill skill;
+
+    private HashMap<Skill, ImageButton> skillButtonMap;
 
     private int selectedSkillIdx = 0;
 
@@ -68,8 +73,17 @@ public class SkillsFragment extends Fragment {
             }
         });
 
+        skillButtonMap = new HashMap<>();
+        Stack<ImageButton> imageButtons = new Stack<>();
+        imageButtons.push(skillButton1);
+        imageButtons.push(skillButton2);
+
+        for (Skill skill : MainActivity.chosenSkillsSet.keySet()) {
+            skillButtonMap.put(skill, imageButtons.pop());
+        }
+
         AsyncFileLoader loader = new AsyncFileLoader();
-        loader.execute(skillButton2);
+        loader.execute(MainActivity.chosenSkillsSet);
 
         return view;
     }
@@ -89,21 +103,38 @@ public class SkillsFragment extends Fragment {
         }
     };
 
-    private class AsyncFileLoader extends AsyncTask<ImageButton, Void, Drawable> {
+    private void setImages(Map<Skill, Drawable> map) {
+        for (Skill skill : map.keySet()) {
+            skillButtonMap.get(skill).setImageDrawable(map.get(skill));
+        }
+    }
+
+    private class AsyncFileLoader extends AsyncTask<Map<Skill, String>, Void, Map<Skill, Drawable>> {
+
         @Override
-        protected void onPostExecute(Drawable drawable) {
-            skillButton2.setImageDrawable(drawable);
+        protected void onPreExecute() {
+
         }
 
         @Override
-        protected Drawable doInBackground(ImageButton ... buttons) {
-            try (InputStream stream = getActivity().getAssets().open("skill/Fireball.png")) {
+        protected Map<Skill, Drawable> doInBackground(Map<Skill, String>... maps) {
+            Map<Skill, String> map = maps[0];
+            Map<Skill, Drawable> resultMap = new HashMap<>();
+            int counter = 0;
 
-                return Drawable.createFromStream(stream, "skill image");
-            } catch (IOException e) {
-                Log.e("SKILLS FRAGMENT", "error loading skill img: "+e);
+            for (Skill skill : map.keySet()) {
+                try (InputStream stream = getActivity().getAssets().open(map.get(skill))) {
+                    resultMap.put(skill, Drawable.createFromStream(stream, "skill image #"+ ++counter));
+                } catch (IOException e) {
+                    Log.e("SKILLS FRAGMENT", "error loading skill img: "+e);
+                }
             }
-            return null;
+            return resultMap;
+        }
+
+        @Override
+        protected void onPostExecute(Map<Skill, Drawable> skillDrawableMap) {
+            setImages(skillDrawableMap);
         }
     }
 }

@@ -50,13 +50,13 @@ public class SkillsAnimator extends AnimateGame {
         switch (skill.getName()) {
             case FIREBALL: {
                 mainSet = animateFireBall();
-                imageFile = skill.getIcon();
                 break;
             } case HEAL_SMALL: {
-
+                mainSet = doNothing();
                 break;
             }
         }
+        imageFile = skill.getIcon();
     }
 
     public void start() {
@@ -64,6 +64,7 @@ public class SkillsAnimator extends AnimateGame {
         fragment.skillEffect_img.setVisibility(View.VISIBLE);
         //animDuration = mainSet.getDuration();
         points.setText(Integer.toString(skill.getEffect()));
+
         mainSet.start();
 
         mainSet.addListener(new AnimatorListenerAdapter() {
@@ -81,6 +82,14 @@ public class SkillsAnimator extends AnimateGame {
                 magicCallBack.magicUsed(skill, animDurationToPoints);
             }
         }, animDurationToPoints);
+    }
+
+    private AnimatorSet doNothing() {
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(
+                ObjectAnimator.ofFloat(imageView, View.TRANSLATION_X, 0, 0).setDuration(0)
+        );
+        return set;
     }
 
     private AnimatorSet animateFireBall() {

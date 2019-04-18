@@ -548,7 +548,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                         public void run() {
                             animateGame.animateHit(imgToAnimate, isPlayer);
                             pointsTextView.setText(String.format(Locale.ENGLISH, Integer.toString(-result.getAttack())));
-                            animateGame.animateDamagePoints(pointsTextView, isPlayer);
+                            animateGame.animateDamagePoints(pointsTextView, isPlayer, false);
                         }
                     }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
                     currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_HIT.getDuration();
@@ -562,7 +562,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                         public void run() {
                             animateGame.animateBlock(imgToAnimate, isPlayer);
                             pointsTextView.setText(getString(R.string.battle_points_block));
-                            animateGame.animateDamagePoints(pointsTextView, isPlayer);
+                            animateGame.animateDamagePoints(pointsTextView, isPlayer, false);
                         }
                     }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
                     currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_BLOCK.getDuration();
@@ -589,7 +589,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                         public void run() {
                             animateGame.animateCriticalHit(imgToAnimate, isPlayer);
                             pointsTextView.setText(getString(R.string.battle_points_critical, -result.getAttack()));
-                            animateGame.animateDamagePoints(pointsTextView, isPlayer);
+                            animateGame.animateDamagePoints(pointsTextView, isPlayer, false);
                         }
                     }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
                     currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_CRITICAL.getDuration();
@@ -604,7 +604,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                         public void run() {
                             animateGame.animateBlockBreak(imgToAnimate, isPlayer);
                             pointsTextView.setText(getString(R.string.battle_points_block_break, -result.getAttack()));
-                            animateGame.animateDamagePoints(pointsTextView, isPlayer);
+                            animateGame.animateDamagePoints(pointsTextView, isPlayer, false);
                         }
                     }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
                     currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_BLOCK_BREAK.getDuration();
@@ -643,7 +643,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                     public void run() {
                         animateGame.animateHit(imgToAnimate, isPlayer);
                         pointsTextView.setText(String.format(Locale.ENGLISH, Integer.toString(-character.getCurrentKick())));
-                        animateGame.animateDamagePoints(pointsTextView, isPlayer);
+                        animateGame.animateDamagePoints(pointsTextView, isPlayer, false);
                     }
                 }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
                 currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_HIT.getDuration();
@@ -657,7 +657,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                     public void run() {
                         animateGame.animateBlock(imgToAnimate, isPlayer);
                         pointsTextView.setText(getString(R.string.battle_points_block));
-                        animateGame.animateDamagePoints(pointsTextView, isPlayer);
+                        animateGame.animateDamagePoints(pointsTextView, isPlayer, false);
                     }
                 }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
                 currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_BLOCK.getDuration();
@@ -683,7 +683,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                     public void run() {
                         animateGame.animateCriticalHit(imgToAnimate, isPlayer);
                         pointsTextView.setText(getString(R.string.battle_points_critical, -character.getCurrentKick()));
-                        animateGame.animateDamagePoints(pointsTextView, isPlayer);
+                        animateGame.animateDamagePoints(pointsTextView, isPlayer, false);
                     }
                 }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
                 currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_CRITICAL.getDuration();
@@ -697,7 +697,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                     public void run() {
                         animateGame.animateBlockBreak(imgToAnimate, isPlayer);
                         pointsTextView.setText(getString(R.string.battle_points_block_break, -character.getCurrentKick()));
-                        animateGame.animateDamagePoints(pointsTextView, isPlayer);
+                        animateGame.animateDamagePoints(pointsTextView, isPlayer, false);
                     }
                 }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
                 currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_BLOCK_BREAK.getDuration();
@@ -794,7 +794,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 @Override
                 public void run() {
                     if (!skill.isEffectOnPlayer()) animateGame.animateHit(enemy_img, true);
-                    animateGame.animateDamagePoints(points, skill.isEffectOnPlayer());
+                    animateGame.animateDamagePoints(points, skill.isEffectOnPlayer(), skill.isEffectOnPlayer());
                 }
             }, 0);
 

@@ -28,10 +28,14 @@ import com.example.user.carnage.animation.SkillsAnimator;
 import com.example.user.carnage.fragments.SkillsFragment;
 import com.example.user.carnage.fragments.dialogs.WipeStatisticsDialogFragment;
 import com.example.user.carnage.logic.main.PlayCharacter;
+import com.example.user.carnage.logic.skills.Fireball;
 import com.example.user.carnage.logic.skills.Skill;
+import com.example.user.carnage.logic.skills.SmallHeal;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
         implements SkillsFragment.OnSelectedButtonListener, ProfileChooseFragment.OnProfileSelectedListener {
@@ -84,6 +88,9 @@ public class MainActivity extends AppCompatActivity
     public static Drawable player_image;
 
     private static ImageView changeImageView, changeImageView2;
+
+    public static HashMap<Skill, String> chosenSkillsSet;
+    public static ArrayList<Skill> skills;
 
 
 
@@ -423,6 +430,15 @@ public class MainActivity extends AppCompatActivity
         //transaction.replace(R.id.container, fragment, "MAIN BATTLE FRAGMENT");
         //transaction.addToBackStack(null);
         //transaction.commit();
+        skills = new ArrayList<>();
+        skills.add(new SmallHeal(player));
+        skills.add(new Fireball(player, enemy));
+
+        chosenSkillsSet = new HashMap<>();
+
+        for (Skill skill : skills) {
+            chosenSkillsSet.put(skill, skill.getIcon());
+        }
     }
 
     public static void animateChangeWindow() {

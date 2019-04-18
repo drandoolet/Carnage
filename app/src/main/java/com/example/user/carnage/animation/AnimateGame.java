@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.example.user.carnage.R;
+
 public class AnimateGame {
     protected final  long ANIMATE_ATTACK_DURATION_TRANSLATION_1 = 500;
     protected final  long ANIMATE_ATTACK_DURATION_TRANSLATION_2 = 100;
@@ -169,7 +171,10 @@ public class AnimateGame {
         set.start();
     }
 
-    public void animateDamagePoints(final View view, boolean isPlayer) {
+    public void animateDamagePoints(final View view, boolean isPlayer, boolean isHeal) {
+        TextView textView = (TextView) view;
+        textView.setTextColor(isHeal ? view.getContext().getColor(R.color.colorHealPoints) :
+                view.getContext().getColor(R.color.colorDamagePoints));
         AnimatorSet set = getAnimateDamagePointsSet(view, isPlayer);
         set.start();
         set.addListener(new AnimatorListenerAdapter() {

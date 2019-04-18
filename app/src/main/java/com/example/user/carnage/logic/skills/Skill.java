@@ -11,6 +11,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
     protected final PlayCharacter.Stats magnifiedStat;
     protected final PlayCharacter.Substats affectedSubstat;
     protected final int defBoundTaker, atkBoundTaker;
+    protected final int manaCost;
     protected final double magnification;
     protected final double addition;
     protected final boolean isEffectOnPlayer;
@@ -23,7 +24,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
                     double magnification, double addition,
                     PlayCharacter.Stats magnifiedStat, PlayCharacter.Substats affectedSubstat,
                     int defBoundTaker, int atkBoundTaker, boolean isEffectOnPlayer,
-                    SkillTypes name, String info, String icon) {
+                    int manaCost, SkillTypes name, String info, String icon) {
         playerChar = playCharacter;
         this.enemyChar = enemyChar;
         this.magnifiedStat = magnifiedStat;
@@ -35,6 +36,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
         this.defBoundTaker = defBoundTaker;
         this.name = name;
         this.info = info;
+        this.manaCost = manaCost;
         this.icon = icon;
     }
 
@@ -72,7 +74,6 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
         private final PlayCharacter player, enemy;
         private final SkillTypes skillType;
 
-        private String icon = "skill/Fireball.png";
         private PlayCharacter.Stats magnifiedStat = Stats.INTELLIGENCE;
         private PlayCharacter.Substats affectedSubstat = Substats.MAGICAL_DEFENCE;
         private int defBoundTaker = 0, atkBoundTaker = 0;
@@ -80,6 +81,8 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
         private double addition = 0;
         private boolean isEffectOnPlayer = false;
         private String info = "please replace with R.string value";
+        private int manaCost = 0;
+        private String icon = "skill/Fireball.png";
 
         public Builder(PlayCharacter player, PlayCharacter enemy, SkillTypes type) {
             this.player = player;
@@ -95,12 +98,11 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
             MAGNIFIED_STAT, AFFECTED_STAT,
             DEF_BOUND_TAKER, ATK_BOUND_TAKER,
             MAGNIFICATION, ADDITION,
-            IS_EFFECT_ON_PLAYER, INFO
+            IS_EFFECT_ON_PLAYER, INFO, MANA_COST
         }
 
-        public Builder setIcon(String s) {
-            icon = s;
-            return this;
+        public Builder setManaCost(int cost) {
+            manaCost = cost; return this;
         }
 
         public Builder setMagnifiedStat(Stats stat) {
@@ -141,6 +143,10 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
         public Builder setInfo(String s) {
             info = s;
             return this;
+        }
+
+        public Builder setIcon(String s) {
+            icon = s; return this;
         }
 
         public Builder setValue(Values value, Object o) {
@@ -194,6 +200,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
         defBoundTaker = builder.defBoundTaker;
         name = builder.skillType;
         info = builder.info;
+        manaCost = builder.manaCost;
         icon = builder.icon;
     }
 
