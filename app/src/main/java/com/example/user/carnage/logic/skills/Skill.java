@@ -6,7 +6,7 @@ import com.example.user.carnage.logic.main.PlayCharacter;
 import com.example.user.carnage.logic.main.PlayCharacter.*;
 
 public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
-    protected final PlayCharacter playerChar; // TODO: create Builder
+    protected final PlayCharacter playerChar;
     protected final PlayCharacter enemyChar;
     protected final PlayCharacter.Stats magnifiedStat;
     protected final PlayCharacter.Substats affectedSubstat;

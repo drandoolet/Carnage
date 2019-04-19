@@ -196,10 +196,11 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         public void onClick(View v) {
             if (defCheckBoxCounter != defCounterBound || atkCheckBoxCounter != atkCounterBound) {
                 //throw new NullPointerException("thrown by if");
-                Toast.makeText(getContext(), R.string.toast_choose_atk, Toast.LENGTH_SHORT).show(); // TODO add placeh for 2/2 atk
+                Toast.makeText(getContext(), getString(R.string.toast_choose_atk, defCounterBound, atkCounterBound),
+                        Toast.LENGTH_SHORT).show();
             } else {
                 setButtonsEnabled(false);
-                addRound(++roundCounter); // TODO check
+                addRound(++roundCounter); // TODO add rounds if magic used
                 final PlayerChoice plCh = new PlayerChoice(playerAttacked, playerDefended);
                 final PlayerChoice enCh = new PlayerChoice(1);
                 ArrayList<PlayCharacterHelper.Result> enemyResult = enemyHelper.handle(enCh, plCh);
@@ -467,7 +468,6 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         attackButton.setOnClickListener(attackButtonListener2);
 
         skillsButton = view.findViewById(R.id.buttonSkills);
-        //skillsButton.setOnClickListener(skillsListener); // TODO: create skills fragment
         skillsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -616,7 +616,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         }
     //}
 
-    private void addLogText(final PlayCharacter character, PlayCharacter enemy) { // TODO: add placeholders to strings.xml
+    private void addLogText(final PlayCharacter character, PlayCharacter enemy) {
         String text;
         final ImageView imgToAnimate, playerImage;
         final boolean isPlayer;

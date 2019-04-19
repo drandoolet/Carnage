@@ -361,7 +361,7 @@ public class PlayCharacter {
                 neural_attacked_legs++;
                 break;
         } /*
-        switch (plc.getDefend_1()) { // TODO: make 1 switch for def
+        switch (plc.getDefend_1()) {
             case HEAD : bpHead.setDefended(true); break;
             case BODY : bpBody.setDefended(true); break;
             case WAIST : bpWaist.setDefended(true); break;

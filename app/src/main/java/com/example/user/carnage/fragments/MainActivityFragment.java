@@ -258,7 +258,7 @@ public class MainActivityFragment extends Fragment {
 
 
 
-    private void setGameOver(String winner) { // TODO: check DialogFragment show() method
+    private void setGameOver(String winner) {
         MainActivity.setGameOverSharedPref(winner, roundCounter, hits, criticals, blockBreaks, blocks, dodges);
         if (MainActivity.trackStatistics) {
             System.out.println("*** Added to neural: ***\nsuccessful hits (4), received hits (4): "+Arrays.toString(enemy.getStatsForNeuralNet()));
@@ -289,7 +289,7 @@ public class MainActivityFragment extends Fragment {
         return s;
     }
 
-    private void addLogText(PlayCharacter character, PlayCharacter enemy) { // TODO: add placeholders to strings.xml
+    private void addLogText(PlayCharacter character, PlayCharacter enemy) {
         String text = battle_textView.getText().toString() +'\n'+'\n'
                 +character.getName()+ getString(R.string.battle_text_aims) +character.getTarget();
         String text2;

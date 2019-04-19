@@ -35,8 +35,6 @@ public class MenuChooseFragment extends Fragment {
 
     private Button testButton;
 
-    //public static PlayCharacter player, enemy; // TODO: replace static from here to MainActivity,  update links
-
     public MenuChooseFragment() {}
 
     @Nullable

@@ -19,7 +19,7 @@
     <string name="battle_text_critical">\n%1$s aims at %2$s, performing a critical damage! \n%3$s receives %4$d points of damage.\n</string>
     <string name="battle_text_block_break">\n%1$s aims at %2$s, breaking block! \n%3$s receives %4$d points of damage.\n</string>
     <string name="battle_text_receives">" receives "</string>
-    <string name="toast_choose_atk">Please select 2 DEFs and 1 ATK</string>
+    <string name="toast_choose_atk">Please select %1$d DEF(s) and %2$d ATK(s)</string>
     <string name="player_type_balanced">BALANCED</string>
     <string name="player_type_tank">TANK</string>
     <string name="player_type_berserker">BERSERKER</string>

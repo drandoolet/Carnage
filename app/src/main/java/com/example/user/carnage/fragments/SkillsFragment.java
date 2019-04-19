@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.user.carnage.MainActivity;
 import com.example.user.carnage.R;
@@ -27,9 +28,10 @@ import java.util.Stack;
 public class SkillsFragment extends Fragment {
     private Button useSkillButton;
     private AppCompatImageButton skillButton1, skillButton2, closeButton;
+    private TextView infoTextView;
     private Skill skill;
 
-    private HashMap<Skill, ImageButton> skillButtonMap;
+    private HashMap<ImageButton, Skill> skillButtonMap;
 
     private int selectedSkillIdx = 0;
 
@@ -58,20 +60,10 @@ public class SkillsFragment extends Fragment {
 
         skillButton1 = view.findViewById(R.id.skillButton1);
         skillButton2 = view.findViewById(R.id.skillButton2);
-        skillButton1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                skill = new SmallHeal(MainActivity.player);
-                //Toast.makeText(getContext(), "SmallHeal effect: "+skill.getEffect(), Toast.LENGTH_LONG).show();
-            }
-        });
-        skillButton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                skill = new Fireball(MainActivity.player, MainActivity.enemy);
-                //Toast.makeText(getContext(), "Fireball effect: "+skill.getEffect(), Toast.LENGTH_LONG).show();
-            }
-        });
+        infoTextView = view.findViewById(R.id.descriptionSkillTextView);
+
+        ImageButton[] skillButtons = {skillButton1, skillButton2};
+        for (ImageButton button : skillButtons) button.setOnClickListener(skillButtonsListener);
 
         skillButtonMap = new HashMap<>();
         Stack<ImageButton> imageButtons = new Stack<>();
@@ -79,7 +71,7 @@ public class SkillsFragment extends Fragment {
         imageButtons.push(skillButton2);
 
         for (Skill skill : MainActivity.chosenSkillsSet.keySet()) {
-            skillButtonMap.put(skill, imageButtons.pop());
+            skillButtonMap.put(imageButtons.pop(), skill);
         }
 
         AsyncFileLoader loader = new AsyncFileLoader();
@@ -95,17 +87,18 @@ public class SkillsFragment extends Fragment {
     private View.OnClickListener skillButtonsListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            int id = view.getId();
-            switch (id) {
-                case R.id.skillButton1 : selectedSkillIdx = 1; break;
-                case R.id.skillButton2 : selectedSkillIdx = 2; break;
-            }
+            skill = skillButtonMap.get((ImageButton) view);
+            infoTextView.setText(skill.getInfo());
         }
     };
 
     private void setImages(Map<Skill, Drawable> map) {
         for (Skill skill : map.keySet()) {
-            skillButtonMap.get(skill).setImageDrawable(map.get(skill));
+            for (ImageButton button : skillButtonMap.keySet()) {
+                if (skillButtonMap.get(button) == skill) {
+                    button.setImageDrawable(map.get(skill));
+                }
+            }
         }
     }
 

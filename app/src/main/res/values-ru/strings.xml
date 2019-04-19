@@ -19,7 +19,7 @@
     <string name="battle_text_critical">\n%1$s бьёт в %2$s, нанося критический удар! \n%3$s получает %4$d ед. урона.\n</string>
     <string name="battle_text_block_break">\n%1$s бьёт в %2$s, пробивая блок! \n%3$s получает %4$d ед. урона.\n</string>
     <string name="battle_text_receives">" получает "</string>
-    <string name="toast_choose_atk">Выберите 2 Защиты и 1 Атаку</string>
+    <string name="toast_choose_atk">Выберите блоков: %1$d, атак: %2$d</string>
     <string name="player_type_balanced">СБАЛАНСИРОВАННЫЙ</string>
     <string name="player_type_tank">ТАНК</string>
     <string name="player_type_berserker">БЕРСЕРК</string>

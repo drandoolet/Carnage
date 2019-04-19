@@ -96,7 +96,7 @@ public class LevelUpFragment extends Fragment {
         return view;
     }
 
-    private View.OnClickListener minusListener = new View.OnClickListener() { // TODO prohibit to set amount less than was
+    private View.OnClickListener minusListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             TextView textView;
