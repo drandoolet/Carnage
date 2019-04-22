@@ -159,9 +159,13 @@ public class PlayCharacter {
     public void reduceHPby(int by) {
         HP = (HP - by) > 0 ? (HP - by) : 0;
     }
+    public void reduceMPby(int by) {
+        MP = (MP - by) > 0 ? (MP - by) : 0;
+    }
 
     public void receiveMagic(Skill skill) {
-        setHP(getHP() + skill.getEffect());
+        reduceHPby(skill.getEffect());
+        reduceMPby(skill.getManaCost());
     }
 
     public int[] getPower() {

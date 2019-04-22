@@ -56,12 +56,14 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
     private TextView player_name, enemy_name, player_hp_view, enemy_hp_view,
             player_sp_view, player_mp_view, battle_textView;
     private TextView player_max_hp_view, enemy_max_hp_view, player_max_sp_view, player_max_mp_view;
+    private TextView enemy_MP_view, enemy_SP_view;
     public TextView player_points, enemy_points;
     private RadioGroup atk_group, def_group;
     private CheckBox checkBox_def_head, checkBox_def_body, checkBox_def_waist, checkBox_def_legs;
     private CheckBox checkBox_atk_head, checkBox_atk_body, checkBox_atk_waist, checkBox_atk_legs;
     private Button attackButton, skillsButton;
     private ProgressBar player_HP_bar, enemy_HP_bar, player_SP_bar, player_MP_bar;
+    private ProgressBar enemy_MP_bar, enemy_SP_bar;
     public ImageView player_img, enemy_img, skillEffect_img;
     private SecureRandom random;
     public LinearLayout skillsFragmentContainer;
@@ -204,14 +206,12 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 final PlayerChoice enCh = new PlayerChoice(1);
                 ArrayList<PlayCharacterHelper.Result> enemyResult = enemyHelper.handle(enCh, plCh);
 
-                int count = 0;
                 for (PlayCharacterHelper.Result result : enemyResult) {
-                    count++;
-                    System.out.println("starting Result#"+count);
                     totalDamage += result.getAttack();
-                    addLogText2(enemy, player, result);
-                    enemy_HP_bar.setProgress(enemy.getHP());
-                    enemy_hp_view.setText(Integer.toString(enemy.getHP()));
+                    //addLogText2(enemy, player, result);
+                    //enemy_HP_bar.setProgress(enemy.getHP());
+                    //enemy_hp_view.setText(Integer.toString(enemy.getHP()));
+                    updateGUI(enemy, player, result);
                 }
                 if (enemy.getHP() > 0) {
                     new Handler().postDelayed(new Runnable() {
@@ -221,9 +221,10 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                                     = playerHelper.handle(plCh, enCh);
 
                             for (PlayCharacterHelper.Result result : playerResult) {
-                                addLogText2(player, enemy, result);
-                                player_hp_view.setText(new Integer(player.getHP()).toString());
-                                player_HP_bar.setProgress(player.getHP());
+                                //addLogText2(player, enemy, result);
+                                //player_hp_view.setText(new Integer(player.getHP()).toString());
+                                //player_HP_bar.setProgress(player.getHP());
+                                updateGUI(player, enemy, result);
 
                                 if (player.getHP() <= 0) {
                                     new Handler().postDelayed(new Runnable() {
@@ -260,6 +261,31 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
             }
         }
     };
+
+    private void updateGUI(PlayCharacter playCh, PlayCharacter playEn, PlayCharacterHelper.Result result) {
+        TextView hpTV, mpTV, spTV;
+        ProgressBar hpPB, mpPB, spPB ;
+        if (playCh == player) {
+            hpTV = player_hp_view;
+            hpPB = player_HP_bar;
+            mpTV = player_mp_view;
+            mpPB = player_MP_bar;
+            spTV = player_sp_view;
+            spPB = player_SP_bar;
+
+            mpTV.setText(Integer.toString(playCh.getMP()));
+            spTV.setText(Integer.toString(playCh.getSP()));
+            mpPB.setProgress(playCh.getMP());
+            spPB.setProgress(playCh.getSP());
+        } else {
+            hpTV = enemy_hp_view;
+            hpPB = enemy_HP_bar;
+        }
+
+        addLogText2(playCh, playEn, result);
+        hpPB.setProgress(playCh.getHP());
+        hpTV.setText(Integer.toString(playCh.getHP()));
+    }
 
     private View.OnClickListener attackButtonListener = new View.OnClickListener() {
         @Override
