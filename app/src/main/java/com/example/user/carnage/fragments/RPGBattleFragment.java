@@ -73,7 +73,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
     private int roundCounter;
     private int maxHP_pl, maxHP_en, maxSP_pl, maxMP_pl;
     private String maxHP_pl_string;
-    private boolean isAtkSelected;
+    private boolean isAtkSelected, isRoundAdded;
 
     private PlayerChoice playerChoice, enemyChoice;
     private ArrayList<BodyPart.BodyPartNames> playerAttacked = new ArrayList<>();
@@ -202,7 +202,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                         Toast.LENGTH_SHORT).show();
             } else {
                 setButtonsEnabled(false);
-                addRound(++roundCounter); // TODO add rounds if magic used
+                addRound();
                 final PlayerChoice plCh = new PlayerChoice(playerAttacked, playerDefended);
                 final PlayerChoice enCh = new PlayerChoice(1);
                 ArrayList<PlayCharacterHelper.Result> enemyResult = enemyHelper.handle(enCh, plCh);
@@ -298,7 +298,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 } else {
                     setButtonsEnabled(false);
                     roundCounter++;
-                    addRound(roundCounter);
+                    addRound();
                     playerChoice = new PlayerChoice(selectedAtk, selectedDef);
                     enemyChoice = new PlayerChoice();
 
@@ -372,6 +372,8 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         playerAttacked.clear();
         playerDefended.clear();
 
+        isRoundAdded = false;
+
         player.clearBodyPartsSelection();
         enemy.clearBodyPartsSelection();
         CheckBox[] atkboxes = {checkBox_atk_head, checkBox_atk_body, checkBox_atk_waist, checkBox_atk_legs};
@@ -393,19 +395,19 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         animateGame = new AnimateGame();
         random = new SecureRandom();
 
-        defCheckBoxCounter = 0;
-        atkCheckBoxCounter = 0;
+        //defCheckBoxCounter = 0;
+        //atkCheckBoxCounter = 0;
         roundCounter = 0;
         hits = 0;
         criticals = 0;
         blockBreaks = 0;
         blocks = 0;
         dodges = 0;
-        selectedAtk = "";
-        selectedDef = "";
-        isAtkSelected = false;
-        defCounterBound = 2;
-        atkCounterBound = 1;
+        //selectedAtk = "";
+        //selectedDef = "";
+        //isAtkSelected = false;
+        //defCounterBound = 2;
+        //atkCounterBound = 1;
         totalDamage = 0;
 
         maxHP_pl = player.getHP();
@@ -506,11 +508,16 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         playerHelper = new PlayCharacterHelper(player, enemy);
         enemyHelper = new PlayCharacterHelper(enemy, player);
 
+        setArgsReadyForNextRound();
+
         return view;
     }
 
-    private void addRound(int roundCounter) {
-        battle_textView.append(getString(R.string.battle_round, roundCounter));
+    private void addRound() {
+        if (!isRoundAdded) {
+            battle_textView.append(getString(R.string.battle_round, ++roundCounter));
+            isRoundAdded = true;
+        }
     }
 
 
@@ -797,6 +804,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         // this method is used when it is needed to show dmg points
         if (defCounterBound - skill.getBoundTakers()[0] >= 0 &&
                 atkCounterBound - skill.getBoundTakers()[1] >= 0) {
+            addRound();
             final TextView points;
             if (skill.isEffectOnPlayer()) {
                 points = player_points;

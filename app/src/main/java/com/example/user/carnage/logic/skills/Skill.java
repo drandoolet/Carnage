@@ -11,7 +11,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
     protected final PlayCharacter.Stats magnifiedStat;
     protected final PlayCharacter.Substats affectedSubstat;
     protected final int defBoundTaker, atkBoundTaker;
-    protected final int manaCost;
+    protected final int manaCost, staminaCost;
     protected final double magnification;
     protected final double addition;
     protected final boolean isEffectOnPlayer;
@@ -24,7 +24,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
                     double magnification, double addition,
                     PlayCharacter.Stats magnifiedStat, PlayCharacter.Substats affectedSubstat,
                     int defBoundTaker, int atkBoundTaker, boolean isEffectOnPlayer,
-                    int manaCost, SkillTypes name, String info, String icon) {
+                    int manaCost, int staminaCost, SkillTypes name, String info, String icon) {
         playerChar = playCharacter;
         this.enemyChar = enemyChar;
         this.magnifiedStat = magnifiedStat;
@@ -37,6 +37,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
         this.name = name;
         this.info = info;
         this.manaCost = manaCost;
+        this.staminaCost = staminaCost;
         this.icon = icon;
     }
 
@@ -86,6 +87,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
         private boolean isEffectOnPlayer = false;
         private String info = "please replace with R.string value";
         private int manaCost = 0;
+        private int staminaCost = 0;
         private String icon = "skill/Fireball.png";
 
         public Builder(PlayCharacter player, PlayCharacter enemy, SkillTypes type) {
@@ -102,11 +104,15 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
             MAGNIFIED_STAT, AFFECTED_STAT,
             DEF_BOUND_TAKER, ATK_BOUND_TAKER,
             MAGNIFICATION, ADDITION,
-            IS_EFFECT_ON_PLAYER, INFO, MANA_COST
+            IS_EFFECT_ON_PLAYER, INFO, MANA_COST, STAMINA_COST
         }
 
         public Builder setManaCost(int cost) {
             manaCost = cost; return this;
+        }
+
+        public Builder setStaminaCost(int cost) {
+            staminaCost = cost; return this;
         }
 
         public Builder setMagnifiedStat(Stats stat) {
@@ -205,6 +211,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
         name = builder.skillType;
         info = builder.info;
         manaCost = builder.manaCost;
+        staminaCost = builder.staminaCost;
         icon = builder.icon;
     }
 
