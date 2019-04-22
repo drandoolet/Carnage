@@ -52,6 +52,10 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
                 - enemyChar.valueOf(affectedSubstat));
     }
 
+    public int getManaCost() {
+        return manaCost;
+    }
+
     public SkillTypes getName() { return name; }
 
     public boolean isEffectOnPlayer() {
