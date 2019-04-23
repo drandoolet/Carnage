@@ -641,6 +641,10 @@ public class AnimateGame {
     public enum AnimationTypes {
         ANIMATION_BATTLE_ATTACK(0) {
             @Override
+            public AnimatorSet getSet(View view, boolean isPlayer) {
+                return null;
+            }
+
             public AnimatorSet getSet(View view, View enView, boolean isPlayer) {
                 float translation_1_x = 30f * (isPlayer ? -1 : 1);
                 float translation_2_x = (isPlayer ?
@@ -663,7 +667,7 @@ public class AnimateGame {
         },
         ANIMATION_BATTLE_HIT(0) {
             @Override
-            public AnimatorSet getSet(View view, View enView, boolean isPlayer) {
+            public AnimatorSet getSet(View view, boolean isPlayer) {
                 AnimatorSet set = new AnimatorSet();
                 set.playSequentially(
                         animateHitOnReceivedDmg(view, Hit.DURATION_1, isPlayer),
@@ -675,7 +679,7 @@ public class AnimateGame {
         },
         ANIMATION_BATTLE_BLOCK(0) {
             @Override
-            public AnimatorSet getSet(View view, View enView, boolean isPlayer) {
+            public AnimatorSet getSet(View view, boolean isPlayer) {
                 float state_2 = Block.Float.STATE_2.getFloat() * (isPlayer ? 1 : -1);
                 float state_3 = Block.Float.STATE_3.getFloat() * (isPlayer ? 1 : -1);
                 AnimatorSet set = new AnimatorSet();
@@ -689,7 +693,7 @@ public class AnimateGame {
         },
         ANIMATION_BATTLE_DODGE(0) {
             @Override
-            public AnimatorSet getSet(View view, View enView, boolean isPlayer) {
+            public AnimatorSet getSet(View view, boolean isPlayer) {
                 float translation_x2 = Dodge.Float.TRANSLATION_X_2.getFloat() * (isPlayer ? 1 : -1);
                 float translation_x3 = Dodge.Float.TRANSLATION_X_3.getFloat() * (isPlayer ? 1 : -1);
                 float rotation_2 = Dodge.Float.ROTATION_2.getFloat() * (isPlayer ? -1 : 1);
@@ -721,7 +725,7 @@ public class AnimateGame {
         },
         ANIMATION_BATTLE_CRITICAL(0) {
             @Override
-            public AnimatorSet getSet(View view, View enView, boolean isPlayer) {
+            public AnimatorSet getSet(View view, boolean isPlayer) {
                 float rotation_2 = Critical.Float.ROTATION_2.getFloat() * (isPlayer ? 1 : -1);
                 float translation_2 = Critical.Float.TRANSLATION_X_1.getFloat() * (isPlayer ? 1 : -1);
                 AnimatorSet set = new AnimatorSet();
@@ -749,7 +753,7 @@ public class AnimateGame {
         },
         ANIMATION_BATTLE_BLOCK_BREAK(0) {
             @Override
-            public AnimatorSet getSet(View view, View enView, boolean isPlayer) {
+            public AnimatorSet getSet(View view, boolean isPlayer) {
                 float state_2 = BlockBreak.Float.STATE_2.getFloat() * (isPlayer ? 1 : -1);
                 float state_3 = BlockBreak.Float.STATE_3.getFloat() * (isPlayer ? 1 : -1);
                 float rotation_2 = BlockBreak.Float.ROTATION_2.getFloat() * (isPlayer ? 1 : -1);
@@ -783,13 +787,13 @@ public class AnimateGame {
         },
         ANIMATION_TEST(0) {
             @Override
-            public AnimatorSet getSet(View view, View enView, boolean isPlayer) {
+            public AnimatorSet getSet(View view, boolean isPlayer) {
                 return null;
             }
         },
         ANIMATION_PROFILE_SELECTED(0) {
             @Override
-            public AnimatorSet getSet(View view, View enView, boolean isPlayer) {
+            public AnimatorSet getSet(View view, boolean isPlayer) {
                 return null;
             }
 
@@ -841,7 +845,7 @@ public class AnimateGame {
 
         private long duration;
         private long fullDuration = 0;
-        abstract public AnimatorSet getSet(View view, View enView, boolean isPlayer);
+        abstract public AnimatorSet getSet(View view, boolean isPlayer);
 
         AnimationTypes(long dur) {
             duration = dur;

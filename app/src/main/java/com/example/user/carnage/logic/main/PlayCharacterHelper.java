@@ -1,5 +1,7 @@
 package com.example.user.carnage.logic.main;
 
+import com.example.user.carnage.animation.AnimateGame;
+
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.concurrent.BrokenBarrierException;
@@ -46,25 +48,25 @@ public class PlayCharacterHelper {
     public ArrayList<Result> handle(PlayerChoice plc, PlayerChoice enc) {
         results.clear();
         for (BodyPart.BodyPartNames attack : enc.getAttacked()) {
-            PlayCharacter.RoundStatus roundStatus;
+            AnimateGame.AnimationTypes roundStatus;
 
             if (hasDodged()) { // player dodged
                 System.out.println("RH "+playerChar.getName()+" dodged!");
-                roundStatus = PlayCharacter.RoundStatus.DODGE;
+                roundStatus = AnimateGame.AnimationTypes.ANIMATION_BATTLE_DODGE;
             } else if (hasBlocked(attack, plc.getDefended())) {
                 System.out.println("RH "+playerChar.getName()+" blocks!");
-                roundStatus = PlayCharacter.RoundStatus.BLOCK;
+                roundStatus = AnimateGame.AnimationTypes.ANIMATION_BATTLE_BLOCK;
                 if (hasReceivedCritical()) {
                     System.out.println("RH "+playerChar.getName()+"'s block is broken!");
-                    roundStatus = PlayCharacter.RoundStatus.BLOCK_BREAK;
+                    roundStatus = AnimateGame.AnimationTypes.ANIMATION_BATTLE_BLOCK_BREAK;
                 }
             } else {
                 if (hasReceivedCritical()) {
                     System.out.println("RH "+playerChar.getName()+" received a critical dmg!");
-                    roundStatus = PlayCharacter.RoundStatus.CRITICAL;
+                    roundStatus = AnimateGame.AnimationTypes.ANIMATION_BATTLE_CRITICAL;
                 } else {
                     System.out.println("RH "+playerChar.getName()+" receives a normal attack!");
-                    roundStatus = PlayCharacter.RoundStatus.NORMAL;
+                    roundStatus = AnimateGame.AnimationTypes.ANIMATION_BATTLE_HIT;
                 }
             }
 
@@ -78,16 +80,16 @@ public class PlayCharacterHelper {
         return results;
     }
 
-    private int calculateKick(PlayCharacter.RoundStatus status, BodyPart.BodyPartNames bodyPart) {
+    private int calculateKick(AnimateGame.AnimationTypes status, BodyPart.BodyPartNames bodyPart) {
         double criticalMag = 1.0;
 
         System.out.println();
 
         switch (status) {
-            case DODGE: criticalMag = 0.0; break;
-            case BLOCK: criticalMag = 0.0; break;
-            case CRITICAL: criticalMag = enemy_crit_dmg; break;
-            case BLOCK_BREAK: criticalMag = enemy_crit_dmg * 1.5; break;
+            case ANIMATION_BATTLE_DODGE: criticalMag = 0.0; break;
+            case ANIMATION_BATTLE_BLOCK: criticalMag = 0.0; break;
+            case ANIMATION_BATTLE_CRITICAL: criticalMag = enemy_crit_dmg; break;
+            case ANIMATION_BATTLE_BLOCK_BREAK: criticalMag = enemy_crit_dmg * 1.5; break;
         }
 
         int kick = (int) (((enemy_power[0] + random.nextInt(enemy_power[1] - enemy_power[0]))
@@ -113,7 +115,7 @@ public class PlayCharacterHelper {
 
     public static class Result {
         private final int attack;
-        private final PlayCharacter.RoundStatus roundStatus;
+        private final AnimateGame.AnimationTypes roundStatus;
         private final BodyPart.BodyPartNames bodyPart;
 
         public BodyPart.BodyPartNames getBodyPart() {
@@ -124,7 +126,7 @@ public class PlayCharacterHelper {
             return attack;
         }
 
-        public PlayCharacter.RoundStatus getRoundStatus() {
+        public AnimateGame.AnimationTypes getRoundStatus() {
             return roundStatus;
         }
 
@@ -136,7 +138,7 @@ public class PlayCharacterHelper {
 
         static class Builder {
             private int result;
-            private PlayCharacter.RoundStatus status;
+            private AnimateGame.AnimationTypes status;
             private BodyPart.BodyPartNames bodyPart;
 
             Builder() {}
@@ -147,7 +149,7 @@ public class PlayCharacterHelper {
             Builder setAttackResult(int result) {
                 this.result = result; return this;
             }
-            Builder setRoundStatus(PlayCharacter.RoundStatus status) {
+            Builder setRoundStatus(AnimateGame.AnimationTypes status) {
                 this.status = status; return this;
             }
             Builder setBodyPart(BodyPart.BodyPartNames name) {
