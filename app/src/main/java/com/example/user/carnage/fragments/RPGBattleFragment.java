@@ -1,5 +1,6 @@
 package com.example.user.carnage.fragments;
 
+import android.animation.AnimatorSet;
 import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.example.user.carnage.animation.AnimateGame;
 import com.example.user.carnage.MainActivity;
 import com.example.user.carnage.R;
 import com.example.user.carnage.animation.SkillsAnimator;
+import com.example.user.carnage.animation.TestThread;
 import com.example.user.carnage.fragments.dialogs.GameOverDialogFragment;
 import com.example.user.carnage.logic.main.BodyPart;
 import com.example.user.carnage.logic.main.PlayCharacter;
@@ -209,9 +211,6 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
 
                 for (PlayCharacterHelper.Result result : enemyResult) {
                     totalDamage += result.getAttack();
-                    //addLogText2(enemy, player, result);
-                    //enemy_HP_bar.setProgress(enemy.getHP());
-                    //enemy_hp_view.setText(Integer.toString(enemy.getHP()));
                     updateGUI(enemy, player, result);
                 }
                 if (enemy.getHP() > 0) {
@@ -382,7 +381,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         for (CheckBox box : boxes) box.setChecked(false);
         atkCheckBoxCounter = 0;
         defCheckBoxCounter = 0;
-        atkCounterBound = 1;
+        atkCounterBound = 2;
         defCounterBound = 2;
         currentAnimationDuration = 0L;
     }
@@ -509,6 +508,9 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         enemyHelper = new PlayCharacterHelper(enemy, player);
 
         setArgsReadyForNextRound();
+
+        TestThread testThread = new TestThread(animateGame, player_img, enemy_img);
+        testThread.start();
 
         return view;
     }
@@ -800,7 +802,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
 
 
     @Override
-    public void magicUsed(final Skill skill, long animDurationToPoints) {
+    public void magicUsed(final Skill skill, AnimatorSet set) {
         // this method is used when it is needed to show dmg points
         if (defCounterBound - skill.getBoundTakers()[0] >= 0 &&
                 atkCounterBound - skill.getBoundTakers()[1] >= 0) {
@@ -818,6 +820,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 points.setText(Integer.toString(skill.getEffect()));
                 battle_textView.append(getString(R.string.magic_attack, player.getName(), skill.getName(),
                         enemy.getName(), Math.abs(skill.getEffect())));
+                player.reduceMPby(skill.getManaCost());
                 enemy.receiveMagic(skill);
                 enemy_HP_bar.setProgress(enemy.getHP());
                 enemy_hp_view.setText(Integer.toString(enemy.getHP()));
@@ -845,6 +848,55 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 }, currentAnimationDuration);
             }
         } else Toast.makeText(getContext(), "You cannot use this skill now", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void animatePointsNow(Skill skill) {
+        final TextView points;
+        addRound();
+        if (skill.isEffectOnPlayer()) {
+            points = player_points;
+            points.setText(Integer.toString(skill.getEffect()));
+            battle_textView.append(getString(R.string.magic_heal, player.getName(), skill.getName(), skill.getEffect()));
+            player.receiveMagic(skill);
+            player_HP_bar.setProgress(player.getHP());
+            player_hp_view.setText(Integer.toString(player.getHP()));
+        } else {
+            points = enemy_points;
+            points.setText(Integer.toString(-skill.getEffect()));
+            battle_textView.append(getString(R.string.magic_attack, player.getName(), skill.getName(),
+                    enemy.getName(), Math.abs(skill.getEffect())));
+            player.reduceMPby(skill.getManaCost());
+            enemy.receiveMagic(skill);
+            enemy_HP_bar.setProgress(enemy.getHP());
+            enemy_hp_view.setText(Integer.toString(enemy.getHP()));
+            totalDamage += skill.getEffect();
+        }
+
+        if (!skill.isEffectOnPlayer()) animateGame.animateHit(enemy_img, true);
+        animateGame.animateDamagePoints(points, skill.isEffectOnPlayer(), skill.isEffectOnPlayer());
+
+        defCounterBound -= skill.getBoundTakers()[0];
+        atkCounterBound -= skill.getBoundTakers()[1];
+
+        if (enemy.getHP() <= 0) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("\n*** GAME OVER. YOU WIN ***");
+                    setGameOver(player.getName(), true);
+                }
+            }, currentAnimationDuration);
+        }
+    }
+
+    @Override
+    public boolean isSkillUsable(Skill skill) {
+        if (defCounterBound - skill.getBoundTakers()[0] >= 0 &&
+                atkCounterBound - skill.getBoundTakers()[1] >= 0) {
+             return (player.checkMP(skill.getManaCost()));
+        }
+        else return false;
     }
 }
 

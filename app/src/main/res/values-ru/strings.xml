@@ -70,4 +70,7 @@
     <string name="dialog_fragment_allocate_stats">Нераспределённых очков характеристик: %1$d. Хотите использовать их сейчас?</string>
     <string name="magic_attack">\n%1$s применяет %2$s. %3$s получает %4$d ед. урона.</string>
     <string name="magic_heal">\n%1$s применяет %2$s. Здоровье %1$s восстановлено на %3$d ед.</string>
+    <string name="magic_info_append">\nЭффект: %1$d\nТребования: Защита (%2$d), Атака (%3$d).\nЗатраты маны: %4$d.</string>
+    <string name="magic_info_fireball">Выстреливает пылающий шар в противника, нанося ему урон огнём.</string>
+    <string name="magic_info_heal">Восстанавливает некоторое количество здоровья.</string>
 </resources>

@@ -1,7 +1,7 @@
 package com.example.user.carnage.logic.skills;
 
 
-import com.example.user.carnage.animation.SkillsAnimator;
+import com.example.user.carnage.R;
 import com.example.user.carnage.logic.main.PlayCharacter;
 import com.example.user.carnage.logic.main.PlayCharacter.*;
 
@@ -15,7 +15,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
     protected final double magnification;
     protected final double addition;
     protected final boolean isEffectOnPlayer;
-    protected final String info;
+    protected final int info;
     protected final SkillTypes name;
     protected final String icon;
 
@@ -24,7 +24,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
                     double magnification, double addition,
                     PlayCharacter.Stats magnifiedStat, PlayCharacter.Substats affectedSubstat,
                     int defBoundTaker, int atkBoundTaker, boolean isEffectOnPlayer,
-                    int manaCost, int staminaCost, SkillTypes name, String info, String icon) {
+                    int manaCost, int staminaCost, SkillTypes name, int info, String icon) {
         playerChar = playCharacter;
         this.enemyChar = enemyChar;
         this.magnifiedStat = magnifiedStat;
@@ -49,8 +49,9 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
         if (enemyChar == null)
             return (int) (playerChar.valueOf(magnifiedStat) * magnification + addition);
 
-        return (int) -(playerChar.valueOf(magnifiedStat) * magnification + addition
+        int effect = (int) (playerChar.valueOf(magnifiedStat) * magnification + addition
                 - enemyChar.valueOf(affectedSubstat));
+        return (effect > 0) ? effect : 0;
     }
 
     public int getManaCost() {
@@ -63,7 +64,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
         return isEffectOnPlayer;
     }
 
-    public String getInfo() {
+    public int getInfo() {
         return info;
     }
 
@@ -85,12 +86,12 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
         private double magnification = 0;
         private double addition = 0;
         private boolean isEffectOnPlayer = false;
-        private String info = "please replace with R.string value";
+        private int info = R.string.app_name;
         private int manaCost = 0;
         private int staminaCost = 0;
         private String icon = "skill/Fireball.png";
 
-        public Builder(PlayCharacter player, PlayCharacter enemy, SkillTypes type) {
+         Builder(PlayCharacter player, PlayCharacter enemy, SkillTypes type) {
             this.player = player;
             this.enemy = enemy;
             skillType = type;
@@ -107,59 +108,59 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
             IS_EFFECT_ON_PLAYER, INFO, MANA_COST, STAMINA_COST
         }
 
-        public Builder setManaCost(int cost) {
+         Builder setManaCost(int cost) {
             manaCost = cost; return this;
         }
 
-        public Builder setStaminaCost(int cost) {
+         Builder setStaminaCost(int cost) {
             staminaCost = cost; return this;
         }
 
-        public Builder setMagnifiedStat(Stats stat) {
+         Builder setMagnifiedStat(Stats stat) {
             magnifiedStat = stat;
             return this;
         }
 
-        public Builder setAffectedSubstat(Substats substat) {
+         Builder setAffectedSubstat(Substats substat) {
             affectedSubstat = substat;
             return this;
         }
 
-        public Builder setDefBoundTaker(int i) {
+         Builder setDefBoundTaker(int i) {
             defBoundTaker = i;
             return this;
         }
 
-        public Builder setAtkBoundTaker(int i) {
+         Builder setAtkBoundTaker(int i) {
             atkBoundTaker = i;
             return this;
         }
 
-        public Builder setMagnification(double d) {
+         Builder setMagnification(double d) {
             magnification = d;
             return this;
         }
 
-        public Builder setAddition(double d) {
+         Builder setAddition(double d) {
             addition = d;
             return this;
         }
 
-        public Builder setIsEffectOnPlayer(boolean b) {
+         Builder setIsEffectOnPlayer(boolean b) {
             isEffectOnPlayer = b;
             return this;
         }
 
-        public Builder setInfo(String s) {
+         Builder setInfo(int s) {
             info = s;
             return this;
         }
 
-        public Builder setIcon(String s) {
+         Builder setIcon(String s) {
             icon = s; return this;
         }
 
-        public Builder setValue(Values value, Object o) {
+         Builder setValue(Values value, Object o) {
             switch (value) {
                 case MAGNIFIED_STAT:
                     if (o instanceof Stats) magnifiedStat = (Stats) o;
@@ -190,7 +191,7 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
                     else throw new IllegalArgumentException();
                     break;
                 case INFO:
-                    if (o instanceof String) info = (String) o;
+                    if (o instanceof String) info = (int) o;
                     else throw new IllegalArgumentException();
                     break;
             }

@@ -61,8 +61,8 @@ public class SkillsAnimator extends AnimateGame {
 
     public void start() {
         fragment.animateSkillsFragmentAppearance(false);
+
         fragment.skillEffect_img.setVisibility(View.VISIBLE);
-        //animDuration = mainSet.getDuration();
         points.setText(Integer.toString(skill.getEffect()));
 
         mainSet.start();
@@ -70,8 +70,6 @@ public class SkillsAnimator extends AnimateGame {
         mainSet.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                //skill.use();  // possibly better to use getEffect() in the fragment
-
                 fragment.setAllEnabled(true);
                 setDefault();
             }
@@ -79,9 +77,10 @@ public class SkillsAnimator extends AnimateGame {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                magicCallBack.magicUsed(skill, animDurationToPoints);
+                magicCallBack.animatePointsNow(skill);
             }
         }, animDurationToPoints);
+
     }
 
     private AnimatorSet doNothing() {
@@ -92,7 +91,7 @@ public class SkillsAnimator extends AnimateGame {
         return set;
     }
 
-    private AnimatorSet animateFireBall() {
+    public AnimatorSet animateFireBall() {
         AnimatorSet state1 = new AnimatorSet();
         AnimatorSet state2 = new AnimatorSet();
         AnimatorSet state3 = new AnimatorSet();
@@ -156,10 +155,12 @@ public class SkillsAnimator extends AnimateGame {
 
 
     public interface MagicCallBack {
-        void magicUsed(Skill skill, long animDurationToPoints);
+        boolean isSkillUsable(Skill skill);
+        void magicUsed(Skill skill, AnimatorSet set);
+        void animatePointsNow(Skill skill);
     }
 
-    public void registerMagicCallBack(MagicCallBack callBack) {
+    private void registerMagicCallBack(MagicCallBack callBack) {
         magicCallBack = callBack;
     }
 }

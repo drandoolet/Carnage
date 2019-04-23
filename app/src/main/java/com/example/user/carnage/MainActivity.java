@@ -390,7 +390,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onButtonSelected(Skill skill) {
+    public boolean onSkillButtonSelected(Skill skill) {
+        return (((RPGBattleFragment) getSupportFragmentManager()
+                .findFragmentByTag("MAIN BATTLE FRAGMENT"))
+                .isSkillUsable(skill));
+    }
+
+    @Override
+    public void onUseSkillButtonPressed(Skill skill) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         RPGBattleFragment fragment = (RPGBattleFragment) fragmentManager.findFragmentByTag("MAIN BATTLE FRAGMENT");
 
@@ -404,7 +411,7 @@ public class MainActivity extends AppCompatActivity
                 Drawable img = Drawable.createFromStream(stream, "skill image");
                 fragment.skillEffect_img.setImageDrawable(img);
             } catch (IOException e) {
-                Log.e(TAG, "error in onButtonSelected loading skill img: "+e);
+                Log.e(TAG, "error in onSkillButtonSelected loading skill img: "+e);
             }
             animator.start();
         }

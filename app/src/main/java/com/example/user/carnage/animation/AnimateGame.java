@@ -6,6 +6,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Point;
+import android.support.annotation.Nullable;
 import android.text.Layout;
 import android.util.Log;
 import android.view.Display;
@@ -15,79 +16,227 @@ import android.widget.TextView;
 
 import com.example.user.carnage.R;
 
+import java.util.HashMap;
+
 public class AnimateGame {
-    protected final  long ANIMATE_ATTACK_DURATION_TRANSLATION_1 = 500;
-    protected final  long ANIMATE_ATTACK_DURATION_TRANSLATION_2 = 100;
-    protected final  long ANIMATE_ATTACK_DURATION_TRANSLATION_3 = 300;
-    protected final  long ANIMATE_ATTACK_DURATION_TRANSLATION_4 = 500;
+    interface Durations {
+        long getDuration();
+    }
+    interface Floats {
+        float getFloat();
+    }
 
-    protected final long ANIMATE_DODGE_DURATION_JUMP_1 = 150;
-    protected final long ANIMATE_DODGE_DURATION_JUMP_2 = 200;
-    protected final long ANIMATE_DODGE_DURATION_JUMP_BACK = 500;
-    private final  float ANIMATE_DODGE_TRANSLATION_X1 = 0f;
-    private final float ANIMATE_DODGE_TRANSLATION_X2 = 40f;
-    private final float ANIMATE_DODGE_TRANSLATION_X3 = 80f;
-    private final float ANIMATE_DODGE_TRANSLATION_Y1 = 0f;
-    private final float ANIMATE_DODGE_TRANSLATION_Y2 = -30f;
-    private final float ANIMATE_DODGE_ROTATION_1 = 0.0f;
-    private final float ANIMATE_DODGE_ROTATION_2 = 30.0f;
+    enum Attack implements Durations {
+        TRANSLATION_DUR_1(500),
+        TRANSLATION_DUR_2(100),
+        TRANSLATION_DUR_3(300),
+        TRANSLATION_DUR_4(500);
 
-    protected final long ANIMATE_HIT_DURATION_1 = 300;
-    protected final long ANIMATE_HIT_DURATION_2 = 1000;
+        private final long duration;
+        Attack(long dur) { duration = dur; }
 
-    protected final long ANIMATE_CRIT_DURATION_ROTATE_1 = 500;
-    protected final long ANIMATE_CRIT_DURATION_ROTATE_2 = 1000;
-    protected final long ANIMATE_CRIT_DURATION_BACK = ANIMATE_CRIT_DURATION_ROTATE_2 / 2;
-    private final float ANIMATE_CRIT_ROTATION_1 = 0.0f;
-    private final float ANIMATE_CRIT_ROTATION_2 = 360.0f;
-    private final float ANIMATE_CRIT_TRANSLATION_X1 = 50f;
-    private final float ANIMATE_CRIT_TRANSLATION_Y1 = 0.0f;
-    private final float ANIMATE_CRIT_SCALE_1 = 1.0f;
-    private final float ANIMATE_CRIT_SCALE_2 = 0.6f;
+        @Override
+        public long getDuration() {
+            return duration;
+        }
+        public static long getDurationToPoints() {
+            return TRANSLATION_DUR_1.duration +TRANSLATION_DUR_2.duration;
+        }
+    }
 
-    protected final long ANIMATE_BLOCK_DURATION_SHAKE = 100;
-    private final float ANIMATE_BLOCK_STATE_1 = 0.0f;
-    private final float ANIMATE_BLOCK_STATE_2 = 15.0f;
-    private final float ANIMATE_BLOCK_STATE_3 = -15.0f;
+    enum Dodge {
+        ;
+        enum Duration implements Durations {
+            JUMP_1(150),
+            JUMP_2(200),
+            JUMP_BACK(500);
 
-    protected final long ANIMATE_BLOCK_BREAK_DURATION_SHAKE = 100;
-    private final float ANIMATE_BLOCK_BREAK_STATE_1 = 0.0f;
-    private final float ANIMATE_BLOCK_BREAK_STATE_2 = 15.0f;
-    private final float ANIMATE_BLOCK_BREAK_STATE_3 = -15.0f;
-    protected final long ANIMATE_BLOCK_BREAK_DURATION_ROTATE_1 = 500;
-    protected final long ANIMATE_BLOCK_BREAK_DURATION_ROTATE_2 = 1000;
-    protected final long ANIMATE_BLOCK_BREAK_DURATION_BACK = ANIMATE_BLOCK_BREAK_DURATION_ROTATE_2 / 2;
-    private final float ANIMATE_BLOCK_BREAK_ROTATION_1 = 0.0f;
-    private final float ANIMATE_BLOCK_BREAK_ROTATION_2 = 360.0f;
-    private final float ANIMATE_BLOCK_BREAK_TRANSLATION_X1 = 50f;
-    private final float ANIMATE_BLOCK_BREAK_TRANSLATION_X2 = 0.0f;
-    private final float ANIMATE_BLOCK_BREAK_TRANSLATION_Y1 = 0.0f;
-    private final float ANIMATE_BLOCK_BREAK_TRANSLATION_Y2 = 0.0f;
-    private final float ANIMATE_BLOCK_BREAK_SCALE_1 = 1.0f;
-    private final float ANIMATE_BLOCK_BREAK_SCALE_2 = 0.6f;
+            private final long duration;
+            Duration(long dur) { duration = dur; }
+            @Override
+            public long getDuration() {
+                return duration;
+            }
+        }
+        enum Float implements Floats {
+            TRANSLATION_X_1(0F),
+            TRANSLATION_X_2(40F),
+            TRANSLATION_X_3(80F),
+            TRANSLATION_Y_1(0F),
+            TRANSLATION_Y_2(-30F),
+            ROTATION_1(0F),
+            ROTATION_2(30F);
+
+            private final float value;
+            Float(float f) { value = f; }
+
+            @Override
+            public float getFloat() {
+                return value;
+            }
+        }
+
+        public static long getDurationToPoints() {
+            return Duration.JUMP_1.duration + Duration.JUMP_2.duration + Duration.JUMP_BACK.duration;
+        }
+    }
+
+    enum Hit implements Durations {
+        DURATION_1(300), DURATION_2(1000);
+
+        private final long duration;
+        Hit(long dur) { duration = dur; }
+
+        @Override
+        public long getDuration() {
+            return duration;
+        }
+        public static long getDurationToPoints() {
+            return DURATION_1.duration + DURATION_2.duration;
+        }
+    }
+
+    enum Critical {
+        ;
+        enum Duration implements Durations {
+            ROTATE_1(500), ROTATE_2(1000),
+            BACK(ROTATE_2.duration / 2);
+
+            private final long duration;
+            Duration(long dur) { duration = dur; }
+
+            @Override
+            public long getDuration() {
+                return duration;
+            }
+        }
+        enum Float implements Floats {
+            ROTATION_1(0F), ROTATION_2(360F),
+            TRANSLATION_X_1(50F), TRANSLATION_Y_1(0F),
+            SCALE_1(1F), SCALE_2(0.6F);
+
+            private final float value;
+            Float(float f) { value = f; }
+
+            @Override
+            public float getFloat() {
+                return value;
+            }
+        }
+
+        public static long getDurationToPoints() {
+            return Duration.ROTATE_1.duration + Duration.ROTATE_2.duration + Duration.BACK.duration;
+        }
+    }
+
+    enum Block {
+        ;
+        enum Duration implements Durations {
+            SHAKE_DURATION(100);
+
+            private final long duration;
+            Duration(long dur) { duration = dur; }
+
+            @Override
+            public long getDuration() {
+                return duration;
+            }
+        }
+        enum Float implements Floats {
+            STATE_1(0f), STATE_2(15f), STATE_3(-15f);
+
+            private final float value;
+            Float(float f) { value = f; }
+
+            @Override
+            public float getFloat() {
+                return value;
+            }
+        }
+        public static long getDurationToPoints() {
+            return Duration.SHAKE_DURATION.duration * 3;
+        }
+    }
+
+    enum BlockBreak {
+        ;
+        enum Duration implements Durations {
+            SHAKE(100),
+            ROTATION_1(500), ROTATION_2(1000),
+            BACK(ROTATION_2.duration / 2);
+
+            private final long duration;
+            Duration(long dur) { duration = dur; }
+
+            @Override
+            public long getDuration() {
+                return duration;
+            }
+        }
+        enum Float implements Floats {
+            STATE_1(0F), STATE_2(15F), STATE_3(-15F),
+            ROTATION_1(0F), ROTATION_2(360F),
+            TRANSLATION_X_1(50F), TRANSLATION_X_2(0F),
+            TRANSLATION_Y_1(0F), TRANSLATION_Y_2(0F),
+            SCALE_1(1F), SCALE_2(0.6F);
+
+            private final float value;
+            Float(float f) { value = f; }
+
+            @Override
+            public float getFloat() {
+                return value;
+            }
+        }
+        public static long getDurationToPoints() {
+            return Duration.SHAKE.duration*2 + Duration.ROTATION_1.duration
+                    + Duration.ROTATION_2.duration + Duration.BACK.duration;
+        }
+    }
+
+    enum ProfileChoose implements Durations {
+        DURATION(1000), WAIT(300), UP(600);
+
+        private final long duration;
+        ProfileChoose(long dur) { duration = dur; }
+
+        @Override
+        public long getDuration() {
+            return duration;
+        }
+
+        public static long getDurationToFadeOut() {
+            return DURATION.duration + WAIT.duration;
+        }
+        public static long getTotalDuration() {
+            return DURATION.duration + WAIT.duration + UP.duration;
+        }
+    }
+
+    private static final Durations NULL_DURATION = new Durations() {
+        @Override
+        public long getDuration() {
+            return 0;
+        }
+    };
 
     protected final long ANIMATE_SKILLS_FRAGMENT_DURATION = 400;
-
-    protected final long ANIMATE_PROFILE_CHOOSE_DURATION = 1000;
-    protected final long ANIMATE_PROFILE_CHOOSE_DURATION_WAIT = 300;
-    protected final long ANIMATE_PROFILE_CHOOSE_DURATION_UP = 600;
 
     protected long ANIMATE_POINTS_DURATION_1 = 200;
     protected long ANIMATE_POINTS_DURATION_2 = 1000;
 
     public AnimateGame() {
-        AnimationTypes.ANIMATION_BATTLE_ATTACK.setDuration(ANIMATE_ATTACK_DURATION_TRANSLATION_1 + ANIMATE_ATTACK_DURATION_TRANSLATION_2);
-        AnimationTypes.ANIMATION_BATTLE_DODGE.setDuration(ANIMATE_DODGE_DURATION_JUMP_1 + ANIMATE_DODGE_DURATION_JUMP_2 + ANIMATE_DODGE_DURATION_JUMP_BACK);
-        AnimationTypes.ANIMATION_BATTLE_HIT.setDuration(ANIMATE_HIT_DURATION_1 + ANIMATE_HIT_DURATION_2);
-        AnimationTypes.ANIMATION_BATTLE_CRITICAL.setDuration(ANIMATE_CRIT_DURATION_ROTATE_1 + ANIMATE_CRIT_DURATION_ROTATE_2 + ANIMATE_CRIT_DURATION_BACK);
-        AnimationTypes.ANIMATION_BATTLE_BLOCK.setDuration(ANIMATE_BLOCK_DURATION_SHAKE *3);
-        AnimationTypes.ANIMATION_BATTLE_BLOCK_BREAK.setDuration(ANIMATE_BLOCK_BREAK_DURATION_SHAKE *2
-                + ANIMATE_BLOCK_BREAK_DURATION_ROTATE_1 + ANIMATE_BLOCK_BREAK_DURATION_ROTATE_2 + ANIMATE_BLOCK_BREAK_DURATION_BACK);
-        AnimationTypes.ANIMATION_PROFILE_SELECTED.setDuration(ANIMATE_PROFILE_CHOOSE_DURATION + ANIMATE_PROFILE_CHOOSE_DURATION_WAIT);
-        AnimationTypes.ANIMATION_PROFILE_SELECTED.setFullDuration(ANIMATE_PROFILE_CHOOSE_DURATION + ANIMATE_PROFILE_CHOOSE_DURATION_WAIT + ANIMATE_PROFILE_CHOOSE_DURATION_UP);
+        AnimationTypes.ANIMATION_BATTLE_ATTACK.setDuration(Attack.getDurationToPoints());
+        AnimationTypes.ANIMATION_BATTLE_DODGE.setDuration(Dodge.getDurationToPoints());
+        AnimationTypes.ANIMATION_BATTLE_HIT.setDuration(Hit.getDurationToPoints());
+        AnimationTypes.ANIMATION_BATTLE_CRITICAL.setDuration(Critical.getDurationToPoints());
+        AnimationTypes.ANIMATION_BATTLE_BLOCK.setDuration(Block.getDurationToPoints());
+        AnimationTypes.ANIMATION_BATTLE_BLOCK_BREAK.setDuration(BlockBreak.getDurationToPoints());
+        AnimationTypes.ANIMATION_PROFILE_SELECTED.setDuration(ProfileChoose.getDurationToFadeOut());
+        AnimationTypes.ANIMATION_PROFILE_SELECTED.setFullDuration(ProfileChoose.getTotalDuration());
 
-        long minDuration = ANIMATE_ATTACK_DURATION_TRANSLATION_1 + ANIMATE_ATTACK_DURATION_TRANSLATION_2
-                + ANIMATE_ATTACK_DURATION_TRANSLATION_3 + ANIMATE_ATTACK_DURATION_TRANSLATION_4;
+        long minDuration = Attack.TRANSLATION_DUR_1.duration + Attack.TRANSLATION_DUR_2.duration
+                + Attack.TRANSLATION_DUR_3.duration + Attack.TRANSLATION_DUR_4.duration;
 
         AnimationTypes types[] = {AnimationTypes.ANIMATION_BATTLE_DODGE, AnimationTypes.ANIMATION_BATTLE_HIT,
                 AnimationTypes.ANIMATION_BATTLE_CRITICAL, AnimationTypes.ANIMATION_BATTLE_BLOCK, AnimationTypes.ANIMATION_BATTLE_BLOCK_BREAK};
@@ -127,13 +276,13 @@ public class AnimateGame {
             scale2 = 1f;
         }
 
-        state1.setDuration(ANIMATE_PROFILE_CHOOSE_DURATION).playTogether(
-                animateTranslation(view, translation_x, translation_y, 0),
-                animateChangeScale(view, scale1, scale2, 0)
+        state1.setDuration(ProfileChoose.DURATION.getDuration()).playTogether(
+                animateTranslation(view, translation_x, translation_y, NULL_DURATION),
+                animateChangeScale(view, scale1, scale2, NULL_DURATION)
         );
 
         for (View view1 : viewsToFade) {
-            state1.setDuration(ANIMATE_PROFILE_CHOOSE_DURATION).playTogether(
+            state1.setDuration(ProfileChoose.DURATION.getDuration()).playTogether(
                     ObjectAnimator.ofFloat(view1, View.ALPHA, (isChosen? 1:0), (isChosen? 0:1))
             );
         }
@@ -141,8 +290,10 @@ public class AnimateGame {
         if (isChosen) {
             set.playSequentially(
                     state1,
-                    ObjectAnimator.ofFloat(view, View.ALPHA, 1, 1).setDuration(ANIMATE_PROFILE_CHOOSE_DURATION_WAIT),
-                    ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, view.getTop()/(-2)).setDuration(ANIMATE_PROFILE_CHOOSE_DURATION_UP)
+                    ObjectAnimator.ofFloat(view, View.ALPHA, 1, 1)
+                            .setDuration(ProfileChoose.WAIT.getDuration()),
+                    ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, view.getTop()/(-2))
+                            .setDuration(ProfileChoose.UP.getDuration())
             );
         }
         set.playTogether(
@@ -156,7 +307,7 @@ public class AnimateGame {
         float f1 = (b ? 0 : 1);
         float f2 = (b ? 1 : 0);
         set.setDuration(ANIMATE_SKILLS_FRAGMENT_DURATION).playTogether(
-                animateChangeScale(view, f1, f2, 0),
+                animateChangeScale(view, f1, f2, NULL_DURATION),
                 ObjectAnimator.ofFloat(view, View.ALPHA, f1, f2)
         );
         if (!b) {
@@ -201,13 +352,13 @@ public class AnimateGame {
         );
         state2.setDuration(ANIMATE_POINTS_DURATION_2).playTogether(
                 ObjectAnimator.ofFloat(view, View.ALPHA, 1.0f, 0.3f),
-                animateTranslation(view, ANIMATE_POINTS_TRANSLATION_X, ANIMATE_POINTS_TRANSLATION_Y, 0),
+                animateTranslation(view, ANIMATE_POINTS_TRANSLATION_X, ANIMATE_POINTS_TRANSLATION_Y, NULL_DURATION),
                 ObjectAnimator.ofFloat(view, View.SCALE_X, 1.0f, 0.7f),
                 ObjectAnimator.ofFloat(view, View.SCALE_Y, 1.0f, 0.7f)
         );
         state3.setDuration(0).playTogether(
                 ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 0f),
-                animateTranslation(view, 0f, 0f, 0)
+                animateTranslation(view, 0f, 0f, NULL_DURATION)
         );
         set.playSequentially(state1, state2, state3);
         return set;
@@ -225,36 +376,60 @@ public class AnimateGame {
         AnimatorSet set = new AnimatorSet();
 
         set.playSequentially(
-                animateTranslation(view, translation_1_x, translation_1_y, ANIMATE_ATTACK_DURATION_TRANSLATION_1),
-                animateTranslation(view, translation_2_x, translation_2_y, ANIMATE_ATTACK_DURATION_TRANSLATION_2),
-                animateTranslation(view, translation_1_x, translation_1_y, ANIMATE_ATTACK_DURATION_TRANSLATION_3),
-                animateTranslation(view, 0f, 0f, ANIMATE_ATTACK_DURATION_TRANSLATION_4)
+                animateTranslation(view, translation_1_x, translation_1_y, Attack.TRANSLATION_DUR_1),
+                animateTranslation(view, translation_2_x, translation_2_y, Attack.TRANSLATION_DUR_2),
+                animateTranslation(view, translation_1_x, translation_1_y, Attack.TRANSLATION_DUR_3),
+                animateTranslation(view, 0f, 0f, Attack.TRANSLATION_DUR_4)
         );
         set.start();
     }
 
+    public AnimatorSet getAnimateAttack(View view, View enView, boolean isPlayer) {
+        float translation_1_x = 30f * (isPlayer ? -1 : 1);
+        float translation_2_x = (isPlayer ?
+                (enView.getLeft() + enView.getWidth()*0.3f) - view.getRight()
+                : (enView.getRight() - enView.getWidth()*0.3f) - view.getLeft());
+        float translation_3_x = (isPlayer ? enView.getLeft() - view.getRight()-30f : enView.getRight() - view.getLeft()+30f);
+        float translation_1_y = -Math.abs(translation_1_x / 2);
+        float translation_2_y = 0f;
+        float translation_3_y = -Math.abs(translation_3_x / 2);
+        AnimatorSet set = new AnimatorSet();
+
+        set.playSequentially(
+                animateTranslation(view, translation_1_x, translation_1_y, Attack.TRANSLATION_DUR_1),
+                animateTranslation(view, translation_2_x, translation_2_y, Attack.TRANSLATION_DUR_2),
+                animateTranslation(view, translation_1_x, translation_1_y, Attack.TRANSLATION_DUR_3),
+                animateTranslation(view, 0f, 0f, Attack.TRANSLATION_DUR_4)
+        );
+        return set;
+    }
+
     public void animateDodge(View view, boolean playerOrEnemy) {
-        float translation_x2 = ANIMATE_DODGE_TRANSLATION_X2 * (playerOrEnemy ? 1 : -1);
-        float translation_x3 = ANIMATE_DODGE_TRANSLATION_X3 * (playerOrEnemy ? 1 : -1);
-        float rotation_2 = ANIMATE_DODGE_ROTATION_2 * (playerOrEnemy ? -1 : 1);
+        float translation_x2 = Dodge.Float.TRANSLATION_X_2.getFloat() * (playerOrEnemy ? 1 : -1);
+        float translation_x3 = Dodge.Float.TRANSLATION_X_3.getFloat() * (playerOrEnemy ? 1 : -1);
+        float rotation_2 = Dodge.Float.ROTATION_2.getFloat() * (playerOrEnemy ? -1 : 1);
         setAnimating(true);
         AnimatorSet set = new AnimatorSet();
         AnimatorSet jump = new AnimatorSet();
         AnimatorSet jump1 = new AnimatorSet();
-        jump.setDuration(ANIMATE_DODGE_DURATION_JUMP_1).playTogether(
-                ObjectAnimator.ofFloat(view, View.TRANSLATION_X, ANIMATE_DODGE_TRANSLATION_X1, translation_x2),
-                ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, ANIMATE_DODGE_TRANSLATION_Y1, ANIMATE_DODGE_TRANSLATION_Y2),
-                ObjectAnimator.ofFloat(view, View.ROTATION, ANIMATE_DODGE_ROTATION_1, rotation_2)
+        jump.setDuration(Dodge.Duration.JUMP_1.getDuration()).playTogether(
+                ObjectAnimator.ofFloat(view, View.TRANSLATION_X,
+                        Dodge.Float.TRANSLATION_X_1.getFloat(), translation_x2),
+                ObjectAnimator.ofFloat(view, View.TRANSLATION_Y,
+                        Dodge.Float.TRANSLATION_Y_1.getFloat(), Dodge.Float.TRANSLATION_Y_2.getFloat()),
+                ObjectAnimator.ofFloat(view, View.ROTATION, Dodge.Float.ROTATION_1.getFloat(), rotation_2)
         );
-        jump1.setDuration(ANIMATE_DODGE_DURATION_JUMP_2).playTogether(
+        jump1.setDuration(Dodge.Duration.JUMP_2.getDuration()).playTogether(
                 ObjectAnimator.ofFloat(view, View.TRANSLATION_X, translation_x2, translation_x3),
-                ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, ANIMATE_DODGE_TRANSLATION_Y2, ANIMATE_DODGE_TRANSLATION_Y1),
-                ObjectAnimator.ofFloat(view, View.ROTATION, rotation_2, ANIMATE_DODGE_ROTATION_1)
+                ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, Dodge.Float.TRANSLATION_Y_2.getFloat(),
+                        Dodge.Float.TRANSLATION_Y_1.getFloat()),
+                ObjectAnimator.ofFloat(view, View.ROTATION, rotation_2, Dodge.Float.ROTATION_1.getFloat())
         );
 
         set.playSequentially(
                 jump, jump1,
-                ObjectAnimator.ofFloat(view, View.TRANSLATION_X, translation_x3, ANIMATE_DODGE_TRANSLATION_X1).setDuration(ANIMATE_DODGE_DURATION_JUMP_BACK)
+                ObjectAnimator.ofFloat(view, View.TRANSLATION_X, translation_x3,
+                        Dodge.Float.TRANSLATION_X_1.getFloat()).setDuration(Dodge.Duration.JUMP_BACK.getDuration())
         );
         set.addListener(animListener);
         set.start();
@@ -263,100 +438,110 @@ public class AnimateGame {
     public void animateHit(View view, boolean playerOrEnemy) {
         AnimatorSet set = new AnimatorSet();
         set.playSequentially(
-                animateHitOnReceivedDmg(view, ANIMATE_HIT_DURATION_1, playerOrEnemy),
-                animateHitOnRecoverFromDmg(view, ANIMATE_HIT_DURATION_2, playerOrEnemy)
+                animateHitOnReceivedDmg(view, Hit.DURATION_1, playerOrEnemy),
+                animateHitOnRecoverFromDmg(view, Hit.DURATION_2, playerOrEnemy)
 
         );
         set.start();
     }
 
     public void animateCriticalHit(View view, boolean isPlayer) {
-        float rotation_2 = ANIMATE_CRIT_ROTATION_2 * (isPlayer ? 1 : -1);
-        float translation_2 = ANIMATE_CRIT_TRANSLATION_X1 * (isPlayer ? 1 : -1);
+        float rotation_2 = Critical.Float.ROTATION_2.getFloat() * (isPlayer ? 1 : -1);
+        float translation_2 = Critical.Float.TRANSLATION_X_1.getFloat() * (isPlayer ? 1 : -1);
         AnimatorSet set = new AnimatorSet();
         AnimatorSet state1 = new AnimatorSet();
         AnimatorSet state2 = new AnimatorSet();
-        state1.setDuration(ANIMATE_CRIT_DURATION_ROTATE_1).playTogether(
-                animateTranslation(view, translation_2, ANIMATE_CRIT_TRANSLATION_Y1, 0),
-                animateRotation(view, ANIMATE_CRIT_ROTATION_1, rotation_2, 0),
-                animateChangeScale(view, ANIMATE_CRIT_SCALE_1, ANIMATE_CRIT_SCALE_2, 0)
+        state1.setDuration(Critical.Duration.ROTATE_1.getDuration()).playTogether(
+                animateTranslation(view, translation_2,
+                        Critical.Float.TRANSLATION_Y_1.getFloat(), NULL_DURATION),
+                animateRotation(view, Critical.Float.ROTATION_1.getFloat(),
+                        rotation_2, NULL_DURATION),
+                animateChangeScale(view, Critical.Float.SCALE_1.getFloat(),
+                        Critical.Float.SCALE_2.getFloat(), NULL_DURATION)
         );
-        state2.setDuration(ANIMATE_CRIT_DURATION_ROTATE_2).playTogether(
-                animateRotation(view, rotation_2, ANIMATE_CRIT_ROTATION_1, 0),
-                animateChangeScale(view, ANIMATE_CRIT_SCALE_2, ANIMATE_CRIT_SCALE_1, 0)
+        state2.setDuration(Critical.Duration.ROTATE_2.getDuration()).playTogether(
+                animateRotation(view, rotation_2, Critical.Float.ROTATION_1.getFloat(), NULL_DURATION),
+                animateChangeScale(view, Critical.Float.SCALE_2.getFloat(),
+                        Critical.Float.SCALE_1.getFloat(), NULL_DURATION)
         );
         set.playSequentially(
                 state1, state2,
-                animateTranslation(view, 0f, 0f, ANIMATE_CRIT_DURATION_BACK)
+                animateTranslation(view, 0f, 0f, Critical.Duration.BACK)
         );
         set.start();
     }
 
     public void animateBlock(View view, boolean isPlayer) {
-        float state_2 = ANIMATE_BLOCK_STATE_2 * (isPlayer ? 1 : -1);
-        float state_3 = ANIMATE_BLOCK_STATE_3 * (isPlayer ? 1 : -1);
+        float state_2 = Block.Float.STATE_2.getFloat() * (isPlayer ? 1 : -1);
+        float state_3 = Block.Float.STATE_3.getFloat() * (isPlayer ? 1 : -1);
         AnimatorSet set = new AnimatorSet();
         set.playSequentially(
-                animateRotation(view, ANIMATE_BLOCK_STATE_1, state_2, ANIMATE_BLOCK_DURATION_SHAKE),
-                animateRotation(view, state_2, state_3, ANIMATE_BLOCK_DURATION_SHAKE),
-                animateRotation(view, state_3, ANIMATE_BLOCK_STATE_1, ANIMATE_BLOCK_DURATION_SHAKE)
+                animateRotation(view, Block.Float.STATE_1.getFloat(), state_2, Block.Duration.SHAKE_DURATION),
+                animateRotation(view, state_2, state_3, Block.Duration.SHAKE_DURATION),
+                animateRotation(view, state_3, Block.Float.STATE_2.getFloat(), Block.Duration.SHAKE_DURATION)
         );
         set.start();
     }
 
     public void animateBlockBreak(View view, boolean isPlayer) {
-        float state_2 = ANIMATE_BLOCK_BREAK_STATE_2 * (isPlayer ? 1 : -1);
-        float state_3 = ANIMATE_BLOCK_BREAK_STATE_3 * (isPlayer ? 1 : -1);
-        float rotation_2 = ANIMATE_BLOCK_BREAK_ROTATION_2 * (isPlayer ? 1 : -1);
-        float translation_x1 = ANIMATE_BLOCK_BREAK_TRANSLATION_X1 * (isPlayer ? 1 : -1);
+        float state_2 = BlockBreak.Float.STATE_2.getFloat() * (isPlayer ? 1 : -1);
+        float state_3 = BlockBreak.Float.STATE_3.getFloat() * (isPlayer ? 1 : -1);
+        float rotation_2 = BlockBreak.Float.ROTATION_2.getFloat() * (isPlayer ? 1 : -1);
+        float translation_x1 = BlockBreak.Float.TRANSLATION_X_1.getFloat() * (isPlayer ? 1 : -1);
         AnimatorSet set = new AnimatorSet();
         AnimatorSet state1 = new AnimatorSet();
         AnimatorSet state2 = new AnimatorSet();
-        state1.setDuration(ANIMATE_BLOCK_BREAK_DURATION_ROTATE_1).playTogether(
-                animateTranslation(view, translation_x1, ANIMATE_BLOCK_BREAK_TRANSLATION_Y1, 0),
-                animateRotation(view, ANIMATE_BLOCK_BREAK_ROTATION_1, rotation_2, 0),
-                animateChangeScale(view, ANIMATE_BLOCK_BREAK_SCALE_1, ANIMATE_BLOCK_BREAK_SCALE_2, 0)
+        state1.setDuration(BlockBreak.Duration.ROTATION_1.getDuration()).playTogether(
+                animateTranslation(view, translation_x1,
+                        BlockBreak.Float.TRANSLATION_Y_1.getFloat(), NULL_DURATION),
+                animateRotation(view, BlockBreak.Float.ROTATION_1.getFloat(),
+                        rotation_2, NULL_DURATION),
+                animateChangeScale(view, BlockBreak.Float.SCALE_1.getFloat(),
+                        BlockBreak.Float.SCALE_2.getFloat(), NULL_DURATION)
         );
-        state2.setDuration(ANIMATE_BLOCK_BREAK_DURATION_ROTATE_2).playTogether(
-                animateRotation(view, rotation_2, ANIMATE_BLOCK_BREAK_ROTATION_1, 0),
-                animateChangeScale(view, ANIMATE_BLOCK_BREAK_SCALE_2, ANIMATE_BLOCK_BREAK_SCALE_1, 0)
+        state2.setDuration(BlockBreak.Duration.ROTATION_2.getDuration()).playTogether(
+                animateRotation(view, rotation_2, BlockBreak.Float.ROTATION_1.getFloat(),
+                        NULL_DURATION),
+                animateChangeScale(view, BlockBreak.Float.SCALE_2.getFloat(),
+                        BlockBreak.Float.SCALE_1.getFloat(), NULL_DURATION)
         );
         set.playSequentially(
-                animateRotation(view, ANIMATE_BLOCK_BREAK_STATE_1, state_2, ANIMATE_BLOCK_BREAK_DURATION_SHAKE),
-                animateRotation(view, state_2, state_3, ANIMATE_BLOCK_BREAK_DURATION_SHAKE),
+                animateRotation(view, BlockBreak.Float.STATE_1.getFloat(), state_2, BlockBreak.Duration.SHAKE),
+                animateRotation(view, state_2, state_3, BlockBreak.Duration.SHAKE),
                 state1, state2,
-                animateTranslation(view, ANIMATE_BLOCK_BREAK_TRANSLATION_X2, ANIMATE_BLOCK_BREAK_TRANSLATION_Y2, ANIMATE_BLOCK_BREAK_DURATION_BACK)
+                animateTranslation(view, BlockBreak.Float.TRANSLATION_X_2.getFloat(),
+                        BlockBreak.Float.TRANSLATION_Y_2.getFloat(), BlockBreak.Duration.BACK)
         );
         set.start();
     }
 
-    protected AnimatorSet animateChangeScale(View view, float f1, float f2, long dur) {
+    protected static AnimatorSet animateChangeScale(View view, float f1, float f2, Durations dur) {
         AnimatorSet set = new AnimatorSet();
-        set.setDuration(dur).playTogether(
+        set.setDuration(dur.getDuration()).playTogether(
                 ObjectAnimator.ofFloat(view, View.SCALE_X, f1, f2),
                 ObjectAnimator.ofFloat(view, View.SCALE_Y, f1, f2)
         );
         return set;
     }
 
-    protected AnimatorSet animateRotation(View view, float f1, float f2, long dur) {
+    protected static AnimatorSet animateRotation(View view, float f1, float f2, Durations dur) {
         AnimatorSet set = new AnimatorSet();
-        set.setDuration(dur).playTogether(
+        set.setDuration(dur.getDuration()).playTogether(
                 ObjectAnimator.ofFloat(view, View.ROTATION, f1, f2)
         );
         return set;
     }
 
-    protected AnimatorSet animateTranslation(View view, float x, float y, long dur) {
+    protected static AnimatorSet animateTranslation(View view, float x, float y, Durations dur) {
         AnimatorSet set = new AnimatorSet();
-            set.setDuration(dur).playTogether(
+            set.setDuration(dur.getDuration()).playTogether(
                     ObjectAnimator.ofFloat(view, View.TRANSLATION_X, x),
                     ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, y)
             );
         return set;
     }
 
-    protected AnimatorSet animateHitOnReceivedDmg(View view, long dur, boolean playerOrEnemy) {
+    protected AnimatorSet animateHitOnReceivedDmg(View view, Durations dur, boolean playerOrEnemy) {
         float rotation1 = 0.0f;
         float rotation2 = 45.0f * (playerOrEnemy ? 1 : -1);
         float scale1 = 1.0f;
@@ -372,7 +557,7 @@ public class AnimateGame {
         return set;
     }
 
-    protected AnimatorSet animateHitOnRecoverFromDmg(View view, long dur, boolean playerOrEnemy) {
+    protected AnimatorSet animateHitOnRecoverFromDmg(View view, Durations dur, boolean playerOrEnemy) {
         float rotation1 = 0.0f;
         float rotation2 = 45.0f * (playerOrEnemy ? 1 : -1);
         float scale1 = 1.0f;
@@ -405,18 +590,123 @@ public class AnimateGame {
         return isAnimating;
     }
 
+    public AnimationSetsWithDurations getAnimatorSet(AnimationTypes type, View view, @Nullable View enView, boolean playerOrEnemy) {
+        AnimatorSet set;
+
+        switch (type) {
+            case ANIMATION_BATTLE_ATTACK: {
+                set = getAnimateAttack(view, enView, playerOrEnemy);
+                break;
+            }
+            case ANIMATION_BATTLE_HIT: {
+                set = new AnimatorSet();
+                set.playSequentially(
+                        animateHitOnReceivedDmg(view, Hit.DURATION_1, playerOrEnemy),
+                        animateHitOnRecoverFromDmg(view, Hit.DURATION_2, playerOrEnemy)
+                );
+                break;
+            }
+            default: {
+                set = new AnimatorSet();
+                set.playSequentially(
+                        animateHitOnReceivedDmg(view, Hit.DURATION_1, playerOrEnemy),
+                        animateHitOnRecoverFromDmg(view, Hit.DURATION_2, playerOrEnemy)
+
+                );
+                break;
+            }
+        }
+        AnimationSetsWithDurations durSet = new AnimationSetsWithDurations(set, type.getDuration());
+        return durSet;
+    }
+
+    class AnimationSetsWithDurations {
+        private final AnimatorSet set;
+        private final long duration;
+
+        AnimationSetsWithDurations(AnimatorSet set, long duration) {
+            this.set = set;
+            this.duration = duration;
+        }
+
+        public AnimatorSet getSet() {
+            return set;
+        }
+
+        public long getDuration() {
+            return duration;
+        }
+    }
+
     public enum AnimationTypes {
-        ANIMATION_BATTLE_ATTACK(0),
-        ANIMATION_BATTLE_HIT(0),
-        ANIMATION_BATTLE_BLOCK(0),
-        ANIMATION_BATTLE_DODGE(0),
-        ANIMATION_BATTLE_CRITICAL(0),
-        ANIMATION_BATTLE_BLOCK_BREAK(0),
-        ANIMATION_TEST(0),
-        ANIMATION_PROFILE_SELECTED(0);
+        ANIMATION_BATTLE_ATTACK(0) {
+            @Override
+            public AnimatorSet getSet(View view, View enView, boolean isPlayer) {
+                float translation_1_x = 30f * (isPlayer ? -1 : 1);
+                float translation_2_x = (isPlayer ?
+                        (enView.getLeft() + enView.getWidth()*0.3f) - view.getRight()
+                        : (enView.getRight() - enView.getWidth()*0.3f) - view.getLeft());
+                float translation_3_x = (isPlayer ? enView.getLeft() - view.getRight()-30f : enView.getRight() - view.getLeft()+30f);
+                float translation_1_y = -Math.abs(translation_1_x / 2);
+                float translation_2_y = 0f;
+                float translation_3_y = -Math.abs(translation_3_x / 2);
+                AnimatorSet set = new AnimatorSet();
+
+                set.playSequentially(
+                        animateTranslation(view, translation_1_x, translation_1_y, Attack.TRANSLATION_DUR_1),
+                        animateTranslation(view, translation_2_x, translation_2_y, Attack.TRANSLATION_DUR_2),
+                        animateTranslation(view, translation_1_x, translation_1_y, Attack.TRANSLATION_DUR_3),
+                        animateTranslation(view, 0f, 0f, Attack.TRANSLATION_DUR_4)
+                );
+                return set;
+            }
+        },
+        ANIMATION_BATTLE_HIT(0) {
+            @Override
+            public AnimatorSet getSet(View view, View enView, boolean isPlayer) {
+                return null;
+            }
+        },
+        ANIMATION_BATTLE_BLOCK(0) {
+            @Override
+            public AnimatorSet getSet(View view, View enView, boolean isPlayer) {
+                return null;
+            }
+        },
+        ANIMATION_BATTLE_DODGE(0) {
+            @Override
+            public AnimatorSet getSet(View view, View enView, boolean isPlayer) {
+                return null;
+            }
+        },
+        ANIMATION_BATTLE_CRITICAL(0) {
+            @Override
+            public AnimatorSet getSet(View view, View enView, boolean isPlayer) {
+                return null;
+            }
+        },
+        ANIMATION_BATTLE_BLOCK_BREAK(0) {
+            @Override
+            public AnimatorSet getSet(View view, View enView, boolean isPlayer) {
+                return null;
+            }
+        },
+        ANIMATION_TEST(0) {
+            @Override
+            public AnimatorSet getSet(View view, View enView, boolean isPlayer) {
+                return null;
+            }
+        },
+        ANIMATION_PROFILE_SELECTED(0) {
+            @Override
+            public AnimatorSet getSet(View view, View enView, boolean isPlayer) {
+                return null;
+            }
+        };
 
         private long duration;
         private long fullDuration = 0;
+        abstract public AnimatorSet getSet(View view, View enView, boolean isPlayer);
 
         AnimationTypes(long dur) {
             duration = dur;

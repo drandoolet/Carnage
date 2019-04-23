@@ -156,16 +156,48 @@ public class PlayCharacter {
         System.out.println(name+" HP is now: "+hp);
     }
 
-    public void reduceHPby(int by) {
-        HP = (HP - by) > 0 ? (HP - by) : 0;
+    public void restoreHPby(int by) {
+        HP = (HP + by) > maxHP ? maxHP : (HP + by);
+    }
+
+    public void restoreMPby(int by) {
+        MP = (MP + by) > maxMP ? maxMP : (MP + by);
+    }
+    public void restoreSPby(int by) {
+        SP = (SP + by) > maxSP ? maxSP : (SP + by);
+    }
+
+     boolean reduceHPby(int by) {
+        if ((HP - by) > 0) {
+            HP = HP - by;
+            return true;
+        } else {
+            HP = 0;
+            return false;
+        }
     }
     public void reduceMPby(int by) {
-        MP = (MP - by) > 0 ? (MP - by) : 0;
+            MP = MP - by;
+    }
+     boolean reduceSPby(int by) {
+        if ((SP - by) > 0) {
+            SP = SP - by;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public boolean checkMP(int mp) {
+        return (MP - mp) >= 0;
     }
 
     public void receiveMagic(Skill skill) {
-        reduceHPby(skill.getEffect());
-        reduceMPby(skill.getManaCost());
+        if (skill.isEffectOnPlayer()) {
+            reduceMPby(skill.getManaCost());
+            restoreHPby(skill.getEffect());
+        } else {
+            reduceHPby(skill.getEffect());
+        }
     }
 
     public int[] getPower() {

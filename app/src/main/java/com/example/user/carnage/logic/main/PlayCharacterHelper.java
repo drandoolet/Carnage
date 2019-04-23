@@ -92,6 +92,7 @@ public class PlayCharacterHelper {
 
         int kick = (int) (((enemy_power[0] + random.nextInt(enemy_power[1] - enemy_power[0]))
                 * bodyPart.getAdjustion() - defence) * criticalMag);
+        if (kick < 0) kick = 1;
         System.out.println(enemyChar.getName()+" kicks: "+kick);
 
         playerChar.reduceHPby(kick);

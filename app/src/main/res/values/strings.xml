@@ -79,4 +79,7 @@
     <string name="dialog_fragment_allocate_stats">You have %1$d available stats. Do you wish to allocate them?</string>
     <string name="magic_attack">\n%1$s uses %2$s. %3$s receives %4$d points of damage.</string>
     <string name="magic_heal">\n%1$s uses %2$s. The health of %1$s is restored by %3$d points.</string>
+    <string name="magic_info_append">\nEffect: %1$d\nRequires: %2$d DEFs and %3$d ATKs.\nMana cost: %4$d.</string>
+    <string name="magic_info_fireball">Launches a blazing shot, inflicting some damage to the enemy.</string>
+    <string name="magic_info_heal">Restores a set amount of your health.</string>
 </resources>

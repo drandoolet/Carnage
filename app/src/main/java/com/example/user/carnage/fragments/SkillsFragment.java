@@ -15,9 +15,7 @@ import android.widget.TextView;
 
 import com.example.user.carnage.MainActivity;
 import com.example.user.carnage.R;
-import com.example.user.carnage.logic.skills.Fireball;
 import com.example.user.carnage.logic.skills.Skill;
-import com.example.user.carnage.logic.skills.SmallHeal;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +28,7 @@ public class SkillsFragment extends Fragment {
     private AppCompatImageButton skillButton1, skillButton2, closeButton;
     private TextView infoTextView;
     private Skill skill;
+    private OnSelectedButtonListener activity;
 
     private HashMap<ImageButton, Skill> skillButtonMap;
 
@@ -39,13 +38,13 @@ public class SkillsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_skills, container, false);
 
+        activity = (OnSelectedButtonListener) getActivity();
+
         useSkillButton = view.findViewById(R.id.exitButton);
         useSkillButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                OnSelectedButtonListener listener = (OnSelectedButtonListener) getActivity();
-                listener.onButtonSelected(skill);
-                //container.setVisibility(View.GONE);
+                activity.onUseSkillButtonPressed(skill);
             }
         });
 
@@ -53,8 +52,7 @@ public class SkillsFragment extends Fragment {
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                OnSelectedButtonListener listener = (OnSelectedButtonListener) getActivity();
-                listener.onButtonSelected(null);
+                activity.onUseSkillButtonPressed(null);
             }
         });
 
@@ -81,14 +79,26 @@ public class SkillsFragment extends Fragment {
     }
 
     public interface OnSelectedButtonListener {
-        void onButtonSelected(Skill skill);
+        boolean onSkillButtonSelected(Skill skill);
+        void onUseSkillButtonPressed(Skill skill);
     }
 
     private View.OnClickListener skillButtonsListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             skill = skillButtonMap.get((ImageButton) view);
-            infoTextView.setText(skill.getInfo());
+            infoTextView.setText(getString(skill.getInfo()));
+
+            if (activity.onSkillButtonSelected(skill)) {
+                infoTextView.append(getString(R.string.magic_info_append,
+                        skill.getEffect(),
+                        skill.getBoundTakers()[0],
+                        skill.getBoundTakers()[1],
+                        skill.getManaCost()));
+            } else {
+                infoTextView.append("\n You cannot use this skill now.");
+                skill = null;
+            }
         }
     };
 

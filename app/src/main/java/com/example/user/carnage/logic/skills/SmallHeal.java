@@ -1,13 +1,9 @@
 package com.example.user.carnage.logic.skills;
 
-import com.example.user.carnage.animation.SkillsAnimator;
+import com.example.user.carnage.R;
 import com.example.user.carnage.logic.main.PlayCharacter;
 
-import static com.example.user.carnage.MainActivity.currentSkill;
-
 public class SmallHeal extends Skill {
-    //public static final String icon = "skill/Heal.png";
-
     public SmallHeal(PlayCharacter player) {
         super(
                 new Builder(player, null, SkillTypes.HEAL_SMALL)
@@ -18,8 +14,8 @@ public class SmallHeal extends Skill {
                         .setDefBoundTaker(1)
                         .setAtkBoundTaker(0)
                         .setIsEffectOnPlayer(true)
-                        .setInfo("small heal info")
-                        .setManaCost(player.getMPPercent(15))
+                        .setInfo(R.string.magic_info_heal)
+                        .setManaCost(50)
                         .setIcon("skill/Heal.png")
         );
     }
