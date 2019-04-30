@@ -25,8 +25,8 @@ import android.widget.Toast;
 import com.example.user.carnage.animation.AnimateGame;
 import com.example.user.carnage.MainActivity;
 import com.example.user.carnage.R;
+import com.example.user.carnage.animation.AnimationQueueThread;
 import com.example.user.carnage.animation.SkillsAnimator;
-import com.example.user.carnage.animation.TestThread;
 import com.example.user.carnage.fragments.dialogs.GameOverDialogFragment;
 import com.example.user.carnage.logic.main.BodyPart;
 import com.example.user.carnage.logic.main.PlayCharacter;
@@ -195,7 +195,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         for (CheckBox x : boxes) x.setOnCheckedChangeListener(defCheckBoxListener);
 
         attackButton = view.findViewById(R.id.buttonAttack);
-        attackButton.setOnClickListener(attackButtonListener2);
+        attackButton.setOnClickListener(attackButtonListener3);
 
         skillsButton = view.findViewById(R.id.buttonSkills);
         skillsButton.setOnClickListener(new View.OnClickListener() {
@@ -212,7 +212,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
 
         setArgsReadyForNextRound();
 
-        //TestThread testThread = new TestThread();
+        //AnimationQueueThread testThread = new AnimationQueueThread();
         //testThread.start();
 
         return view;
@@ -319,15 +319,15 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         }
     };
 
-    private View.OnClickListener attackButtonListener2 = new View.OnClickListener() {
+    private View.OnClickListener attackButtonListener3 = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (defCheckBoxCounter != defCounterBound || atkCheckBoxCounter != atkCounterBound) {
-                //throw new NullPointerException("thrown by if");
                 Toast.makeText(getContext(), getString(R.string.toast_choose_atk, defCounterBound, atkCounterBound),
                         Toast.LENGTH_SHORT).show();
             } else {
                 setButtonsEnabled(false);
+                final AnimationQueueThread thread = new AnimationQueueThread();
                 addRound();
                 final PlayerChoice plCh = new PlayerChoice(playerAttacked, playerDefended);
                 final PlayerChoice enCh = new PlayerChoice(1);
@@ -335,58 +335,38 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
 
                 for (PlayCharacterHelper.Result result : enemyResult) {
                     totalDamage += result.getAttack();
-                    updateGUI(enemy, player, result);
+                    updateGUI(enemy, player, result, thread);
                 }
                 if (enemy.getHP() > 0) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            ArrayList<PlayCharacterHelper.Result> playerResult
-                                    = playerHelper.handle(plCh, enCh);
+                    ArrayList<PlayCharacterHelper.Result> playerResult
+                            = playerHelper.handle(plCh, enCh);
 
-                            for (PlayCharacterHelper.Result result : playerResult) {
-                                //addLogTextAndAnimate(player, enemy, result);
-                                //player_hp_view.setText(new Integer(player.getHP()).toString());
-                                //player_HP_bar.setProgress(player.getHP());
-                                updateGUI(player, enemy, result);
+                    for (PlayCharacterHelper.Result result : playerResult) {
+                        updateGUI(player, enemy, result, thread);
 
-                                if (player.getHP() <= 0) {
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            System.out.println("\n*** GAME OVER. YOU LOSE ***");
-                                            setGameOver(enemy.getName(), false);
-                                        }
-                                    }, currentAnimationDuration);
-                                    break;
-                                }
-                            }
-                            if (player.getHP() > 0) {
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        setButtonsEnabled(true);
-                                        setArgsReadyForNextRound();
-                                    }
-                                }, currentAnimationDuration);
-                            }
-
+                        if (player.getHP() <= 0) {
+                            System.out.println("\n*** GAME OVER. YOU LOSE ***");
+                            setGameOver(enemy.getName(), false);
+                            break;
                         }
-                    }, currentAnimationDuration);
+                    }
+                    if (player.getHP() > 0) {
+                        setButtonsEnabled(true);
+                        setArgsReadyForNextRound();
+                    }
                 } else {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            System.out.println("\n*** GAME OVER. YOU WIN ***");
-                            setGameOver(player.getName(), true);
-                        }
-                    }, currentAnimationDuration);
+                    System.out.println("\n*** GAME OVER. YOU WIN ***");
+                    setGameOver(player.getName(), true);
                 }
+                thread.start();
             }
         }
     };
 
-    private void updateGUI(PlayCharacter playCh, PlayCharacter playEn, PlayCharacterHelper.Result result) {
+
+
+    private void updateGUI(PlayCharacter playCh, PlayCharacter playEn,
+                           PlayCharacterHelper.Result result, AnimationQueueThread destinationThread) {
         TextView hpTV, mpTV, spTV;
         ProgressBar hpPB, mpPB, spPB;
         if (playCh == player) {
@@ -406,7 +386,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
             hpPB = enemy_HP_bar;
         }
 
-        addLogTextAndAnimate(playCh, playEn, result);
+        addLogTextAndAnimate(playCh, playEn, result, destinationThread);
         hpPB.setProgress(playCh.getHP());
         hpTV.setText(Integer.toString(playCh.getHP()));
     }
@@ -473,11 +453,14 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
     // character receives damage
     // enemy attacks
     // results are hits taken by character
-    private void addLogTextAndAnimate(final PlayCharacter character, PlayCharacter enemy, final PlayCharacterHelper.Result result) {
+    private void addLogTextAndAnimate(final PlayCharacter character, PlayCharacter enemy,
+                                      final PlayCharacterHelper.Result result,
+                                      AnimationQueueThread destinationThread) {
         String text = "";
         final ImageView imgToAnimate, playerImage;
         final boolean isPlayer;
         final TextView pointsTextView;
+        String textForPoints;
         if (character == player) {
             imgToAnimate = player_img;
             playerImage = enemy_img;
@@ -496,43 +479,53 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 text = getString(R.string.battle_text_normal, enemy.getName(), result.getBodyPart(), result.getAttack());
                 hits++;
                 //animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
-                pointsTextView.setText(String.format(Locale.ENGLISH, Integer.toString(-result.getAttack())));
+                textForPoints = String.format(Locale.ENGLISH, Integer.toString(-result.getAttack()));
                 break;
             case ANIMATION_BATTLE_BLOCK:
                 text = getString(R.string.battle_text_blocked, enemy.getName(), result.getBodyPart(), character.getName());
                 blocks++;
-                pointsTextView.setText(getString(R.string.battle_points_block));
+                textForPoints = getString(R.string.battle_points_block);
                 break;
             case ANIMATION_BATTLE_DODGE:
                 text = getString(R.string.battle_text_dodged, enemy.getName(), result.getBodyPart(), character.getName());
                 dodges++;
-                pointsTextView.setText(getString(R.string.battle_points_dodge));
+                textForPoints = getString(R.string.battle_points_dodge);
                 break;
             case ANIMATION_BATTLE_CRITICAL:
                 text = getString(R.string.battle_text_critical, enemy.getName(), result.getBodyPart(),
                         character.getName(), result.getAttack());
+                textForPoints = getString(R.string.battle_points_critical, -result.getAttack());
                 criticals++;
                 break;
             case ANIMATION_BATTLE_BLOCK_BREAK:
                 text = getString(R.string.battle_text_block_break, enemy.getName(), result.getBodyPart(),
                         character.getName(), result.getAttack());
+                textForPoints = getString(R.string.battle_points_block_break, -result.getAttack());
                 blockBreaks++;
                 break;
             default:
+                textForPoints = "ERROR";
                 text = '\n' + '\n' + "  ERROR in round " + roundCounter;
         }
 
-        AnimationTypes.ANIMATION_BATTLE_ATTACK.getSet(isPlayer, playerImage, imgToAnimate).start();
+        //AnimationTypes.ANIMATION_BATTLE_ATTACK.getSet(isPlayer, playerImage, imgToAnimate).start();
 
         currentAnimationDuration = status.getDuration();
-
+        /*
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 result.getRoundStatus().getSet(isPlayer, imgToAnimate).start();
                 animateGame.animateDamagePoints(pointsTextView, isPlayer, false);
             }
-        }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
+        }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration()); */
+
+        destinationThread.add(AnimationTypes.ANIMATION_BATTLE_ATTACK.getSet(isPlayer, playerImage, imgToAnimate)
+                , AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
+        destinationThread.add(AnimationTypes.Common.POINTS.getSet(pointsTextView, isPlayer, false, textForPoints),
+                0);
+        destinationThread.add(result.getRoundStatus().getSet(isPlayer, imgToAnimate),
+                result.getRoundStatus().getDuration());
 
         battle_textView.append(text);
     }
@@ -694,7 +687,78 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
     }
 
 
-    //       --- DEPRECATED METHODS BELOW ---
+
+    //       --- DEPRECATED METHODS, FIELDS BELOW ---
+
+    @Deprecated
+    private View.OnClickListener attackButtonListener2 = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (defCheckBoxCounter != defCounterBound || atkCheckBoxCounter != atkCounterBound) {
+                //throw new NullPointerException("thrown by if");
+                Toast.makeText(getContext(), getString(R.string.toast_choose_atk, defCounterBound, atkCounterBound),
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                setButtonsEnabled(false);
+                final AnimationQueueThread thread = new AnimationQueueThread();
+                addRound();
+                final PlayerChoice plCh = new PlayerChoice(playerAttacked, playerDefended);
+                final PlayerChoice enCh = new PlayerChoice(1);
+                ArrayList<PlayCharacterHelper.Result> enemyResult = enemyHelper.handle(enCh, plCh);
+
+                for (PlayCharacterHelper.Result result : enemyResult) {
+                    totalDamage += result.getAttack();
+                    updateGUI(enemy, player, result, thread);
+                }
+                if (enemy.getHP() > 0) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ArrayList<PlayCharacterHelper.Result> playerResult
+                                    = playerHelper.handle(plCh, enCh);
+
+                            for (PlayCharacterHelper.Result result : playerResult) {
+                                //addLogTextAndAnimate(player, enemy, result);
+                                //player_hp_view.setText(new Integer(player.getHP()).toString());
+                                //player_HP_bar.setProgress(player.getHP());
+                                updateGUI(player, enemy, result, thread);
+
+                                if (player.getHP() <= 0) {
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            System.out.println("\n*** GAME OVER. YOU LOSE ***");
+                                            setGameOver(enemy.getName(), false);
+                                        }
+                                    }, currentAnimationDuration);
+                                    break;
+                                }
+                            }
+                            if (player.getHP() > 0) {
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        setButtonsEnabled(true);
+                                        setArgsReadyForNextRound();
+                                    }
+                                }, currentAnimationDuration);
+                            }
+
+                        }
+                    }, currentAnimationDuration);
+                } else {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            System.out.println("\n*** GAME OVER. YOU WIN ***");
+                            setGameOver(player.getName(), true);
+                        }
+                    }, currentAnimationDuration);
+                }
+                thread.start();
+            }
+        }
+    };
 
     @Deprecated
     private View.OnClickListener attackButtonListener = new View.OnClickListener() {

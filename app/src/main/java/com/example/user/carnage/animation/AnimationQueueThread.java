@@ -4,6 +4,7 @@ package com.example.user.carnage.animation;
 import android.animation.AnimatorSet;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 
 import com.example.user.carnage.animation.AnimateGame.AnimationTypes;
 
-public class TestThread extends Thread {
+public class AnimationQueueThread extends Thread {
     private ArrayList<AnimatorSet> animatorSets = new ArrayList<>();
     private ArrayList<AnimationTypes> typesArrayList = new ArrayList<>();
     private HashMap<AnimatorSet, Long> animatorMap = new HashMap<>();
@@ -39,7 +40,7 @@ public class TestThread extends Thread {
         }
     }
 
-    public TestThread() {
+    public AnimationQueueThread() {
         mHandler = new Handler(Looper.getMainLooper());
     }
 
@@ -58,6 +59,7 @@ public class TestThread extends Thread {
                 }
             });
             System.out.println("thread delay = "+delay);
+            Log.i("AnimationQueueThread", "thread delay = "+delay);
             try {
                 sleep(delay);
             } catch (InterruptedException e) {

@@ -6,6 +6,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Point;
+import android.renderscript.Double2;
 import android.support.annotation.Nullable;
 import android.text.Layout;
 import android.util.Log;
@@ -213,6 +214,22 @@ public class AnimateGame {
         }
     }
 
+    enum Points implements Durations {
+        DURATION_1(200), DURATION_2(1000);
+
+        private final long duration;
+        Points(long dur) { duration = dur; }
+
+        @Override
+        public long getDuration() {
+            return duration;
+        }
+
+        public static long getTotalDuration() {
+            return DURATION_1.duration + DURATION_2.duration;
+        }
+    }
+
     protected static final Durations NULL_DURATION = new Durations() {
         @Override
         public long getDuration() {
@@ -337,7 +354,7 @@ public class AnimateGame {
         });
     }
 
-    protected AnimatorSet getAnimateDamagePointsSet(final View view, boolean isPlayer) {
+    private static AnimatorSet getAnimateDamagePointsSet(final View view, boolean isPlayer) {
         view.setVisibility(View.VISIBLE);
         float ANIMATE_POINTS_TRANSLATION_X = 10f * (isPlayer ? -1 : 1);
         float ANIMATE_POINTS_TRANSLATION_Y = -40f;
@@ -345,12 +362,12 @@ public class AnimateGame {
         AnimatorSet state2 = new AnimatorSet();
         AnimatorSet state3 = new AnimatorSet();
         AnimatorSet set = new AnimatorSet();
-        state1.setDuration(ANIMATE_POINTS_DURATION_1).playTogether(
+        state1.setDuration(Points.DURATION_1.getDuration()).playTogether(
                 ObjectAnimator.ofFloat(view, View.SCALE_X, 0.1f, 1.0f),
                 ObjectAnimator.ofFloat(view, View.SCALE_Y, 0.1f, 1.0f),
                 ObjectAnimator.ofFloat(view, View.ALPHA, 0, 1)
         );
-        state2.setDuration(ANIMATE_POINTS_DURATION_2).playTogether(
+        state2.setDuration(Points.DURATION_2.getDuration()).playTogether(
                 ObjectAnimator.ofFloat(view, View.ALPHA, 1.0f, 0.3f),
                 animateTranslation(view, ANIMATE_POINTS_TRANSLATION_X, ANIMATE_POINTS_TRANSLATION_Y, NULL_DURATION),
                 ObjectAnimator.ofFloat(view, View.SCALE_X, 1.0f, 0.7f),
@@ -862,6 +879,39 @@ public class AnimateGame {
         public long getFullDuration() {
             if (fullDuration == 0) return duration;
             return fullDuration;
+        }
+
+        public enum Skills {
+
+        }
+        public enum Common {
+            POINTS {
+                public AnimatorSet getSet(final View view, final boolean isPlayer,
+                                          final boolean isHeal, final String text) {
+                    final TextView textView = (TextView) view;
+
+                    AnimatorSet set = getAnimateDamagePointsSet(view, isPlayer);
+                    set.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            //view.setVisibility(View.INVISIBLE);
+                            super.onAnimationEnd(animation);
+                        }
+
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            textView.setTextColor(isHeal ? view.getContext().getColor(R.color.colorHealPoints) :
+                                    view.getContext().getColor(R.color.colorDamagePoints));
+                            ((TextView) view).setText(text);
+                            super.onAnimationStart(animation);
+                        }
+                    });
+
+                    return set;
+                }
+            };
+
+            public abstract AnimatorSet getSet(View view, boolean isPlayer, boolean isHeal, String text);
         }
     }
 }
