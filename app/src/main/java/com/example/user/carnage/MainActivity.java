@@ -244,19 +244,6 @@ public class MainActivity extends AppCompatActivity
         return getPrefs().getInt(APP_PREFERENCES_DAMAGE_INFLICTED, 0);
     }
 
-    public static void setGameOverSharedPref(String winner, int rounds, int hits, int criticals,
-                                             int blockBreaks, int blocks, int dodges) {
-        SharedPreferences.Editor editor = getPrefs().edit();
-        editor.putString(APP_PREFERENCES_WINNER, winner);
-        editor.putInt(APP_PREFERENCES_ROUNDS, rounds);
-        editor.putInt(APP_PREFERENCES_HITS, hits);
-        editor.putInt(APP_PREFERENCES_CRITICALS, criticals);
-        editor.putInt(APP_PREFERENCES_BLOCK_BREAKS, blockBreaks);
-        editor.putInt(APP_PREFERENCES_BLOCKS, blocks);
-        editor.putInt(APP_PREFERENCES_DODGES, dodges);
-        editor.commit();
-    }
-
     public static void setGameOverSharedPref(String winner, boolean isWinner, int rounds, int damage) {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putString(APP_PREFERENCES_WINNER, winner);
@@ -265,24 +252,6 @@ public class MainActivity extends AppCompatActivity
         editor.putBoolean(APP_PREFERENCES_WINNER_BOOLEAN, isWinner);
         editor.commit();
     }
-
-    public static int getSharedHits() {
-        return getPrefs().getInt(APP_PREFERENCES_HITS, 0);
-    }
-    public static int getSharedCriticals() {
-        return getPrefs().getInt(APP_PREFERENCES_CRITICALS, 0);
-    }
-    public static int getSharedBlockBreaks() {
-        return getPrefs().getInt(APP_PREFERENCES_BLOCK_BREAKS, 0);
-    }
-    public static int getSharedBlocks() {
-        return getPrefs().getInt(APP_PREFERENCES_BLOCKS, 0);
-    }
-    public static int getSharedDodges() {
-        return getPrefs().getInt(APP_PREFERENCES_DODGES, 0);
-    }
-
-
 
     public static void addStatisticsToNeuralNet(int[] stats, String profile) {
         SharedPreferences.Editor editor = mContext.getSharedPreferences(profile, Context.MODE_PRIVATE).edit();

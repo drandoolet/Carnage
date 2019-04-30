@@ -213,7 +213,7 @@ public class AnimateGame {
         }
     }
 
-    private static final Durations NULL_DURATION = new Durations() {
+    protected static final Durations NULL_DURATION = new Durations() {
         @Override
         public long getDuration() {
             return 0;
@@ -478,7 +478,7 @@ public class AnimateGame {
         set.playSequentially(
                 animateRotation(view, Block.Float.STATE_1.getFloat(), state_2, Block.Duration.SHAKE_DURATION),
                 animateRotation(view, state_2, state_3, Block.Duration.SHAKE_DURATION),
-                animateRotation(view, state_3, Block.Float.STATE_2.getFloat(), Block.Duration.SHAKE_DURATION)
+                animateRotation(view, state_3, Block.Float.STATE_1.getFloat(), Block.Duration.SHAKE_DURATION)
         );
         set.start();
     }
@@ -641,11 +641,10 @@ public class AnimateGame {
     public enum AnimationTypes {
         ANIMATION_BATTLE_ATTACK(0) {
             @Override
-            public AnimatorSet getSet(View view, boolean isPlayer) {
-                return null;
-            }
+            public AnimatorSet getSet(boolean isPlayer, View...views) {
+                View view = views[0];
+                View enView = views[1];
 
-            public AnimatorSet getSet(View view, View enView, boolean isPlayer) {
                 float translation_1_x = 30f * (isPlayer ? -1 : 1);
                 float translation_2_x = (isPlayer ?
                         (enView.getLeft() + enView.getWidth()*0.3f) - view.getRight()
@@ -667,7 +666,8 @@ public class AnimateGame {
         },
         ANIMATION_BATTLE_HIT(0) {
             @Override
-            public AnimatorSet getSet(View view, boolean isPlayer) {
+            public AnimatorSet getSet(boolean isPlayer, View...views) {
+                View view = views[0];
                 AnimatorSet set = new AnimatorSet();
                 set.playSequentially(
                         animateHitOnReceivedDmg(view, Hit.DURATION_1, isPlayer),
@@ -679,21 +679,23 @@ public class AnimateGame {
         },
         ANIMATION_BATTLE_BLOCK(0) {
             @Override
-            public AnimatorSet getSet(View view, boolean isPlayer) {
+            public AnimatorSet getSet(boolean isPlayer, View...views) {
+                View view = views[0];
                 float state_2 = Block.Float.STATE_2.getFloat() * (isPlayer ? 1 : -1);
                 float state_3 = Block.Float.STATE_3.getFloat() * (isPlayer ? 1 : -1);
                 AnimatorSet set = new AnimatorSet();
                 set.playSequentially(
                         animateRotation(view, Block.Float.STATE_1.getFloat(), state_2, Block.Duration.SHAKE_DURATION),
                         animateRotation(view, state_2, state_3, Block.Duration.SHAKE_DURATION),
-                        animateRotation(view, state_3, Block.Float.STATE_2.getFloat(), Block.Duration.SHAKE_DURATION)
+                        animateRotation(view, state_3, Block.Float.STATE_1.getFloat(), Block.Duration.SHAKE_DURATION)
                 );
                 return set;
             }
         },
         ANIMATION_BATTLE_DODGE(0) {
             @Override
-            public AnimatorSet getSet(View view, boolean isPlayer) {
+            public AnimatorSet getSet(boolean isPlayer, View...views) {
+                View view = views[0];
                 float translation_x2 = Dodge.Float.TRANSLATION_X_2.getFloat() * (isPlayer ? 1 : -1);
                 float translation_x3 = Dodge.Float.TRANSLATION_X_3.getFloat() * (isPlayer ? 1 : -1);
                 float rotation_2 = Dodge.Float.ROTATION_2.getFloat() * (isPlayer ? -1 : 1);
@@ -725,7 +727,8 @@ public class AnimateGame {
         },
         ANIMATION_BATTLE_CRITICAL(0) {
             @Override
-            public AnimatorSet getSet(View view, boolean isPlayer) {
+            public AnimatorSet getSet(boolean isPlayer, View...views) {
+                View view = views[0];
                 float rotation_2 = Critical.Float.ROTATION_2.getFloat() * (isPlayer ? 1 : -1);
                 float translation_2 = Critical.Float.TRANSLATION_X_1.getFloat() * (isPlayer ? 1 : -1);
                 AnimatorSet set = new AnimatorSet();
@@ -753,7 +756,8 @@ public class AnimateGame {
         },
         ANIMATION_BATTLE_BLOCK_BREAK(0) {
             @Override
-            public AnimatorSet getSet(View view, boolean isPlayer) {
+            public AnimatorSet getSet(boolean isPlayer, View...views) {
+                View view = views[0];
                 float state_2 = BlockBreak.Float.STATE_2.getFloat() * (isPlayer ? 1 : -1);
                 float state_3 = BlockBreak.Float.STATE_3.getFloat() * (isPlayer ? 1 : -1);
                 float rotation_2 = BlockBreak.Float.ROTATION_2.getFloat() * (isPlayer ? 1 : -1);
@@ -785,19 +789,12 @@ public class AnimateGame {
                 return set;
             }
         },
-        ANIMATION_TEST(0) {
+        ANIMATION_PROFILE_SELECTED(0) { // TODO: very weak! Consider rebuilding
             @Override
-            public AnimatorSet getSet(View view, boolean isPlayer) {
-                return null;
-            }
-        },
-        ANIMATION_PROFILE_SELECTED(0) {
-            @Override
-            public AnimatorSet getSet(View view, boolean isPlayer) {
-                return null;
-            }
-
-            public AnimatorSet getSet(View view, View layout, View[] viewsToFade, boolean isChosen) {
+            public AnimatorSet getSet(boolean isChosen, View...views) {
+                View view = views[0];
+                View layout = views[1];
+                View[] viewsToFade = {views[2], views[3], views[4], views[5]};
                 AnimatorSet set = new AnimatorSet();
                 AnimatorSet state1 = new AnimatorSet();
                 float translation_x;
@@ -845,7 +842,7 @@ public class AnimateGame {
 
         private long duration;
         private long fullDuration = 0;
-        abstract public AnimatorSet getSet(View view, boolean isPlayer);
+        abstract public AnimatorSet getSet(boolean isPlayer, View...views);
 
         AnimationTypes(long dur) {
             duration = dur;

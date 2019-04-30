@@ -82,4 +82,5 @@
     <string name="magic_info_append">\nEffect: %1$d\nRequires: %2$d DEFs and %3$d ATKs.\nMana cost: %4$d.</string>
     <string name="magic_info_fireball">Launches a blazing shot, inflicting some damage to the enemy.</string>
     <string name="magic_info_heal">Restores a set amount of your health.</string>
+    <string name="battle_points_dodge" translatable="false">Dodge!</string>
 </resources>

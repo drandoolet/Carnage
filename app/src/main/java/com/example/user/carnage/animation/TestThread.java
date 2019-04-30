@@ -7,18 +7,40 @@ import android.os.Looper;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import com.example.user.carnage.animation.AnimateGame.AnimationTypes;
 
 public class TestThread extends Thread {
     private ArrayList<AnimatorSet> animatorSets = new ArrayList<>();
+    private ArrayList<AnimationTypes> typesArrayList = new ArrayList<>();
+    private HashMap<AnimatorSet, Long> animatorMap = new HashMap<>();
+    private ArrayList<Test> testArrayList = new ArrayList<>();
     long delay = 0;
     Handler mHandler;
 
-    public TestThread(AnimateGame animateGame, ImageView plView, ImageView enView) {
+    private ImageView pl_view, en_view;
+
+    private class Test {
+        private AnimatorSet set;
+        private long duration;
+
+        Test(AnimatorSet animatorSet, long l) {
+            set = animatorSet;
+            duration = l;
+        }
+
+        public long getDuration() {
+            return duration;
+        }
+
+        public AnimatorSet getSet() {
+            return set;
+        }
+    }
+
+    public TestThread() {
         mHandler = new Handler(Looper.getMainLooper());
-        animatorSets.add(animateGame.getAnimateAttack(plView, enView, true));
-        animatorSets.add(animateGame.getAnimateAttack(plView, enView, true));
-        animatorSets.add(animateGame.getAnimateAttack(plView, enView, false));
-        animatorSets.add(animateGame.getAnimateAttack(plView, enView, true));
     }
 
     // need to use getTotalDuration(), maybe.
@@ -26,13 +48,13 @@ public class TestThread extends Thread {
     // thus, need to create own method and add dur manually
     @Override
     public void run() {
-        for (final AnimatorSet set : animatorSets) {
-            delay = set.getDuration();
+        for (final Test test : testArrayList) {
+            delay = test.getDuration();
 
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    set.start();
+                    test.getSet().start();
                 }
             });
             System.out.println("thread delay = "+delay);
@@ -44,7 +66,7 @@ public class TestThread extends Thread {
         }
     }
 
-    public void add(AnimatorSet set) {
-        animatorSets.add(set);
+    public void add(AnimatorSet set, long duration) {
+        testArrayList.add(new Test(set, duration));
     }
 }

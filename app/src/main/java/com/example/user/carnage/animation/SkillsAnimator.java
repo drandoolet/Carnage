@@ -14,6 +14,18 @@ import com.example.user.carnage.fragments.RPGBattleFragment;
 import com.example.user.carnage.logic.skills.Skill;
 
 public class SkillsAnimator extends AnimateGame {
+    enum Fireball implements Durations {
+        FIREBALL_1(800), FIREBALL_2(200),
+        FIREBALL_3(70), FIREBALL_4(300);
+
+        private final long duration;
+        Fireball(long l) { duration = l; }
+
+        @Override
+        public long getDuration() {
+            return duration;
+        }
+    }
     private final long DURATION_FIREBALL_1 = 800;
     private final long DURATION_FIREBALL_2 = 200;
     private final long DURATION_FIREBALL_3 = 70;
@@ -97,10 +109,10 @@ public class SkillsAnimator extends AnimateGame {
         AnimatorSet state3 = new AnimatorSet();
         AnimatorSet set = new AnimatorSet();
 
-        state1.setDuration(DURATION_FIREBALL_1).playTogether(
+        state1.setDuration(Fireball.FIREBALL_1.getDuration()).playTogether(
                 ObjectAnimator.ofFloat(imageView, View.ALPHA, 0f, 1f),
-                animateChangeScale(imageView, 0f, 1f, 0),
-                animateRotation(imageView, 0f, 720f, 0)
+                animateChangeScale(imageView, 0f, 1f, NULL_DURATION),
+                animateRotation(imageView, 0f, 720f, NULL_DURATION)
         ); /*
         state2.playTogether(
                 animateChangeScale(imageView, 1f, 3f, 200),
@@ -120,9 +132,9 @@ public class SkillsAnimator extends AnimateGame {
         set.playSequentially(
                 state1,
                 animateTranslation(imageView, enemyImg.getX()-imageView.getX(),
-                        (enemyImg.getBottom() - enemyImg.getTop())/(-2) + imageView.getHeight()/2, DURATION_FIREBALL_2),
-                animateChangeScale(imageView, 1f, 2f, DURATION_FIREBALL_3),
-                ObjectAnimator.ofFloat(imageView, View.ALPHA, 1, 0).setDuration(DURATION_FIREBALL_4),
+                        (enemyImg.getBottom() - enemyImg.getTop())/(-2) + imageView.getHeight()/2, Fireball.FIREBALL_2),
+                animateChangeScale(imageView, 1f, 2f, Fireball.FIREBALL_3),
+                ObjectAnimator.ofFloat(imageView, View.ALPHA, 1, 0).setDuration(Fireball.FIREBALL_4.getDuration()),
                 state2
         );
         return set;
@@ -132,8 +144,8 @@ public class SkillsAnimator extends AnimateGame {
         View[] views = {fragment.enemy_points, fragment.player_points, fragment.skillEffect_img, fragment.enemy_img, fragment.player_img};
         for (View view : views) {
             ObjectAnimator.ofFloat(view, View.ALPHA, 1f, 1f);
-            animateTranslation(view, 0f, 0f, 0);
-            animateChangeScale(view, 1f, 1f, 0);
+            animateTranslation(view, 0f, 0f, NULL_DURATION);
+            animateChangeScale(view, 1f, 1f, NULL_DURATION);
             ObjectAnimator.ofFloat(view, View.ROTATION, 0f, 0f);
         }
         fragment.skillEffect_img.setVisibility(View.INVISIBLE);
