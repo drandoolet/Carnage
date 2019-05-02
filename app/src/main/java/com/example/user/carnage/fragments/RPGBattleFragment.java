@@ -5,6 +5,7 @@ import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.method.ScrollingMovementMethod;
@@ -45,7 +46,7 @@ import static com.example.user.carnage.MainActivity.currentProfile;
 import static com.example.user.carnage.MainActivity.enemy;
 import static com.example.user.carnage.MainActivity.player;
 
-public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicCallBack {
+public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicCallBack, AnimationQueueThread.AnimationEndListener {
     public final String TAG = "Carnage MAF RPG";
     //private PlayCharacter player, enemy;
     private AnimateGame animateGame;
@@ -82,6 +83,14 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
     private long currentAnimationDuration = 0L;
 
     private PlayCharacterHelper playerHelper, enemyHelper;
+
+    private boolean isAnimating = false;
+    private AnimationEndWaiter waiter;
+
+    public synchronized void setAnimating(boolean set) {
+        isAnimating = set;
+        notify();
+    }
 
 
     private Button testAnimButton;
@@ -211,6 +220,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         enemyHelper = new PlayCharacterHelper(enemy, player);
 
         setArgsReadyForNextRound();
+        waiter = new AnimationEndWaiter();
 
         //AnimationQueueThread testThread = new AnimationQueueThread();
         //testThread.start();
@@ -328,6 +338,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
             } else {
                 setButtonsEnabled(false);
                 final AnimationQueueThread thread = new AnimationQueueThread();
+                thread.registerListener(RPGBattleFragment.this);
                 addRound();
                 final PlayerChoice plCh = new PlayerChoice(playerAttacked, playerDefended);
                 final PlayerChoice enCh = new PlayerChoice(1);
@@ -350,18 +361,61 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                             break;
                         }
                     }
-                    if (player.getHP() > 0) {
-                        setButtonsEnabled(true);
-                        setArgsReadyForNextRound();
-                    }
+                    //if (player.getHP() > 0) {
+                    //    setButtonsEnabled(true);
+                    //    setArgsReadyForNextRound();
+                    // }
                 } else {
                     System.out.println("\n*** GAME OVER. YOU WIN ***");
                     setGameOver(player.getName(), true);
                 }
                 thread.start();
+
+                waiter.setAnimatingNow(true);
+
+                Thread thread1 = new Thread() {
+                    @Override
+                    public void run() {
+                        waiter.setArgsReady();
+                    }
+                };
+                thread1.start();
+
             }
         }
     };
+
+    private class AnimationEndWaiter {
+        private boolean isAnimatingNow = false;
+
+        public synchronized void setArgsReady() {
+            while (isAnimatingNow) {
+                try {
+                    //Toast.makeText(getContext(), "waiting started", Toast.LENGTH_SHORT).show();
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            //Toast.makeText(getContext(), "waiting finished", Toast.LENGTH_SHORT).show();
+            Handler mHandler = new Handler(Looper.getMainLooper());
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {if (player.getHP() > 0) {
+                    setButtonsEnabled(true);
+                    setArgsReadyForNextRound();
+                }
+                    //notify();
+                }
+            });
+
+        }
+
+        public synchronized void setAnimatingNow(boolean b) {
+            isAnimatingNow = b;
+            notify();
+        }
+    }
 
 
 
@@ -684,6 +738,12 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 atkCounterBound - skill.getBoundTakers()[1] >= 0) {
             return (player.checkMP(skill.getManaCost()));
         } else return false;
+    }
+
+
+    @Override
+    public void animationEnded() {
+        waiter.setAnimatingNow(false);
     }
 
 

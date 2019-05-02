@@ -11,11 +11,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.example.user.carnage.animation.AnimateGame.AnimationTypes;
+import com.example.user.carnage.fragments.RPGBattleFragment;
 
 public class AnimationQueueThread extends Thread {
-    private ArrayList<AnimatorSet> animatorSets = new ArrayList<>();
-    private ArrayList<AnimationTypes> typesArrayList = new ArrayList<>();
-    private HashMap<AnimatorSet, Long> animatorMap = new HashMap<>();
+    private AnimationEndListener listener;
     private ArrayList<Test> testArrayList = new ArrayList<>();
     long delay = 0;
     Handler mHandler;
@@ -66,9 +65,18 @@ public class AnimationQueueThread extends Thread {
                 e.printStackTrace();
             }
         }
+        listener.animationEnded();
     }
 
     public void add(AnimatorSet set, long duration) {
         testArrayList.add(new Test(set, duration));
+    }
+
+
+    public void registerListener(AnimationEndListener listener) {
+        this.listener = listener;
+    }
+    public interface AnimationEndListener {
+        void animationEnded();
     }
 }
