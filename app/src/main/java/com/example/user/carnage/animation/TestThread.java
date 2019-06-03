@@ -10,8 +10,7 @@ import java.util.ArrayList;
 
 public class TestThread extends Thread {
     private ArrayList<AnimatorSet> animatorSets = new ArrayList<>();
-    long delay = 0;
-    Handler mHandler;
+    private final Handler mHandler;
 
     public TestThread(AnimateGame animateGame, ImageView plView, ImageView enView) {
         mHandler = new Handler(Looper.getMainLooper());
@@ -27,7 +26,7 @@ public class TestThread extends Thread {
     @Override
     public void run() {
         for (final AnimatorSet set : animatorSets) {
-            delay = set.getDuration();
+            long delay = set.getDuration();
 
             mHandler.post(new Runnable() {
                 @Override
@@ -46,5 +45,18 @@ public class TestThread extends Thread {
 
     public void add(AnimatorSet set) {
         animatorSets.add(set);
+    }
+
+    /*
+    * In order to practice, I need to add multithreading here,
+    * regardless its pointlessness here.
+    * Will create a synchronized holder class for ImageViews, Threads will
+    * queue to animate, but will be able to get coordinates.
+    *
+    * BlockingQueue<>? Semaphore?
+    */
+
+    private class MultiThreadTestThread extends Thread {
+
     }
 }

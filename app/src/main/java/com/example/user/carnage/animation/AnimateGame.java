@@ -4,19 +4,11 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.content.Context;
-import android.graphics.Point;
 import android.support.annotation.Nullable;
-import android.text.Layout;
-import android.util.Log;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.example.user.carnage.R;
-
-import java.util.HashMap;
 
 public class AnimateGame {
     interface Durations {
@@ -213,7 +205,7 @@ public class AnimateGame {
         }
     }
 
-    private static final Durations NULL_DURATION = new Durations() {
+    protected static final Durations NULL_DURATION = new Durations() {
         @Override
         public long getDuration() {
             return 0;
