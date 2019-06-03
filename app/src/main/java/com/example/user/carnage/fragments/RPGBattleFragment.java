@@ -27,6 +27,7 @@ import com.example.user.carnage.animation.AnimateGame;
 import com.example.user.carnage.MainActivity;
 import com.example.user.carnage.R;
 import com.example.user.carnage.animation.AnimationQueueThread;
+import com.example.user.carnage.animation.ImageViewHolder;
 import com.example.user.carnage.animation.SkillsAnimator;
 import com.example.user.carnage.fragments.dialogs.GameOverDialogFragment;
 import com.example.user.carnage.logic.main.BodyPart;
@@ -86,6 +87,9 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
 
     private boolean isAnimating = false;
     private AnimationEndWaiter waiter;
+    private ImageViewHolder playerImageHolder, enemyImageHolder;
+
+
 
     public synchronized void setAnimating(boolean set) {
         isAnimating = set;
@@ -225,6 +229,11 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         //AnimationQueueThread testThread = new AnimationQueueThread();
         //testThread.start();
 
+        synchronized (this) {
+            playerImageHolder = new ImageViewHolder(player_img, true, enemyImageHolder);
+            enemyImageHolder = new ImageViewHolder(enemy_img, false, playerImageHolder);
+        }
+
         return view;
     }
 
@@ -346,14 +355,14 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
 
                 for (PlayCharacterHelper.Result result : enemyResult) {
                     totalDamage += result.getAttack();
-                    updateGUI(enemy, player, result, thread);
+                    updateGUI(enemy, player, result, thread, enemyImageHolder);
                 }
                 if (enemy.getHP() > 0) {
                     ArrayList<PlayCharacterHelper.Result> playerResult
                             = playerHelper.handle(plCh, enCh);
 
                     for (PlayCharacterHelper.Result result : playerResult) {
-                        updateGUI(player, enemy, result, thread);
+                        updateGUI(player, enemy, result, thread, playerImageHolder);
 
                         if (player.getHP() <= 0) {
                             System.out.println("\n*** GAME OVER. YOU LOSE ***");
@@ -420,7 +429,8 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
 
 
     private void updateGUI(PlayCharacter playCh, PlayCharacter playEn,
-                           PlayCharacterHelper.Result result, AnimationQueueThread destinationThread) {
+                           PlayCharacterHelper.Result result, AnimationQueueThread destinationThread,
+                           ImageViewHolder holder) {
         TextView hpTV, mpTV, spTV;
         ProgressBar hpPB, mpPB, spPB;
         if (playCh == player) {
@@ -440,7 +450,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
             hpPB = enemy_HP_bar;
         }
 
-        addLogTextAndAnimate(playCh, playEn, result, destinationThread);
+        addLogTextAndAnimate(playCh, playEn, result, destinationThread, holder);
         hpPB.setProgress(playCh.getHP());
         hpTV.setText(Integer.toString(playCh.getHP()));
     }
@@ -509,7 +519,8 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
     // results are hits taken by character
     private void addLogTextAndAnimate(final PlayCharacter character, PlayCharacter enemy,
                                       final PlayCharacterHelper.Result result,
-                                      AnimationQueueThread destinationThread) {
+                                      AnimationQueueThread destinationThread,
+                                      ImageViewHolder holder) {
         String text = "";
         final ImageView imgToAnimate, playerImage;
         final boolean isPlayer;
@@ -580,6 +591,8 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 0);
         destinationThread.add(result.getRoundStatus().getSet(isPlayer, imgToAnimate),
                 result.getRoundStatus().getDuration());
+
+        holder.addAnimationToQueue(AnimationTypes.ANIMATION_BATTLE_ATTACK, imgToAnimate);
 
         battle_textView.append(text);
     }
@@ -768,7 +781,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
 
                 for (PlayCharacterHelper.Result result : enemyResult) {
                     totalDamage += result.getAttack();
-                    updateGUI(enemy, player, result, thread);
+                    updateGUI(enemy, player, result, thread, null);
                 }
                 if (enemy.getHP() > 0) {
                     new Handler().postDelayed(new Runnable() {
@@ -781,7 +794,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                                 //addLogTextAndAnimate(player, enemy, result);
                                 //player_hp_view.setText(new Integer(player.getHP()).toString());
                                 //player_HP_bar.setProgress(player.getHP());
-                                updateGUI(player, enemy, result, thread);
+                                updateGUI(player, enemy, result, thread, null);
 
                                 if (player.getHP() <= 0) {
                                     new Handler().postDelayed(new Runnable() {
