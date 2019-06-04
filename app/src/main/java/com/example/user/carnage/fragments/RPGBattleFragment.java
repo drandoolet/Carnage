@@ -211,12 +211,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         attackButton.setOnClickListener(attackButtonListener3);
 
         skillsButton = view.findViewById(R.id.buttonSkills);
-        skillsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showSkillsFragment();
-            }
-        });
+        skillsButton.setOnClickListener(view1 -> showSkillsFragment());
 
         skillsFragmentContainer = view.findViewById(R.id.skillsFragmentContainer);
 
@@ -230,9 +225,21 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         //testThread.start();
 
         synchronized (this) {
-            playerImageHolder = new ImageViewHolder(player_img, true, enemyImageHolder);
-            enemyImageHolder = new ImageViewHolder(enemy_img, false, playerImageHolder);
+            playerImageHolder = new ImageViewHolder(player_img, true, enemyImageHolder,
+                    player_points, skillEffect_img);
+            enemyImageHolder = new ImageViewHolder(enemy_img, false, playerImageHolder,
+                    enemy_points, null);
+            playerImageHolder.setEnemy(enemyImageHolder);
+            enemyImageHolder.setEnemy(playerImageHolder);
         }
+
+        playerImageHolder.animateAttack(AnimationTypes.Defence.ANIMATION_BATTLE_CRITICAL, "TEST CRITICAL");
+        playerImageHolder.animateAttack(AnimationTypes.Defence.ANIMATION_BATTLE_BLOCK, "TEST BLOCK");
+        playerImageHolder.animateAttack(AnimationTypes.Defence.ANIMATION_BATTLE_BLOCK_BREAK, "TEST BREAK");
+        playerImageHolder.animateAttack(AnimationTypes.Defence.ANIMATION_BATTLE_HIT, "TEST HIT");
+        playerImageHolder.animateAttack(AnimationTypes.Defence.ANIMATION_BATTLE_DODGE, "TEST DODGE");
+
+        //playerImageHolder.animate();
 
         return view;
     }
@@ -341,6 +348,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
     private View.OnClickListener attackButtonListener3 = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            playerImageHolder.animate();
             if (defCheckBoxCounter != defCounterBound || atkCheckBoxCounter != atkCounterBound) {
                 Toast.makeText(getContext(), getString(R.string.toast_choose_atk, defCounterBound, atkCounterBound),
                         Toast.LENGTH_SHORT).show();
@@ -592,7 +600,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         destinationThread.add(result.getRoundStatus().getSet(isPlayer, imgToAnimate),
                 result.getRoundStatus().getDuration());
 
-        holder.addAnimationToQueue(AnimationTypes.ANIMATION_BATTLE_ATTACK, imgToAnimate);
+        //holder.addAnimationToQueue(AnimationTypes.ANIMATION_BATTLE_ATTACK, imgToAnimate);
 
         battle_textView.append(text);
     }

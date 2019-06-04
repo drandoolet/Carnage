@@ -51,12 +51,7 @@ public class AnimationQueueThread extends Thread {
         for (final Test test : testArrayList) {
             delay = test.getDuration();
 
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    test.getSet().start();
-                }
-            });
+            mHandler.post(() -> test.getSet().start());
             System.out.println("thread delay = "+delay);
             Log.i("AnimationQueueThread", "thread delay = "+delay);
             try {
