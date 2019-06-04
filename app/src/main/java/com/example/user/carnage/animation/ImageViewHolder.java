@@ -14,6 +14,8 @@ import com.example.user.carnage.animation.AnimateGame.AnimationTypes;
 import com.example.user.carnage.animation.AnimateGame.AnimationTypes.DefenceAnimation;
 
 import java.util.ArrayList;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Logger;
 
@@ -84,24 +86,46 @@ public class ImageViewHolder implements AnimationQueueListener {
                     attackSemaphore.acquire();
                     defenceSemaphore.acquire();
                     mHandler.post(set::start); // anonymous -> lambda -> method reference (::)
+                    //logger.info("ATK thread sleeps for: "+duration);
                     sleep(duration);
                     enemy.animateHit(type, effect, defenceSemaphore);
+                    //logger.info("ATK thread sleeps for:    "+(AnimationTypes.ANIMATION_BATTLE_ATTACK.getFullDuration() - duration));
                     sleep(AnimationTypes.ANIMATION_BATTLE_ATTACK.getFullDuration() - duration);
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
                     attackSemaphore.release();
                     defenceSemaphore.release();
-                    Logger.getAnonymousLogger().info("exiting animateAttack thread");
                 }
             }
         });
     }
 
     public void animate() { // TODO: fix unexpected execution mixture (take, start etc)
-        for (Thread thread : taskList) {
-            thread.start();
+        BlockingQueue<Thread> queue = new LinkedBlockingQueue<>(1);
+        Thread producer = new Thread() {
+            @Override
+            public void run() {
+                for (Thread thread : taskList) {
+                    try {
+                        queue.put(thread);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        producer.start();
+
+        for (int i=0; i<taskList.size(); i++) {
+            try {
+                queue.take().start();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+
         taskList.clear();
     }
 
@@ -112,7 +136,6 @@ public class ImageViewHolder implements AnimationQueueListener {
 
     @Override
     public void animateHit(DefenceAnimation type, String effect, Semaphore semaphore) {
-        logger.info("entering animateHit()");
         try {
             semaphore.acquire();
 
@@ -120,13 +143,12 @@ public class ImageViewHolder implements AnimationQueueListener {
                 AnimationTypes.Common.POINTS.getSet(points, !leftToRight, false, effect).start();
                 type.getSet(!leftToRight, view).start();
             });
-
+            logger.info("DEF thread sleeps for: "+type.getDuration());
             Thread.sleep(type.getDuration());
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
             semaphore.release();
-            logger.info("exiting animateHit()");
         }
     }
 }

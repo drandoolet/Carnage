@@ -43,6 +43,10 @@ public class AnimateGame {
         public static long getDurationToPoints() {
             return TRANSLATION_DUR_1.duration +TRANSLATION_DUR_2.duration;
         }
+        public static long getFullDuration() {
+            return TRANSLATION_DUR_1.duration + TRANSLATION_DUR_2.duration +
+                    TRANSLATION_DUR_3.duration + TRANSLATION_DUR_4.duration;
+        }
     }
 
     enum Dodge {
@@ -244,6 +248,7 @@ public class AnimateGame {
 
     public AnimateGame() {
         AnimationTypes.ANIMATION_BATTLE_ATTACK.setDuration(Attack.getDurationToPoints());
+        AnimationTypes.ANIMATION_BATTLE_ATTACK.setFullDuration(Attack.getFullDuration());
         AnimationTypes.ANIMATION_BATTLE_DODGE.setDuration(Dodge.getDurationToPoints());
         AnimationTypes.ANIMATION_BATTLE_HIT.setDuration(Hit.getDurationToPoints());
         AnimationTypes.ANIMATION_BATTLE_CRITICAL.setDuration(Critical.getDurationToPoints());
