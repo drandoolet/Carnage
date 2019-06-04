@@ -102,31 +102,43 @@ public class ImageViewHolder implements AnimationQueueListener {
         });
     }
 
-    public void animate() { // TODO: fix unexpected execution mixture (take, start etc)
-        BlockingQueue<Thread> queue = new LinkedBlockingQueue<>(1);
-        Thread producer = new Thread() {
-            @Override
-            public void run() {
-                for (Thread thread : taskList) {
-                    try {
-                        queue.put(thread);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+    public Runnable animate() {
+        return () -> {
+            while (flag) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-        };
-        producer.start();
+            flag = true;
+            BlockingQueue<Thread> queue = new LinkedBlockingQueue<>(1);
+            Thread producer = new Thread() {
+                @Override
+                public void run() {
+                    for (Thread thread : taskList) {
+                        try {
+                            queue.put(thread);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+            producer.start();
 
-        for (int i=0; i<taskList.size(); i++) {
-            try {
-                queue.take().start();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            for (int i=0; i<taskList.size(); i++) {
+                try {
+                    queue.take().start();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        taskList.clear();
+            taskList.clear();
+            flag = false;
+        };
+
     }
 
     @Override

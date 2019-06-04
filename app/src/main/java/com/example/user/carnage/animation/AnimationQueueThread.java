@@ -52,8 +52,8 @@ public class AnimationQueueThread extends Thread {
             delay = test.getDuration();
 
             mHandler.post(() -> test.getSet().start());
-            System.out.println("thread delay = "+delay);
-            Log.i("AnimationQueueThread", "thread delay = "+delay);
+            //System.out.println("thread delay = "+delay);
+            //Log.i("AnimationQueueThread", "thread delay = "+delay);
             try {
                 sleep(delay);
             } catch (InterruptedException e) {

@@ -42,6 +42,8 @@ import java.io.InputStream;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static com.example.user.carnage.MainActivity.currentProfile;
 import static com.example.user.carnage.MainActivity.enemy;
@@ -232,13 +234,13 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
             playerImageHolder.setEnemy(enemyImageHolder);
             enemyImageHolder.setEnemy(playerImageHolder);
         }
-
+/*
         playerImageHolder.animateAttack(AnimationTypes.Defence.ANIMATION_BATTLE_CRITICAL, "TEST CRITICAL");
         playerImageHolder.animateAttack(AnimationTypes.Defence.ANIMATION_BATTLE_BLOCK, "TEST BLOCK");
         playerImageHolder.animateAttack(AnimationTypes.Defence.ANIMATION_BATTLE_BLOCK_BREAK, "TEST BREAK");
         playerImageHolder.animateAttack(AnimationTypes.Defence.ANIMATION_BATTLE_HIT, "TEST HIT");
         playerImageHolder.animateAttack(AnimationTypes.Defence.ANIMATION_BATTLE_DODGE, "TEST DODGE");
-
+*/
         //playerImageHolder.animate();
 
         return view;
@@ -348,7 +350,6 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
     private View.OnClickListener attackButtonListener3 = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            playerImageHolder.animate();
             if (defCheckBoxCounter != defCounterBound || atkCheckBoxCounter != atkCounterBound) {
                 Toast.makeText(getContext(), getString(R.string.toast_choose_atk, defCounterBound, atkCounterBound),
                         Toast.LENGTH_SHORT).show();
@@ -363,14 +364,18 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
 
                 for (PlayCharacterHelper.Result result : enemyResult) {
                     totalDamage += result.getAttack();
-                    updateGUI(enemy, player, result, thread, enemyImageHolder);
+                    updateGUI(enemy, player, result, thread, playerImageHolder);
+                    //playerImageHolder.animate();
+                    addAnimation(playerImageHolder.animate());
                 }
                 if (enemy.getHP() > 0) {
                     ArrayList<PlayCharacterHelper.Result> playerResult
                             = playerHelper.handle(plCh, enCh);
 
                     for (PlayCharacterHelper.Result result : playerResult) {
-                        updateGUI(player, enemy, result, thread, playerImageHolder);
+                        updateGUI(player, enemy, result, thread, enemyImageHolder);
+                        //enemyImageHolder.animate();
+                        addAnimation(enemyImageHolder.animate());
 
                         if (player.getHP() <= 0) {
                             System.out.println("\n*** GAME OVER. YOU LOSE ***");
@@ -386,7 +391,8 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                     System.out.println("\n*** GAME OVER. YOU WIN ***");
                     setGameOver(player.getName(), true);
                 }
-                thread.start();
+                //thread.start();
+
 
                 waiter.setAnimatingNow(true);
 
@@ -401,6 +407,25 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
             }
         }
     };
+
+    BlockingQueue<Runnable> animationQueue = new LinkedBlockingQueue<>(1);
+
+    private void addAnimation(Runnable runnable) {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    animationQueue.put(runnable);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
+
+    private void animateNow() {
+        animationQueue.take();
+    }
 
     private class AnimationEndWaiter {
         private boolean isAnimatingNow = false;
@@ -547,36 +572,43 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         }
 
         AnimationTypes status = result.getRoundStatus();
+        AnimationTypes.Defence defenceStatus;
         switch (status) {
             case ANIMATION_BATTLE_HIT:
+                defenceStatus = AnimationTypes.Defence.ANIMATION_BATTLE_HIT;
                 text = getString(R.string.battle_text_normal, enemy.getName(), result.getBodyPart(), result.getAttack());
                 hits++;
                 //animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
                 textForPoints = String.format(Locale.ENGLISH, Integer.toString(-result.getAttack()));
                 break;
             case ANIMATION_BATTLE_BLOCK:
+                defenceStatus = AnimationTypes.Defence.ANIMATION_BATTLE_BLOCK;
                 text = getString(R.string.battle_text_blocked, enemy.getName(), result.getBodyPart(), character.getName());
                 blocks++;
                 textForPoints = getString(R.string.battle_points_block);
                 break;
             case ANIMATION_BATTLE_DODGE:
+                defenceStatus = AnimationTypes.Defence.ANIMATION_BATTLE_DODGE;
                 text = getString(R.string.battle_text_dodged, enemy.getName(), result.getBodyPart(), character.getName());
                 dodges++;
                 textForPoints = getString(R.string.battle_points_dodge);
                 break;
             case ANIMATION_BATTLE_CRITICAL:
+                defenceStatus = AnimationTypes.Defence.ANIMATION_BATTLE_CRITICAL;
                 text = getString(R.string.battle_text_critical, enemy.getName(), result.getBodyPart(),
                         character.getName(), result.getAttack());
                 textForPoints = getString(R.string.battle_points_critical, -result.getAttack());
                 criticals++;
                 break;
             case ANIMATION_BATTLE_BLOCK_BREAK:
+                defenceStatus = AnimationTypes.Defence.ANIMATION_BATTLE_BLOCK_BREAK;
                 text = getString(R.string.battle_text_block_break, enemy.getName(), result.getBodyPart(),
                         character.getName(), result.getAttack());
                 textForPoints = getString(R.string.battle_points_block_break, -result.getAttack());
                 blockBreaks++;
                 break;
             default:
+                defenceStatus = AnimationTypes.Defence.ANIMATION_BATTLE_HIT;
                 textForPoints = "ERROR";
                 text = '\n' + '\n' + "  ERROR in round " + roundCounter;
         }
@@ -592,15 +624,16 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 animateGame.animateDamagePoints(pointsTextView, isPlayer, false);
             }
         }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration()); */
-
+/*
         destinationThread.add(AnimationTypes.ANIMATION_BATTLE_ATTACK.getSet(isPlayer, playerImage, imgToAnimate)
                 , AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
         destinationThread.add(AnimationTypes.Common.POINTS.getSet(pointsTextView, isPlayer, false, textForPoints),
                 0);
         destinationThread.add(result.getRoundStatus().getSet(isPlayer, imgToAnimate),
                 result.getRoundStatus().getDuration());
-
+*/
         //holder.addAnimationToQueue(AnimationTypes.ANIMATION_BATTLE_ATTACK, imgToAnimate);
+        holder.animateAttack(defenceStatus, textForPoints);
 
         battle_textView.append(text);
     }
