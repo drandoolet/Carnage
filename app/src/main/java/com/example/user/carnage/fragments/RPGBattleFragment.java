@@ -43,7 +43,10 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 
 import static com.example.user.carnage.MainActivity.currentProfile;
 import static com.example.user.carnage.MainActivity.enemy;
@@ -90,6 +93,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
     private boolean isAnimating = false;
     private AnimationEndWaiter waiter;
     private ImageViewHolder playerImageHolder, enemyImageHolder;
+    private Executor oneThreadExecutor;
 
 
 
@@ -112,6 +116,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         animateGame = new AnimateGame();
         random = new SecureRandom();
 
+        oneThreadExecutor = Executors.newSingleThreadExecutor();
         //defCheckBoxCounter = 0;
         //atkCheckBoxCounter = 0;
         roundCounter = 0;
@@ -403,12 +408,12 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                     }
                 };
                 thread1.start();
-
+                animateNow();
             }
         }
     };
 
-    BlockingQueue<Runnable> animationQueue = new LinkedBlockingQueue<>(1);
+    BlockingQueue<Runnable> animationQueue = new LinkedBlockingQueue<>(2);
 
     private void addAnimation(Runnable runnable) {
         new Thread() {
@@ -423,8 +428,24 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         };
     }
 
+    Thread thread;
+    Logger logger = Logger.getAnonymousLogger();
     private void animateNow() {
-        animationQueue.take();
+        thread = new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        logger.info("trying to start executing");
+                        oneThreadExecutor.execute(animationQueue.take());
+                        logger.info("has started executing");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        thread.start();
     }
 
     private class AnimationEndWaiter {
@@ -799,6 +820,8 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
     public void animationEnded() {
         waiter.setAnimatingNow(false);
     }
+
+
 
 
 
