@@ -31,7 +31,7 @@ public class ImageViewHolder implements AnimationQueueListener {
     private final ArrayList<Thread> taskList;
 
     private AnimationQueueListener enemy;
-    private volatile boolean flag = false;
+    static volatile boolean flag = false;
 
     Logger logger = Logger.getAnonymousLogger();
 
@@ -106,11 +106,14 @@ public class ImageViewHolder implements AnimationQueueListener {
         return () -> {
             while (flag) {
                 try {
+                    logger.info("animation task Waits.");
                     wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
+
+            logger.info("animation task has Started executing.");
             flag = true;
             BlockingQueue<Thread> queue = new LinkedBlockingQueue<>(1);
             Thread producer = new Thread() {
@@ -137,6 +140,13 @@ public class ImageViewHolder implements AnimationQueueListener {
 
             taskList.clear();
             flag = false;
+            try {
+                attackSemaphore.acquire();
+                attackSemaphore.release();
+                logger.info("animation task has Ended executing.");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         };
 
     }

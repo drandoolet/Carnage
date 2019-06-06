@@ -413,7 +413,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         }
     };
 
-    BlockingQueue<Runnable> animationQueue = new LinkedBlockingQueue<>(2);
+    BlockingQueue<Runnable> animationQueue = new LinkedBlockingQueue<>(1);
 
     private void addAnimation(Runnable runnable) {
         new Thread() {
@@ -425,7 +425,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                     e.printStackTrace();
                 }
             }
-        };
+        }.start();
     }
 
     Thread thread;
@@ -437,7 +437,10 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 while (true) {
                     try {
                         logger.info("trying to start executing");
-                        oneThreadExecutor.execute(animationQueue.take());
+                        //oneThreadExecutor.execute(animationQueue.take());
+                        Thread worker = new Thread(animationQueue.take());
+                        worker.start();
+                        worker.join();
                         logger.info("has started executing");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
