@@ -396,7 +396,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                     System.out.println("\n*** GAME OVER. YOU WIN ***");
                     setGameOver(player.getName(), true);
                 }
-                //thread.start();
+                thread.start();
 
 
                 waiter.setAnimatingNow(true);
@@ -408,7 +408,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                     }
                 };
                 thread1.start();
-                animateNow();
+                //animateNow();
             }
         }
     };
@@ -648,14 +648,14 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 animateGame.animateDamagePoints(pointsTextView, isPlayer, false);
             }
         }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration()); */
-/*
+
         destinationThread.add(AnimationTypes.ANIMATION_BATTLE_ATTACK.getSet(isPlayer, playerImage, imgToAnimate)
                 , AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
         destinationThread.add(AnimationTypes.Common.POINTS.getSet(pointsTextView, isPlayer, false, textForPoints),
                 0);
         destinationThread.add(result.getRoundStatus().getSet(isPlayer, imgToAnimate),
                 result.getRoundStatus().getDuration());
-*/
+
         //holder.addAnimationToQueue(AnimationTypes.ANIMATION_BATTLE_ATTACK, imgToAnimate);
         holder.animateAttack(defenceStatus, textForPoints);
 
