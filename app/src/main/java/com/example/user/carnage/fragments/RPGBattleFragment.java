@@ -43,9 +43,11 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Logger;
 
 import static com.example.user.carnage.MainActivity.currentProfile;
@@ -233,9 +235,9 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
 
         synchronized (this) {
             playerImageHolder = new ImageViewHolder(player_img, true, enemyImageHolder,
-                    player_points, skillEffect_img);
+                    this, player_points, skillEffect_img);
             enemyImageHolder = new ImageViewHolder(enemy_img, false, playerImageHolder,
-                    enemy_points, null);
+                    this, enemy_points, null);
             playerImageHolder.setEnemy(enemyImageHolder);
             enemyImageHolder.setEnemy(playerImageHolder);
         }
@@ -388,18 +390,11 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                             break;
                         }
                     }
-                    //if (player.getHP() > 0) {
-                    //    setButtonsEnabled(true);
-                    //    setArgsReadyForNextRound();
-                    // }
                 } else {
                     System.out.println("\n*** GAME OVER. YOU WIN ***");
                     setGameOver(player.getName(), true);
                 }
-                thread.start();
-
-
-                waiter.setAnimatingNow(true);
+                //thread.start();
 
                 Thread thread1 = new Thread() {
                     @Override
@@ -408,7 +403,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                     }
                 };
                 thread1.start();
-                //animateNow();
+                animateNow();
             }
         }
     };
@@ -436,12 +431,10 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
             public void run() {
                 while (true) {
                     try {
-                        logger.info("trying to start executing");
-                        //oneThreadExecutor.execute(animationQueue.take());
-                        Thread worker = new Thread(animationQueue.take());
-                        worker.start();
-                        worker.join();
-                        logger.info("has started executing");
+                        //Thread worker = new Thread(animationQueue.take());
+                        //worker.start();
+                        //worker.join();
+                        animateInTurns(animationQueue.take());
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -451,10 +444,28 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         thread.start();
     }
 
+    Thread animateInTurnsThread;
+    Semaphore animateInTurnsSemaphore = new Semaphore(1);
+    /**
+     * Creates a new Thread(Runnable) and waits for it to finish operating
+     */
+    private synchronized void animateInTurns(Runnable runnable) {
+        try {
+            animateInTurnsSemaphore.acquire();
+            animateInTurnsThread = new Thread(runnable);
+            waiter.setAnimatingNow(true);
+            animateInTurnsThread.start();
+            animateInTurnsThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        animateInTurnsSemaphore.release();
+    }
+
     private class AnimationEndWaiter {
         private boolean isAnimatingNow = false;
 
-        public synchronized void setArgsReady() {
+        synchronized void setArgsReady() {
             while (isAnimatingNow) {
                 try {
                     //Toast.makeText(getContext(), "waiting started", Toast.LENGTH_SHORT).show();
@@ -648,14 +659,14 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 animateGame.animateDamagePoints(pointsTextView, isPlayer, false);
             }
         }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration()); */
-
+/*
         destinationThread.add(AnimationTypes.ANIMATION_BATTLE_ATTACK.getSet(isPlayer, playerImage, imgToAnimate)
                 , AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
         destinationThread.add(AnimationTypes.Common.POINTS.getSet(pointsTextView, isPlayer, false, textForPoints),
                 0);
         destinationThread.add(result.getRoundStatus().getSet(isPlayer, imgToAnimate),
                 result.getRoundStatus().getDuration());
-
+*/
         //holder.addAnimationToQueue(AnimationTypes.ANIMATION_BATTLE_ATTACK, imgToAnimate);
         holder.animateAttack(defenceStatus, textForPoints);
 
@@ -746,12 +757,9 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 totalDamage -= skill.getEffect(); // getEffect() returns negative int if damage and positive if heal
             }
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (!skill.isEffectOnPlayer()) animateGame.animateHit(enemy_img, true);
-                    animateGame.animateDamagePoints(points, skill.isEffectOnPlayer(), skill.isEffectOnPlayer());
-                }
+            new Handler().postDelayed(() -> {
+                if (!skill.isEffectOnPlayer()) animateGame.animateHit(enemy_img, true);
+                animateGame.animateDamagePoints(points, skill.isEffectOnPlayer(), skill.isEffectOnPlayer());
             }, 0);
 
             defCounterBound -= skill.getBoundTakers()[0];

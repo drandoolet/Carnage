@@ -16,8 +16,10 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.example.user.carnage.R;
+import com.example.user.carnage.animation.AnimationQueueThread.AnimationEndListener;
 
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 public class AnimateGame {
     interface Durations {
@@ -862,14 +864,26 @@ public class AnimateGame {
             }
         };
 
+
+
+        public Runnable getRunnableSet(boolean isPlayer, View view,
+                                       View enemyView, AnimationEndListener listener) {
+            return () -> {
+                AnimatorSet set = getSet(isPlayer, view, enemyView);
+                set.addListener(new CallbackAnimatorListener(listener));
+                set.start();
+            };
+        }
+
+
         public interface DefenceAnimation extends Durations {
             AnimatorSet getSet(boolean isPlayer, View view);
+            Runnable getRunnableSet(boolean isPlayer, View view, AnimationEndListener listener);
             long getDuration();
-            long getFullDuration();
         }
 
         public enum Defence implements DefenceAnimation {
-            ANIMATION_BATTLE_HIT {
+            ANIMATION_BATTLE_HIT(Hit.getDurationToPoints()) {
                 @Override
                 public AnimatorSet getSet(boolean isPlayer, View view) {
                     AnimatorSet set = new AnimatorSet();
@@ -880,18 +894,8 @@ public class AnimateGame {
                     );
                     return set;
                 }
-
-                @Override
-                public long getDuration() {
-                    return Hit.getDurationToPoints();
-                }
-
-                @Override
-                public long getFullDuration() {
-                    return getDuration();
-                }
             },
-            ANIMATION_BATTLE_BLOCK {
+            ANIMATION_BATTLE_BLOCK(Block.getDurationToPoints()) {
                 @Override
                 public AnimatorSet getSet(boolean isPlayer, View view) {
                     float state_2 = Block.Float.STATE_2.getFloat() * (isPlayer ? 1 : -1);
@@ -904,18 +908,8 @@ public class AnimateGame {
                     );
                     return set;
                 }
-
-                @Override
-                public long getDuration() {
-                    return Block.getDurationToPoints();
-                }
-
-                @Override
-                public long getFullDuration() {
-                    return getDuration();
-                }
             },
-            ANIMATION_BATTLE_DODGE {
+            ANIMATION_BATTLE_DODGE(Dodge.getDurationToPoints()) {
                 @Override
                 public AnimatorSet getSet(boolean isPlayer, View view) {
                     float translation_x2 = Dodge.Float.TRANSLATION_X_2.getFloat() * (isPlayer ? 1 : -1);
@@ -946,18 +940,8 @@ public class AnimateGame {
                     );
                     return set;
                 }
-
-                @Override
-                public long getDuration() {
-                    return Dodge.getDurationToPoints();
-                }
-
-                @Override
-                public long getFullDuration() {
-                    return getDuration();
-                }
             },
-            ANIMATION_BATTLE_CRITICAL {
+            ANIMATION_BATTLE_CRITICAL(Critical.getDurationToPoints()) {
                 @Override
                 public AnimatorSet getSet(boolean isPlayer, View view) {
                     float rotation_2 = Critical.Float.ROTATION_2.getFloat() * (isPlayer ? 1 : -1);
@@ -984,18 +968,8 @@ public class AnimateGame {
                     );
                     return set;
                 }
-
-                @Override
-                public long getDuration() {
-                    return Critical.getDurationToPoints();
-                }
-
-                @Override
-                public long getFullDuration() {
-                    return getDuration();
-                }
             },
-            ANIMATION_BATTLE_BLOCK_BREAK {
+            ANIMATION_BATTLE_BLOCK_BREAK(BlockBreak.getDurationToPoints()) {
                 @Override
                 public AnimatorSet getSet(boolean isPlayer, View view) {
                     float state_2 = BlockBreak.Float.STATE_2.getFloat() * (isPlayer ? 1 : -1);
@@ -1028,16 +1002,26 @@ public class AnimateGame {
                     );
                     return set;
                 }
+            };
 
-                @Override
-                public long getDuration() {
-                    return BlockBreak.getDurationToPoints();
-                }
+            private long duration;
 
-                @Override
-                public long getFullDuration() {
-                    return getDuration();
-                }
+            Defence(long duration) {
+                this.duration = duration;
+            }
+
+            @Override
+            public Runnable getRunnableSet(boolean isPlayer, View view, AnimationEndListener listener) {
+                return () -> {
+                    AnimatorSet set = getSet(isPlayer, view);
+                    set.addListener(new CallbackAnimatorListener(listener));
+                    set.start();
+                };
+            }
+
+            @Override
+            public long getDuration() {
+                return duration;
             }
         }
 
@@ -1100,3 +1084,21 @@ public class AnimateGame {
     }
 }
 
+class CallbackAnimatorListener extends AnimatorListenerAdapter {
+    private final AnimationEndListener listener;
+
+    CallbackAnimatorListener(AnimationEndListener listener) {
+        this.listener = listener;
+    }
+
+    @Override
+    public void onAnimationEnd(Animator animation) {
+        super.onAnimationEnd(animation);
+        listener.animationEnded();
+    }
+
+    @Override
+    public void onAnimationStart(Animator animation) {
+        super.onAnimationStart(animation);
+    }
+}
