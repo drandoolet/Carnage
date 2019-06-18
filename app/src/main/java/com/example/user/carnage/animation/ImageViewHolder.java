@@ -12,10 +12,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.user.carnage.R;
 import com.example.user.carnage.animation.AnimateGame.AnimationTypes;
 import com.example.user.carnage.animation.AnimateGame.AnimationTypes.DefenceAnimation;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
@@ -113,7 +117,7 @@ public class ImageViewHolder implements AnimationQueueListener, AnimationQueueTh
             }
         });
 */
-        taskList.add(() -> {
+/*        taskList.add(() -> {
             final AnimatorSet set = AnimationTypes.ANIMATION_BATTLE_ATTACK.getSet(leftToRight, view, enemy.getView());
             long duration = AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration();
 
@@ -138,9 +142,28 @@ public class ImageViewHolder implements AnimationQueueListener, AnimationQueueTh
                 //defenceSemaphore.release();
             }
         });
-
+*/
         taskList.add(() -> {
+            long duration = AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration();
+            Semaphore semaphore = new Semaphore(1);
 
+            try {
+                semaphore.acquire();
+                mHandler.post(AnimationTypes.ANIMATION_BATTLE_ATTACK.getRunnableSet(
+                        leftToRight,
+                        view,
+                        enemy.getView(),
+                        semaphore::release)
+                );
+                sleep(duration);
+                enemy.animateHit(type, effect, defenceSemaphore);
+
+                while (semaphore.tryAcquire()) {
+                    wait();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         });
     }
 
@@ -170,7 +193,7 @@ public class ImageViewHolder implements AnimationQueueListener, AnimationQueueTh
                     for (Runnable runnable : taskList) {
                         try {
                             synchronousQueue.put(runnable);
-                            logger.info("a task has been put to the queue");
+                            //logger.info("a task has been put to the queue");
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -207,6 +230,16 @@ public class ImageViewHolder implements AnimationQueueListener, AnimationQueueTh
 
     }
 
+    public Runnable animate(int i) {
+        InTurnsExecutor executor = new InTurnsExecutor();
+
+        for (Runnable runnable : taskList) {
+            executor.add(runnable);
+        }
+
+        return executor.execute();
+    }
+
     @Override
     public ImageView getView() {
         return view;
@@ -235,6 +268,37 @@ public class ImageViewHolder implements AnimationQueueListener, AnimationQueueTh
     @Override
     public void animationEnded() {
 
+    }
+
+    class InTurnsExecutor {
+        private ArrayList<Runnable> list;
+
+        InTurnsExecutor() {
+            list = new ArrayList<>();
+        }
+
+        void add(Runnable runnable) {
+            list.add(runnable);
+        }
+
+        Thread execute() {
+            return new Thread() {
+                @Override
+                public void run() {
+                    for (Runnable runnable : list) {
+                        Thread thread = new Thread(runnable);
+                        thread.start();
+                        try {
+                            logger.info("ITE execute() : join() at "+Calendar.getInstance().getTime());
+                            thread.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    taskList.clear();
+                }
+            };
+        }
     }
 }
 

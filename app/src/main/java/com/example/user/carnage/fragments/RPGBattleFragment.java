@@ -373,7 +373,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                     totalDamage += result.getAttack();
                     updateGUI(enemy, player, result, thread, playerImageHolder);
                     //playerImageHolder.animate();
-                    addAnimation(playerImageHolder.animate());
+                    addAnimation(playerImageHolder.animate(1));
                 }
                 if (enemy.getHP() > 0) {
                     ArrayList<PlayCharacterHelper.Result> playerResult
@@ -382,7 +382,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                     for (PlayCharacterHelper.Result result : playerResult) {
                         updateGUI(player, enemy, result, thread, enemyImageHolder);
                         //enemyImageHolder.animate();
-                        addAnimation(enemyImageHolder.animate());
+                        addAnimation(enemyImageHolder.animate(1));
 
                         if (player.getHP() <= 0) {
                             System.out.println("\n*** GAME OVER. YOU LOSE ***");
@@ -408,7 +408,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         }
     };
 
-    BlockingQueue<Runnable> animationQueue = new LinkedBlockingQueue<>(1);
+    BlockingQueue<Runnable> animationQueue = new LinkedBlockingQueue<>(3);
 
     private void addAnimation(Runnable runnable) {
         new Thread() {
@@ -452,6 +452,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
     private synchronized void animateInTurns(Runnable runnable) {
         try {
             animateInTurnsSemaphore.acquire();
+            logger.info("RPGBF sem acq");
             animateInTurnsThread = new Thread(runnable);
             waiter.setAnimatingNow(true);
             animateInTurnsThread.start();
@@ -460,6 +461,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
             e.printStackTrace();
         }
         animateInTurnsSemaphore.release();
+        logger.info("RPGBF sem released");
     }
 
     private class AnimationEndWaiter {
