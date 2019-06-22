@@ -158,9 +158,8 @@ public class ImageViewHolder implements AnimationQueueListener, AnimationQueueTh
                 sleep(duration);
                 enemy.animateHit(type, effect, defenceSemaphore);
 
-                while (semaphore.tryAcquire()) {
-                    wait();
-                }
+                semaphore.acquire();
+                semaphore.release();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

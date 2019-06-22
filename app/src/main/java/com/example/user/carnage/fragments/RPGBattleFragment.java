@@ -48,6 +48,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.SynchronousQueue;
 import java.util.logging.Logger;
 
 import static com.example.user.carnage.MainActivity.currentProfile;
@@ -408,7 +409,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         }
     };
 
-    BlockingQueue<Runnable> animationQueue = new LinkedBlockingQueue<>(3);
+    SynchronousQueue<Runnable> animationQueue = new SynchronousQueue<>();
 
     private void addAnimation(Runnable runnable) {
         new Thread() {
