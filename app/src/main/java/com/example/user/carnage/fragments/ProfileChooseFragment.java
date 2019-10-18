@@ -87,32 +87,24 @@ public class ProfileChooseFragment extends Fragment {
         profile1TextView.setText("Lv."+MainActivity.getInitialStats(MainActivity.currentProfile)[5]);
 
         profile1ImgButton.setOnClickListener(buttonListener);
-        profile2ImgButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MainActivity.animateChangeWindow();
-            }
-        });
+        profile2ImgButton.setOnClickListener(view12 -> MainActivity.animateChangeWindow());
 
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (MainActivity.player.getAvailableStatPoints() > 0) {
-                    AllocateStatsDialogFragment dialogFragment = new AllocateStatsDialogFragment();
-                    dialogFragment.show(getFragmentManager(), "ALLOCATE STATS DIALOG");
-                } else {
-                    MainActivity.animateChangeWindow();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            RPGBattleFragment fragment = new RPGBattleFragment();
-                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                            transaction.replace(R.id.container, fragment, "MAIN BATTLE FRAGMENT");
-                            transaction.addToBackStack(null);
-                            transaction.commit();
-                        }
-                    }, MainActivity.getChangeAnimationDuration()-100);
-                }
+        okButton.setOnClickListener(view1 -> {
+            if (MainActivity.player.getAvailableStatPoints() > 0) {
+                AllocateStatsDialogFragment dialogFragment = new AllocateStatsDialogFragment();
+                dialogFragment.show(getFragmentManager(), "ALLOCATE STATS DIALOG");
+            } else {
+                MainActivity.animateChangeWindow();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        RPGBattleFragment fragment = new RPGBattleFragment();
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.replace(R.id.container, fragment, "MAIN BATTLE FRAGMENT");
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
+                }, MainActivity.getChangeAnimationDuration()-100);
             }
         });
 
@@ -162,25 +154,22 @@ public class ProfileChooseFragment extends Fragment {
             luckTextView.setText("LUCK: "+'\n'+Integer.toString(stats[3]));
             intTextView.setText("INT: "+'\n'+Integer.toString(stats[4]));
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    TextView[] views = {strTextView, staTextView, agiTextView, luckTextView, intTextView, levelTextView, expTextView};
-                    for (int i=0; i<views.length; i++) {
-                        //views[i].setText(Integer.toString(stats[i]));
-                        views[i].setVisibility(View.VISIBLE);
-                    }
-                    okButton.setVisibility(View.VISIBLE);
-                    View[] views1 = {strTextView, staTextView, agiTextView, luckTextView, intTextView, levelTextView, expTextView, okButton};
-                    animateGame.animateFade(isProfileSelected, 500, views1);
+            new Handler().postDelayed(() -> {
+                TextView[] views = {strTextView, staTextView, agiTextView, luckTextView, intTextView, levelTextView, expTextView};
+                for (int i=0; i<views.length; i++) {
+                    //views[i].setText(Integer.toString(stats[i]));
+                    views[i].setVisibility(View.VISIBLE);
                 }
+                okButton.setVisibility(View.VISIBLE);
+                View[] views1 = {strTextView, staTextView, agiTextView, luckTextView, intTextView, levelTextView, expTextView, okButton};
+                animateGame.animateFade(isProfileSelected, 500, views1);
             }, AnimateGame.AnimationTypes.ANIMATION_PROFILE_SELECTED.getDuration());
+
+            OnProfileSelectedListener listener = (OnProfileSelectedListener) getActivity();
+            listener.profileSelected(profile);
         } else {
             View[] views1 = {strTextView, staTextView, agiTextView, luckTextView, intTextView, levelTextView, expTextView, okButton};
             animateGame.animateFade(isProfileSelected, 500, views1);
         }
-
-        OnProfileSelectedListener listener = (OnProfileSelectedListener) getActivity();
-        listener.profileSelected(profile);
     }
 }
