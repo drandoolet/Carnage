@@ -33,7 +33,7 @@ public class BodyPart {
 
 
 
-    public enum  BodyPartNames {
+    public enum BodyPartNames {
         HEAD(1.2, "ГОЛОВУ"), BODY(0.8, "ТЕЛО"), WAIST(0.9, "ПОЯС"), LEGS(1.1, "НОГИ") ;
 
         private double adjustion;

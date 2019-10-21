@@ -41,6 +41,7 @@ public class PlayerChoice {
         attacked = playerAttacked;
     }
 
+    @Deprecated
     public PlayerChoice(String jcb_name_att, String jcb_name_def) {
         str_att = jcb_name_att;
         str_def = jcb_name_def;
@@ -109,6 +110,7 @@ public class PlayerChoice {
         }
     }
 
+    @Deprecated
     public PlayerChoice() { // for COMP only
         random = new SecureRandom();
         handleNeuralNetStatistics(MainActivity.getNeuralNetStatistics(MainActivity.currentProfile));
