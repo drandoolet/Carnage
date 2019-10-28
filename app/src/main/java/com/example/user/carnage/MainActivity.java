@@ -30,6 +30,7 @@ import com.example.user.carnage.fragments.dialogs.WipeStatisticsDialogFragment;
 import com.example.user.carnage.logic.main.PlayCharacter;
 import com.example.user.carnage.logic.skills.Fireball;
 import com.example.user.carnage.logic.skills.Skill;
+import com.example.user.carnage.logic.skills.SkillFactory;
 import com.example.user.carnage.logic.skills.SmallHeal;
 
 import java.io.IOException;
@@ -407,8 +408,8 @@ public class MainActivity extends AppCompatActivity
         //transaction.addToBackStack(null);
         //transaction.commit();
         skills = new ArrayList<>();
-        skills.add(new SmallHeal(player));
-        skills.add(new Fireball(player, enemy));
+        skills.add(SkillFactory.newSkill(Skill.SkillTypes.HEAL_SMALL, player));
+        skills.add(SkillFactory.newSkill(Skill.SkillTypes.FIREBALL, player, enemy));
 
         chosenSkillsSet = new HashMap<>();
 

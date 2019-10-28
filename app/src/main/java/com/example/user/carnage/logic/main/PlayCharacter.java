@@ -91,6 +91,7 @@ public class PlayCharacter {
         neural_attacked_legs = 0;
     }
 
+    @Deprecated
     PlayCharacter(Chars ch, String pl_name) {
         maxHP = ch.getHP();
         HP = ch.getHP();
@@ -116,6 +117,7 @@ public class PlayCharacter {
         neural_attacked_legs = 0;
     }
 
+    @Deprecated
     PlayCharacter(Chars ch, String pl_name, boolean RPGStyle) {
         int[] stats = ch.getStats();
         maxHP = stats[3];
@@ -298,6 +300,7 @@ public class PlayCharacter {
         return random.nextInt(100) < rate;
     }
 
+    @Deprecated
     public void damageReceived(PlayCharacter en) {
         int dmg = 0;
         finalKick = 0;
@@ -373,7 +376,7 @@ public class PlayCharacter {
         return isCrit;
     }
 
-
+    @Deprecated
     public void getChoices(PlayerChoice plc, PlayerChoice plc1) { // plc - player, plc1 - enemy
         switch (plc1.getAttack()) {
             case HEAD :
@@ -439,6 +442,7 @@ public class PlayCharacter {
         for (BodyPart x : bps) x.clear();
     }
 
+    @Deprecated
     public String getInfo(PlayCharacter enemy) {
         String s1 = "*** Начинается бой между: " +name+ " и "+enemy.getName()+". *** \n";
         String s2 = "\nХарактеристики игрока: \nЗдоровье: "+HP +" ед.\nСила удара: "
@@ -462,6 +466,7 @@ public class PlayCharacter {
     public String getTarget() { return target.getName(); }
     public RoundStatus getRoundStatus() { return roundStatus; }
 
+    @Deprecated
     private void handleSuccessfulAttack(BodyPart bodyPart, PlayCharacter enemy) {
         switch (bodyPart.getName()) {
             case "HEAD" : enemy.neural_ok_atk_head++; break;
@@ -597,5 +602,35 @@ public class PlayCharacter {
             case MAGICAL_DEFENCE: return magic_defence;
         }
         return 0;
+    }
+
+
+
+
+
+    // all code above - to refactor
+
+    public enum MainScalesType {
+        HP, SP, MP;
+        enum Value {
+            MAX_VALUE, CURRENT_VALUE
+        }
+    }
+
+    public int getMainScaleState(MainScalesType type, MainScalesType.Value value) {
+        if (value == MainScalesType.Value.MAX_VALUE) {
+            switch (type) {
+                case HP: return maxHP;
+                case MP: return maxMP;
+                case SP: return maxSP;
+            }
+        } else if (value == MainScalesType.Value.CURRENT_VALUE) {
+            switch (type) {
+                case HP: return HP;
+                case SP: return SP;
+                case MP: return MP;
+            }
+        }
+        throw new IllegalArgumentException();
     }
 }

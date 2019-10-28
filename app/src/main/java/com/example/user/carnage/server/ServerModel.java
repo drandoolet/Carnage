@@ -150,7 +150,7 @@ public class ServerModel {
         }
 
         /**
-         * @format { "attacked" : {"BodyPartNames", ...}, "defended" : {...} }
+         * @format { "attacked" : {"BodyPartNames", ...}, "defended" : {...}, "skills" : {...} }
          */
         private static class JsonPlayerChoice {
 
