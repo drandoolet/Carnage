@@ -9,6 +9,8 @@ import com.example.user.carnage.logic.main.PlayCharacter;
 import com.example.user.carnage.logic.main.Subtraction;
 import com.example.user.carnage.logic.skills.Fireball;
 import com.example.user.carnage.logic.skills.Skill;
+import com.example.user.carnage.logic.skills.SkillFactory;
+import com.example.user.carnage.server.roundprocessor.roundelement.RoundResults;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,12 +57,12 @@ class BattleRoundProcessor {
         for (RoundResults.RoundStage stage: results.getStages()) {
             array.put(new JSONObject()
                     .put("subtraction", new JSONArray().put(new JSONObject()
-                            .put("player1", stage.subtraction_player_1.toJson())
-                            .put("player2", stage.subtraction_player_2.toJson())))
-                    .put("actor", stage.actor)
-                    .put("skill", stage.skill)
-                    .put("status", stage.status)
-                    .put("target", stage.target)
+                            .put("player1", stage.getSubtraction_player_1().toJson())
+                            .put("player2", stage.getSubtraction_player_2().toJson())))
+                    .put("actor", stage.getActor())
+                    .put("skill", stage.getSkill())
+                    .put("status", stage.getStatus())
+                    .put("target", stage.getTarget())
             );
         }
         return main.put("stages", array);
@@ -89,100 +91,12 @@ class BattleRoundProcessor {
                                 .build(),
                         new PlayCharacter(player_1, "test ACTOR")
                 )
-                        .setSkill(new Fireball(player_1, player_2))
+                        .setSkill(SkillFactory.newSkill(Skill.SkillTypes.FIREBALL, player_1, player_2))
                         .build())
                 //.addStage( bla bla line 2)
                 .build());
     }
 
-    static class RoundResults {
-        private final List<RoundStage> stages;
-
-        private RoundResults(Builder builder) {
-            this.stages = builder.stages;
-        }
-
-        static class Builder {
-            private List<RoundStage> stages;
-
-            public Builder() {
-                stages = new ArrayList<>();
-            }
-
-            Builder addStage(RoundStage stage) {
-                stages.add(stage);
-                return this;
-            }
-
-            RoundResults build() {
-                return new RoundResults(this);
-            }
-        }
-
-        List<RoundStage> getStages() {
-            return stages;
-        }
-
-        /**
-         * An entity that represents a single kick or magic usage.
-         * i.e. "Player 1 aims at Head, dealing 100 points of damage."
-         *
-         * Transferred to Server to make JSON for Clients
-         */
-        static class RoundStage {
-            @NonNull private final Subtraction subtraction_player_1, subtraction_player_2;
-            @NonNull private final PlayCharacter actor; // or maybe a String? boolean?
-            @Nullable private final Skill skill;
-            @Nullable private final PlayCharacter.RoundStatus status;
-            @Nullable private final BodyPart.BodyPartNames target;
-
-            public static Builder newStageBuilder(Subtraction pl1, Subtraction pl2, PlayCharacter actor) {
-                return new Builder(pl1, pl2, actor);
-            }
-
-            private RoundStage(Builder builder) {
-                subtraction_player_1 = builder.subtraction_player_1;
-                subtraction_player_2 = builder.subtraction_player_2;
-                actor = builder.actor;
-                skill = builder.skill;
-                status = builder.status;
-                target = builder.target;
-            }
-
-            static class Builder {
-                private final Subtraction subtraction_player_1, subtraction_player_2;
-                private final PlayCharacter actor;
-                @Nullable private Skill skill = null;
-                @Nullable private PlayCharacter.RoundStatus status = null;
-                @Nullable private BodyPart.BodyPartNames target = null;
-
-                private Builder(Subtraction subtraction_player_1, Subtraction subtraction_player_2, PlayCharacter actor) {
-                    this.subtraction_player_1 = subtraction_player_1;
-                    this.subtraction_player_2 = subtraction_player_2;
-                    this.actor = actor;
-                }
-
-                Builder setSkill(Skill skill) {
-                    this.skill = skill;
-                    return this;
-                }
-
-                Builder setRoundStatus(PlayCharacter.RoundStatus status) {
-                    this.status = status;
-                    return this;
-                }
-
-                Builder setTarget(BodyPart.BodyPartNames target) {
-                    this.target = target;
-                    return this;
-                }
-
-                RoundStage build() {
-                    return new RoundStage(this);
-                }
-            }
-        }
-    }
 
     enum Players {
         PLAYER_1, PLAYER_2

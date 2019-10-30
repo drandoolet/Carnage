@@ -1,0 +1,46 @@
+Stage:
+    requires
+        2x Subtraction
+            get: Skill? Const?
+        1x PlayCharacter actor
+            get: constructor
+        0-1x Skill
+            get: builder.add()
+        0-1x BPN Target & RoundStatus
+            get: builder.add()
+
+    1. Who (PlCh) - const
+    2. What does (Skill / Atk) - method
+        mb Atk should also return Subtraction (make interface?)
+    3. What effect - Subtraction
+        get: p.2: Skill.getSubtraction() / Atk.getS() ("Subtractor"?)
+            Subtraction - mb class for both pl1 & pl2?
+        but should it have effect? mb only intention + base effect, calculated on server
+    4. Where hits (for Atk) - BPN target, RS status
+        again -- Atk should be class with Subtraction, RS, BPN inside
+
+    PlayerAction.class
+        bool isSkill {
+            List<Skill> skills
+        } else {
+            List<BPN> targets
+            List<BPN> defs
+        }
+        well it's PlayerChoice
+
+    I forgot it's now server side
+
+    again
+    " /1/ attacks /3/.BPN, inflicting /3/.effect p.o.d."
+    " /1/ uses /4/.skill, ..."
+    Stage:
+        const ( /1/ PlCh actor, /2/ bool isSkill)
+            if(isSkill) BPN, RS = null;
+        .add( /3/ Attack (Sub, Sub(?), BPN, RS)) for atk
+        .add( /4/ Skill (Sub, Sub, SkillType)) for skill
+            they look similar
+            no
+        const(-//-)
+        .add( /34/ Subtractor (Sub x2, BPN+RS / SkillType)
+            why not all in const then
+        const(PlCh actor, bool isSkill, Subtractor skill/atk);
