@@ -6,6 +6,9 @@ import android.support.annotation.Nullable;
 import com.example.user.carnage.logic.main.BodyPart;
 import com.example.user.carnage.logic.main.PlayCharacter;
 import com.example.user.carnage.logic.main.Subtraction;
+import com.example.user.carnage.logic.main.Subtractor;
+import com.example.user.carnage.logic.main.attack.NormalAttack;
+import com.example.user.carnage.logic.main.attack.SkillAttack;
 import com.example.user.carnage.logic.skills.Skill;
 
 import java.util.ArrayList;
@@ -46,11 +49,9 @@ public class RoundResults {
      * Transferred to Server to make JSON for Clients
      */
     public static class RoundStage {
-        @NonNull
-        private final Subtraction subtraction_player_1, subtraction_player_2;
+        @NonNull private final Subtraction subtraction_player_1, subtraction_player_2;
         @NonNull private final PlayCharacter actor; // or maybe a String? boolean?
-        @Nullable
-        private final Skill skill;
+        @Nullable private final Skill skill;
         @Nullable private final PlayCharacter.RoundStatus status;
         @Nullable private final BodyPart.BodyPartNames target;
 
@@ -88,6 +89,10 @@ public class RoundResults {
             return new Builder(pl1, pl2, actor);
         }
 
+        public static Builder newStageBuilder(Subtractor subtractor, PlayCharacter actor) {
+            return new Builder(subtractor, actor);
+        }
+
         private RoundStage(Builder builder) {
             subtraction_player_1 = builder.subtraction_player_1;
             subtraction_player_2 = builder.subtraction_player_2;
@@ -108,6 +113,22 @@ public class RoundResults {
                 this.subtraction_player_1 = subtraction_player_1;
                 this.subtraction_player_2 = subtraction_player_2;
                 this.actor = actor;
+            }
+
+            public Builder(Subtractor subtractor, PlayCharacter actor) {
+                subtraction_player_1 = subtractor.getActorSubtraction();
+                subtraction_player_2 = subtractor.getEnemySubtraction();
+                this.actor = actor;
+
+                if (subtractor instanceof SkillAttack) {
+                    setSkill(((SkillAttack) subtractor).getSkill());
+                }
+                if (subtractor instanceof NormalAttack) {
+                    NormalAttack attack = (NormalAttack) subtractor;
+                    
+                    setRoundStatus(attack.getRoundStatus());
+                    setTarget(attack.getTarget());
+                }
             }
 
             public Builder setSkill(Skill skill) {

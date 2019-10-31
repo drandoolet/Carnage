@@ -14,6 +14,9 @@ public class Subtraction {
     public int subtract(PlayCharacter character, MainScalesType type) {
         Entry entry = map.get(type);
 
+        if (entry == null)
+            entry = Entry.empty();
+
         switch (entry.type) {
             case ABSOLUTE:
                 return entry.effect;
@@ -46,6 +49,10 @@ public class Subtraction {
 
         private static Entry newEntry(int effect, SubtractionType type) {
             return new Entry(effect, type);
+        }
+
+        private static Entry empty() {
+            return newEntry(0, SubtractionType.ABSOLUTE);
         }
 
         static Entry valueOf(JSONObject object) throws JSONException {
@@ -103,6 +110,14 @@ public class Subtraction {
 
         public static Subtraction.Builder newSubtractionBuilder() {
             return new Builder();
+        }
+
+        public static Subtraction empty() {
+            return new Builder()
+                    .setSubtraction(MainScalesType.HP, 0, SubtractionType.ABSOLUTE)
+                    .setSubtraction(MainScalesType.SP, 0, SubtractionType.ABSOLUTE)
+                    .setSubtraction(MainScalesType.MP, 0, SubtractionType.ABSOLUTE)
+                    .build();
         }
 
         /**

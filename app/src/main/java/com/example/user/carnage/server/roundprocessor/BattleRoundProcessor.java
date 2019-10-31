@@ -7,6 +7,9 @@ import android.support.annotation.Nullable;
 import com.example.user.carnage.logic.main.BodyPart;
 import com.example.user.carnage.logic.main.PlayCharacter;
 import com.example.user.carnage.logic.main.Subtraction;
+import com.example.user.carnage.logic.main.attack.AttackFactory;
+import com.example.user.carnage.logic.main.attack.NormalAttack;
+import com.example.user.carnage.logic.main.attack.SkillAttack;
 import com.example.user.carnage.logic.skills.Fireball;
 import com.example.user.carnage.logic.skills.Skill;
 import com.example.user.carnage.logic.skills.SkillFactory;
@@ -94,6 +97,22 @@ class BattleRoundProcessor {
                         .setSkill(SkillFactory.newSkill(Skill.SkillTypes.FIREBALL, player_1, player_2))
                         .build())
                 //.addStage( bla bla line 2)
+                .build());
+
+        Skill fireball = SkillFactory.newSkill(Skill.SkillTypes.FIREBALL, player_1, player_2);
+        SkillAttack skillAttack = AttackFactory.newSkillAttack(fireball);
+
+        NormalAttack normalAttack = AttackFactory.newNormalAttack(
+                Subtraction.SubtractionFactory.empty(),
+                Subtraction.SubtractionFactory.newSubtractionBuilder()
+                        .setSubtraction(PlayCharacter.MainScalesType.HP, 30, Subtraction.SubtractionType.ABSOLUTE)
+                        .build(),
+                PlayCharacter.RoundStatus.NORMAL,
+                BodyPart.BodyPartNames.BODY);
+
+        JSONObject object1 = getResponse(new RoundResults.Builder()
+                .addStage(RoundResults.RoundStage.newStageBuilder(normalAttack, player_1).build())
+                .addStage(RoundResults.RoundStage.newStageBuilder(skillAttack, player_2).build())
                 .build());
     }
 
