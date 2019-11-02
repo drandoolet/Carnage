@@ -57,6 +57,7 @@ class BattleRoundProcessor {
     public JSONObject getResponse(RoundResults results) throws JSONException {
         JSONObject main = new JSONObject();
         JSONArray array = new JSONArray();
+        /*
         for (RoundResults.RoundStage stage: results.getStages()) {
             array.put(new JSONObject()
                     .put("subtraction", new JSONArray().put(new JSONObject()
@@ -68,6 +69,10 @@ class BattleRoundProcessor {
                     .put("target", stage.getTarget())
             );
         }
+        */
+        for (RoundResults.RoundStage stage : results.getStages())
+            array.put(stage.toJson());
+
         return main.put("stages", array);
     }
 
@@ -114,10 +119,5 @@ class BattleRoundProcessor {
                 .addStage(RoundResults.RoundStage.newStageBuilder(normalAttack, player_1).build())
                 .addStage(RoundResults.RoundStage.newStageBuilder(skillAttack, player_2).build())
                 .build());
-    }
-
-
-    enum Players {
-        PLAYER_1, PLAYER_2
     }
 }

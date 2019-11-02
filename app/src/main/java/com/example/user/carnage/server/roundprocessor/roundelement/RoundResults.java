@@ -11,8 +11,13 @@ import com.example.user.carnage.logic.main.attack.NormalAttack;
 import com.example.user.carnage.logic.main.attack.SkillAttack;
 import com.example.user.carnage.logic.skills.Skill;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RoundResults {
     private final List<RoundStage> stages;
@@ -50,7 +55,7 @@ public class RoundResults {
      */
     public static class RoundStage {
         @NonNull private final Subtraction subtraction_player_1, subtraction_player_2;
-        @NonNull private final PlayCharacter actor; // or maybe a String? boolean?
+        @NonNull private final Players actor; // or maybe a String? boolean?
         @Nullable private final Skill skill;
         @Nullable private final PlayCharacter.RoundStatus status;
         @Nullable private final BodyPart.BodyPartNames target;
@@ -66,7 +71,7 @@ public class RoundResults {
         }
 
         @NonNull
-        public PlayCharacter getActor() {
+        public Players getActor() {
             return actor;
         }
 
@@ -85,12 +90,16 @@ public class RoundResults {
             return target;
         }
 
-        public static Builder newStageBuilder(Subtraction pl1, Subtraction pl2, PlayCharacter actor) {
+        public static Builder newStageBuilder(Subtraction pl1, Subtraction pl2, Players actor) {
             return new Builder(pl1, pl2, actor);
         }
 
-        public static Builder newStageBuilder(Subtractor subtractor, PlayCharacter actor) {
+        public static Builder newStageBuilder(Subtractor subtractor, Players actor) {
             return new Builder(subtractor, actor);
+        }
+
+        public JSONObject toJson() throws JSONException {
+            return RoundResultsJsonParser.toJson(this);
         }
 
         private RoundStage(Builder builder) {
@@ -104,18 +113,18 @@ public class RoundResults {
 
         public static class Builder {
             private final Subtraction subtraction_player_1, subtraction_player_2;
-            private final PlayCharacter actor;
+            private final Players actor;
             @Nullable private Skill skill = null;
             @Nullable private PlayCharacter.RoundStatus status = null;
             @Nullable private BodyPart.BodyPartNames target = null;
 
-            public Builder(Subtraction subtraction_player_1, Subtraction subtraction_player_2, PlayCharacter actor) {
+            public Builder(Subtraction subtraction_player_1, Subtraction subtraction_player_2, Players actor) {
                 this.subtraction_player_1 = subtraction_player_1;
                 this.subtraction_player_2 = subtraction_player_2;
                 this.actor = actor;
             }
 
-            public Builder(Subtractor subtractor, PlayCharacter actor) {
+            public Builder(Subtractor subtractor, Players actor) {
                 subtraction_player_1 = subtractor.getActorSubtraction();
                 subtraction_player_2 = subtractor.getEnemySubtraction();
                 this.actor = actor;
@@ -148,6 +157,30 @@ public class RoundResults {
 
             public RoundStage build() {
                 return new RoundStage(this);
+            }
+        }
+    }
+
+
+    enum Players {
+        PLAYER_1(RoundResultsJsonParser.PLAYER_1),
+        PLAYER_2(RoundResultsJsonParser.PLAYER_2);
+
+        private final String name;
+
+        Players(String name) {
+            this.name = name;
+        }
+
+        public static Players find(String s) {
+            return aliasMap.get(s);
+        }
+
+        private static Map<String, Players> aliasMap;
+        static {
+            aliasMap = new HashMap<>();
+            for (Players p : Players.values()) {
+                aliasMap.put(p.name, p);
             }
         }
     }
