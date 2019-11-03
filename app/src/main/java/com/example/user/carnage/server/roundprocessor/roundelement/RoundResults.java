@@ -5,8 +5,8 @@ import android.support.annotation.Nullable;
 
 import com.example.user.carnage.logic.main.BodyPart;
 import com.example.user.carnage.logic.main.PlayCharacter;
-import com.example.user.carnage.logic.main.Subtraction;
-import com.example.user.carnage.logic.main.Subtractor;
+import com.example.user.carnage.logic.main.attack.effect.MainScalesSubtraction;
+import com.example.user.carnage.logic.main.attack.effect.Subtractor;
 import com.example.user.carnage.logic.main.attack.NormalAttack;
 import com.example.user.carnage.logic.main.attack.SkillAttack;
 import com.example.user.carnage.logic.skills.Skill;
@@ -54,19 +54,19 @@ public class RoundResults {
      * Transferred to Server to make JSON for Clients
      */
     public static class RoundStage {
-        @NonNull private final Subtraction subtraction_player_1, subtraction_player_2;
+        @NonNull private final MainScalesSubtraction subtraction_player_1, subtraction_player_2;
         @NonNull private final Players actor; // or maybe a String? boolean?
         @Nullable private final Skill skill;
         @Nullable private final PlayCharacter.RoundStatus status;
         @Nullable private final BodyPart.BodyPartNames target;
 
         @NonNull
-        public Subtraction getSubtraction_player_1() {
+        public MainScalesSubtraction getSubtraction_player_1() {
             return subtraction_player_1;
         }
 
         @NonNull
-        public Subtraction getSubtraction_player_2() {
+        public MainScalesSubtraction getSubtraction_player_2() {
             return subtraction_player_2;
         }
 
@@ -90,7 +90,7 @@ public class RoundResults {
             return target;
         }
 
-        public static Builder newStageBuilder(Subtraction pl1, Subtraction pl2, Players actor) {
+        public static Builder newStageBuilder(MainScalesSubtraction pl1, MainScalesSubtraction pl2, Players actor) {
             return new Builder(pl1, pl2, actor);
         }
 
@@ -112,13 +112,13 @@ public class RoundResults {
         }
 
         public static class Builder {
-            private final Subtraction subtraction_player_1, subtraction_player_2;
+            private final MainScalesSubtraction subtraction_player_1, subtraction_player_2;
             private final Players actor;
             @Nullable private Skill skill = null;
             @Nullable private PlayCharacter.RoundStatus status = null;
             @Nullable private BodyPart.BodyPartNames target = null;
 
-            public Builder(Subtraction subtraction_player_1, Subtraction subtraction_player_2, Players actor) {
+            public Builder(MainScalesSubtraction subtraction_player_1, MainScalesSubtraction subtraction_player_2, Players actor) {
                 this.subtraction_player_1 = subtraction_player_1;
                 this.subtraction_player_2 = subtraction_player_2;
                 this.actor = actor;

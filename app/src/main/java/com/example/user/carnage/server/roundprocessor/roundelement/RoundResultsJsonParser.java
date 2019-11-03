@@ -1,15 +1,11 @@
 package com.example.user.carnage.server.roundprocessor.roundelement;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.user.carnage.logic.main.BodyPart;
-import com.example.user.carnage.logic.main.PlayCharacter;
-import com.example.user.carnage.logic.main.Subtraction;
-import com.example.user.carnage.logic.main.Subtractor;
+import com.example.user.carnage.logic.main.attack.effect.Subtractor;
 import com.example.user.carnage.logic.main.attack.AttackFactory;
-import com.example.user.carnage.logic.main.Subtraction.SubtractionFactory;
+import com.example.user.carnage.logic.main.attack.effect.MainScalesSubtraction.SubtractionFactory;
 import com.example.user.carnage.logic.main.PlayCharacter.RoundStatus;
 import com.example.user.carnage.logic.main.BodyPart.BodyPartNames;
 import com.example.user.carnage.logic.skills.SkillFactory;

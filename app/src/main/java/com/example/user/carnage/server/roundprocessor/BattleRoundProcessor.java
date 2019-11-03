@@ -1,16 +1,11 @@
 package com.example.user.carnage.server.roundprocessor;
 
-import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import com.example.user.carnage.logic.main.BodyPart;
 import com.example.user.carnage.logic.main.PlayCharacter;
-import com.example.user.carnage.logic.main.Subtraction;
+import com.example.user.carnage.logic.main.attack.effect.MainScalesSubtraction;
 import com.example.user.carnage.logic.main.attack.AttackFactory;
 import com.example.user.carnage.logic.main.attack.NormalAttack;
 import com.example.user.carnage.logic.main.attack.SkillAttack;
-import com.example.user.carnage.logic.skills.Fireball;
 import com.example.user.carnage.logic.skills.Skill;
 import com.example.user.carnage.logic.skills.SkillFactory;
 import com.example.user.carnage.server.roundprocessor.roundelement.RoundResults;
@@ -18,9 +13,6 @@ import com.example.user.carnage.server.roundprocessor.roundelement.RoundResults;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 class BattleRoundProcessor {
     private final PlayCharacter player_1, player_2;
@@ -42,7 +34,7 @@ class BattleRoundProcessor {
      *
      * Server sends (JSON RoundStage):
      * {
-     *      player 1 subtract (can be negative, means addition) : {Subtraction hp, sp, mp}, p2 {-//-},
+     *      player 1 subtract (can be negative, means addition) : {MainScalesSubtraction hp, sp, mp}, p2 {-//-},
      *      player 1 or 2 (who acts),
      *      Nullable Skill (if null == normal),
      *      Nullable RoundStatus (considered null if Skill != null),
@@ -90,12 +82,12 @@ class BattleRoundProcessor {
     private void t() throws JSONException {
         JSONObject object = getResponse(new RoundResults.Builder()
                 .addStage(RoundResults.RoundStage.newStageBuilder(
-                        Subtraction.SubtractionFactory.newSubtractionBuilder()
-                                .setSubtraction(PlayCharacter.MainScalesType.MP, 30, Subtraction.SubtractionType.ABSOLUTE)
+                        MainScalesSubtraction.SubtractionFactory.newSubtractionBuilder()
+                                .setSubtraction(PlayCharacter.MainScales.MP, 30, MainScalesSubtraction.SubtractionType.ABSOLUTE)
                                 .build(),
-                        Subtraction.SubtractionFactory.newSubtractionBuilder()
-                                .setSubtraction(PlayCharacter.MainScalesType.HP, 50, Subtraction.SubtractionType.RELATIVE_CURRENT)
-                                .setSubtraction(PlayCharacter.MainScalesType.SP, 50, Subtraction.SubtractionType.RELATIVE_CURRENT)
+                        MainScalesSubtraction.SubtractionFactory.newSubtractionBuilder()
+                                .setSubtraction(PlayCharacter.MainScales.HP, 50, MainScalesSubtraction.SubtractionType.RELATIVE_CURRENT)
+                                .setSubtraction(PlayCharacter.MainScales.SP, 50, MainScalesSubtraction.SubtractionType.RELATIVE_CURRENT)
                                 .build(),
                         new PlayCharacter(player_1, "test ACTOR")
                 )
@@ -108,9 +100,9 @@ class BattleRoundProcessor {
         SkillAttack skillAttack = AttackFactory.newSkillAttack(fireball);
 
         NormalAttack normalAttack = AttackFactory.newNormalAttack(
-                Subtraction.SubtractionFactory.empty(),
-                Subtraction.SubtractionFactory.newSubtractionBuilder()
-                        .setSubtraction(PlayCharacter.MainScalesType.HP, 30, Subtraction.SubtractionType.ABSOLUTE)
+                MainScalesSubtraction.SubtractionFactory.empty(),
+                MainScalesSubtraction.SubtractionFactory.newSubtractionBuilder()
+                        .setSubtraction(PlayCharacter.MainScales.HP, 30, MainScalesSubtraction.SubtractionType.ABSOLUTE)
                         .build(),
                 PlayCharacter.RoundStatus.NORMAL,
                 BodyPart.BodyPartNames.BODY);

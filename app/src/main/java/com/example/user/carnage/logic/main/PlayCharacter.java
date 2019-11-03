@@ -561,20 +561,6 @@ public class PlayCharacter {
         return s;
     }
 
-    public enum Stats {
-        STAMINA,
-        STRENGTH,
-        AGILITY,
-        LUCK,
-        INTELLIGENCE
-    }
-
-    public enum Substats {
-        CRITICAL, ANTI_CRITICAL, CRITICAL_DAMAGE,
-        DODGE, ANTI_DODGE,
-        DEFENCE, MAGICAL_DEFENCE
-    }
-
     public enum RoundStatus {
         NORMAL, BLOCK, CRITICAL, BLOCK_BREAK, DODGE
     }
@@ -605,26 +591,52 @@ public class PlayCharacter {
     }
 
 
-
+//TODO: implement States in PlayCharacter, initialize in constructor. Then finish Subtractions
 
 
     // all code above - to refactor
-
-    public enum MainScalesType {
-        HP, SP, MP;
+    /**
+     * Marker interface
+     *
+     * Used for marking values (e.g. HP or STR), that can be temporarily influenced during battles
+     */
+    public interface SubtractableValue {
         enum Value {
             MAX_VALUE, CURRENT_VALUE
         }
     }
 
-    public int getMainScaleState(MainScalesType type, MainScalesType.Value value) {
-        if (value == MainScalesType.Value.MAX_VALUE) {
+    public enum MainScales implements SubtractableValue {
+        HP, SP, MP
+
+    }
+
+    public enum Stats implements SubtractableValue {
+        STAMINA,
+        STRENGTH,
+        AGILITY,
+        LUCK,
+        INTELLIGENCE
+    }
+
+    public enum Substats implements SubtractableValue {
+        CRITICAL, ANTI_CRITICAL, CRITICAL_DAMAGE,
+        DODGE, ANTI_DODGE,
+        DEFENCE, MAGICAL_DEFENCE
+    }
+
+    public int getState(SubtractableValue type, SubtractableValue.Value value) {
+
+    }
+
+    public int getMainScaleState(MainScales type, MainScales.Value value) {
+        if (value == MainScales.Value.MAX_VALUE) {
             switch (type) {
                 case HP: return maxHP;
                 case MP: return maxMP;
                 case SP: return maxSP;
             }
-        } else if (value == MainScalesType.Value.CURRENT_VALUE) {
+        } else if (value == MainScales.Value.CURRENT_VALUE) {
             switch (type) {
                 case HP: return HP;
                 case SP: return SP;

@@ -1,43 +1,45 @@
-package com.example.user.carnage.logic.main;
+package com.example.user.carnage.logic.main.attack.effect;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.user.carnage.logic.main.PlayCharacter.MainScalesType;
+import com.example.user.carnage.logic.main.PlayCharacter;
+import com.example.user.carnage.logic.main.PlayCharacter.MainScales;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Subtraction {
-    private final Map<MainScalesType, Entry> map;
+public class MainScalesSubtraction extends Subtraction<MainScales> {
+    private final Map<MainScales, Entry> map;
 
-    public int subtract(PlayCharacter character, MainScalesType type) {
+    public int subtract(PlayCharacter character, MainScales type) {
         Entry entry = map.get(type);
 
         if (entry == null)
             entry = Entry.empty();
 
-        switch (entry.type) {
+        switch (entry.getType()) {
             case ABSOLUTE:
-                return entry.effect;
+                return entry.getEffect();
             case RELATIVE_MAX:
                 return (character.getMainScaleState(
-                    type, MainScalesType.Value.MAX_VALUE) * entry.effect) / 100;
+                    type, MainScales.Value.MAX_VALUE) * entry.getEffect()) / 100;
             case RELATIVE_CURRENT:
                 return (character.getMainScaleState(
-                    type, MainScalesType.Value.CURRENT_VALUE) * entry.effect) / 100;
+                    type, MainScales.Value.CURRENT_VALUE) * entry.getEffect()) / 100;
         }
-        throw new IllegalStateException("Wrong Subtraction class state");
+        throw new IllegalStateException("Wrong MainScalesSubtraction class state");
     }
 
     public JSONObject toJson() throws JSONException {
         return SubtractionFactory.jsonOf(this);
     }
 
-    private Subtraction(Builder builder) {
+    private MainScalesSubtraction(Builder builder) {
         this.map = builder.map;
     }
 
+    /*
     private static class Entry {
         private int effect;
         private SubtractionType type;
@@ -67,33 +69,33 @@ public class Subtraction {
                     .put("effect", effect);
         }
     }
+    */
 
     public static class Builder {
-        private final Map<MainScalesType, Entry> map;
+        private final Map<MainScales, Entry> map;
 
         public Builder() {
             map = new HashMap<>();
         }
 
-        public Builder setSubtraction(MainScalesType effectType, int effect, SubtractionType subtractionType) {
-            map.put(effectType, new Entry(effect, subtractionType));
-            return this;
+        public Builder setSubtraction(MainScales effectType, int effect, SubtractionType subtractionType) {
+            return setSubtraction(effectType, Entry.newEntry(effect, subtractionType));
         }
 
-        public Builder setSubtraction(MainScalesType effectType, Entry entry) {
+        public Builder setSubtraction(MainScales effectType, Entry entry) {
             map.put(effectType, entry);
             return this;
         }
 
-        public Subtraction build() {
-            return new Subtraction(this);
+        public MainScalesSubtraction build() {
+            return new MainScalesSubtraction(this);
         }
 
     }
 
     public static class SubtractionFactory {
 
-        public static Subtraction newSubtraction(JSONObject object) throws JSONException {
+        public static MainScalesSubtraction newSubtraction(JSONObject object) throws JSONException {
             Builder builder = new Builder();
             Entry hp = Entry.valueOf(object.getJSONObject("hp"));
             Entry mp = Entry.valueOf(object.getJSONObject("mp"));
@@ -101,42 +103,38 @@ public class Subtraction {
 
 
             return builder
-                    .setSubtraction(MainScalesType.HP, hp)
-                    .setSubtraction(MainScalesType.MP, mp)
-                    .setSubtraction(MainScalesType.SP, sp)
+                    .setSubtraction(MainScales.HP, hp)
+                    .setSubtraction(MainScales.MP, mp)
+                    .setSubtraction(MainScales.SP, sp)
                     .build();
 
         }
 
-        public static Subtraction.Builder newSubtractionBuilder() {
+        public static MainScalesSubtraction.Builder newSubtractionBuilder() {
             return new Builder();
         }
 
-        public static Subtraction empty() {
+        public static MainScalesSubtraction empty() {
             return new Builder()
-                    .setSubtraction(MainScalesType.HP, 0, SubtractionType.ABSOLUTE)
-                    .setSubtraction(MainScalesType.SP, 0, SubtractionType.ABSOLUTE)
-                    .setSubtraction(MainScalesType.MP, 0, SubtractionType.ABSOLUTE)
+                    .setSubtraction(MainScales.HP, 0, SubtractionType.ABSOLUTE)
+                    .setSubtraction(MainScales.SP, 0, SubtractionType.ABSOLUTE)
+                    .setSubtraction(MainScales.MP, 0, SubtractionType.ABSOLUTE)
                     .build();
         }
 
         /**
          * @param subtraction
-         * @return { "hp": {Subtraction.Entry JSON}, "mp": {-//-}, "sp": {-//-} }
+         * @return { "hp": {MainScalesSubtraction.Entry JSON}, "mp": {-//-}, "sp": {-//-} }
          * @throws JSONException
          */
-        public static JSONObject jsonOf(Subtraction subtraction) throws JSONException {
+        public static JSONObject jsonOf(MainScalesSubtraction subtraction) throws JSONException {
             JSONObject object = new JSONObject();
 
-            object.put("hp", subtraction.map.get(MainScalesType.HP).toJson());
-            object.put("mp", subtraction.map.get(MainScalesType.MP).toJson());
-            object.put("sp", subtraction.map.get(MainScalesType.SP).toJson());
+            object.put("hp", subtraction.map.get(MainScales.HP).toJson());
+            object.put("mp", subtraction.map.get(MainScales.MP).toJson());
+            object.put("sp", subtraction.map.get(MainScales.SP).toJson());
 
             return object;
         }
-    }
-
-    public enum SubtractionType {
-        ABSOLUTE, RELATIVE_MAX, RELATIVE_CURRENT
     }
 }
