@@ -43,7 +43,7 @@ public class BodyPart {
             adjustion = damageAdjust;
             runame = rusName;
         }
-        double getAdjustion() {
+        public double getAdjustion() {
             return adjustion;
         }
         String getRuName() {

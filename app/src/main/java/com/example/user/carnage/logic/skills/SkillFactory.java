@@ -16,4 +16,8 @@ public class SkillFactory {
     public static Skill newSkill(Skill.SkillTypes type, PlayCharacter player) {
         return newSkill(type, player, null);
     }
+
+    public static SkillNew newSkill(SkillNew.SkillTypes type) {
+        return type.getSkill();
+    }
 }

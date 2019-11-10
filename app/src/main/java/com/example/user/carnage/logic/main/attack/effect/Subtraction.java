@@ -8,8 +8,18 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-abstract class Subtraction <T extends PlayCharacter.SubtractableValue> {
-    private final Map<T, Entry> entries;
+import com.example.user.carnage.logic.main.PlayCharacter.SubtractableValue;
+
+public class Subtraction {
+    private final Map<SubtractableValue, Entry> entries;
+
+    /**
+     *
+     */
+
+    private Subtraction(Builder builder) {
+        entries = builder.map;
+    }
 
     static class Entry {
         private int effect;
@@ -44,25 +54,24 @@ abstract class Subtraction <T extends PlayCharacter.SubtractableValue> {
         }
     }
 
-    public static class Builder <T> {
-        private final Map<T, Entry> map;
+    public static class Builder {
+        private final Map<SubtractableValue, Entry> map;
 
         public Builder() {
             map = new HashMap<>();
         }
 
-        public Builder setSubtraction(T effectType, int effect, SubtractionType subtractionType) {
-            map.put(effectType, new Entry(effect, subtractionType));
-            return this;
+        public Builder setSubtraction(SubtractableValue effectType, int effect, SubtractionType subtractionType) {
+            return setSubtraction(effectType, Entry.newEntry(effect, subtractionType));
         }
 
-        public Builder setSubtraction(T effectType, Entry entry) {
+        public Builder setSubtraction(SubtractableValue effectType, Entry entry) {
             map.put(effectType, entry);
             return this;
         }
 
         public Subtraction build() {
-            return null;
+            return new Subtraction(this);
         }
 
     }

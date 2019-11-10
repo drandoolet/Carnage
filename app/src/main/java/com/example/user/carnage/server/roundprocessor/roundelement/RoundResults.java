@@ -162,7 +162,7 @@ public class RoundResults {
     }
 
 
-    enum Players {
+    public enum Players {
         PLAYER_1(RoundResultsJsonParser.PLAYER_1),
         PLAYER_2(RoundResultsJsonParser.PLAYER_2);
 

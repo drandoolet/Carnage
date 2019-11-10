@@ -15,8 +15,7 @@ public class MainScalesSubtraction extends Subtraction<MainScales> {
     public int subtract(PlayCharacter character, MainScales type) {
         Entry entry = map.get(type);
 
-        if (entry == null)
-            entry = Entry.empty();
+        if (entry == null) return 0;
 
         switch (entry.getType()) {
             case ABSOLUTE:
@@ -36,6 +35,7 @@ public class MainScalesSubtraction extends Subtraction<MainScales> {
     }
 
     private MainScalesSubtraction(Builder builder) {
+
         this.map = builder.map;
     }
 
@@ -116,9 +116,9 @@ public class MainScalesSubtraction extends Subtraction<MainScales> {
 
         public static MainScalesSubtraction empty() {
             return new Builder()
-                    .setSubtraction(MainScales.HP, 0, SubtractionType.ABSOLUTE)
-                    .setSubtraction(MainScales.SP, 0, SubtractionType.ABSOLUTE)
-                    .setSubtraction(MainScales.MP, 0, SubtractionType.ABSOLUTE)
+                    .setSubtraction(MainScales.HP, Entry.empty())
+                    .setSubtraction(MainScales.SP, Entry.empty())
+                    .setSubtraction(MainScales.MP, Entry.empty())
                     .build();
         }
 

@@ -1,6 +1,8 @@
 package com.example.user.carnage.logic.main;
 
 import com.example.user.carnage.MainActivity;
+import com.example.user.carnage.logic.skills.Skill;
+import com.example.user.carnage.logic.skills.SkillNew;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -18,6 +20,9 @@ public class PlayerChoice {
     private ArrayList<BodyPart.BodyPartNames> defended, attacked;
     private SecureRandom random = new SecureRandom();
 
+    // added for new compat
+    private SkillNew skill = null;
+
     private int neural_atk_head, neural_atk_body, neural_atk_waist, neural_atk_legs;
     private int neural_def_head, neural_def_body, neural_def_waist, neural_def_legs;
     private int[] atkStatistics = {neural_atk_head, neural_atk_body, neural_atk_waist, neural_atk_legs};
@@ -33,6 +38,14 @@ public class PlayerChoice {
 
     public ArrayList<BodyPart.BodyPartNames> getAttacked() {
         return attacked;
+    }
+
+    public PlayerChoice(ArrayList<BodyPart.BodyPartNames> playerAttacked,
+                        ArrayList<BodyPart.BodyPartNames> playerDefended,
+                        SkillNew skill) {
+        this(playerAttacked, playerDefended);
+        this.skill = skill;
+
     }
 
     public PlayerChoice(ArrayList<BodyPart.BodyPartNames> playerAttacked,
@@ -215,6 +228,8 @@ public class PlayerChoice {
         //System.out.println("ATT: "+num_att+". DEF_1: "+num_def_1+". DEF_2: "+num_def_2);
         //System.out.println("ATT: "+attack+". DEF_1: "+defend_1+". DEF_2: "+defend_2);
     }
+
+    public SkillNew getSkill() { return skill; }
 
     private void handleNeuralNetStatistics(int[] stats) {
         for (int i=0; i<4; i++) atkStatistics[i] = stats[i];
