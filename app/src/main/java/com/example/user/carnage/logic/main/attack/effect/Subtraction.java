@@ -1,7 +1,5 @@
 package com.example.user.carnage.logic.main.attack.effect;
 
-import com.example.user.carnage.logic.main.PlayCharacter;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,15 +11,15 @@ import com.example.user.carnage.logic.main.PlayCharacter.SubtractableValue;
 public class Subtraction {
     private final Map<SubtractableValue, Entry> entries;
 
-    /**
-     *
-     */
+    public Map<SubtractableValue, Entry> getEntries() {
+        return entries;
+    }
 
     private Subtraction(Builder builder) {
         entries = builder.map;
     }
 
-    static class Entry {
+    public static class Entry {
         private int effect;
         private SubtractionType type;
 
@@ -41,13 +39,13 @@ public class Subtraction {
             return newEntry(0, SubtractionType.ABSOLUTE);
         }
 
-        static Entry valueOf(JSONObject object) throws JSONException {
+        public static Entry valueOf(JSONObject object) throws JSONException {
             int effect = object.getInt("effect");
             SubtractionType type = SubtractionType.valueOf(object.getString("type"));
             return newEntry(effect, type);
         }
 
-        JSONObject toJson() throws JSONException {
+        public JSONObject toJson() throws JSONException {
             return new JSONObject()
                     .put("type", type)
                     .put("effect", effect);
@@ -56,6 +54,10 @@ public class Subtraction {
 
     public static class Builder {
         private final Map<SubtractableValue, Entry> map;
+
+        public Builder(Subtraction subtraction) {
+            map = subtraction.entries;
+        }
 
         public Builder() {
             map = new HashMap<>();
@@ -78,5 +80,15 @@ public class Subtraction {
 
     public enum SubtractionType {
         ABSOLUTE, RELATIVE_MAX, RELATIVE_CURRENT
+    }
+
+    public static class SubtractionFactory {
+        public static Builder newSubtractionBuilder() {
+            return new Builder();
+        }
+
+        public static Subtraction empty() {
+            return new Builder().build();
+        }
     }
 }

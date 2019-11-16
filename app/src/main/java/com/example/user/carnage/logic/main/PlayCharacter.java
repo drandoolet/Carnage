@@ -2,6 +2,8 @@ package com.example.user.carnage.logic.main;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.example.user.carnage.MainActivity;
 import com.example.user.carnage.logic.main.BodyPart.*;
@@ -625,18 +627,70 @@ public class PlayCharacter {
         DEFENCE, MAGICAL_DEFENCE
     }
 
-    public int getState(SubtractableValue type, SubtractableValue.Value value) {
-
+    private static Map<String, SubtractableValue> SUBTRACTABLE_VALUE_ALIAS_MAP = new HashMap<>();
+    static {
+        for (MainScales m : MainScales.values())
+            SUBTRACTABLE_VALUE_ALIAS_MAP.put(m.toString(), m);
+        for (Stats m : Stats.values())
+            SUBTRACTABLE_VALUE_ALIAS_MAP.put(m.toString(), m);
+        for (Substats m : Substats.values())
+            SUBTRACTABLE_VALUE_ALIAS_MAP.put(m.toString(), m);
     }
 
-    public int getMainScaleState(MainScales type, MainScales.Value value) {
-        if (value == MainScales.Value.MAX_VALUE) {
+    public static SubtractableValue findValue(String s) {
+        return SUBTRACTABLE_VALUE_ALIAS_MAP.get(s);
+    }
+
+    public int getState(SubtractableValue type, SubtractableValue.Value value) { // i have no choice
+        if (type instanceof MainScales)
+            return getMainScaleState((MainScales) type, value);
+        else if (type instanceof Stats)
+            return getStatsState((Stats) type, value);
+        else if (type instanceof Substats)
+            return getSubtatsState((Substats) type, value);
+        else throw new IllegalArgumentException();
+    }
+
+    private int getStatsState(Stats stat, SubtractableValue.Value value) {
+        if (value == SubtractableValue.Value.MAX_VALUE) {
+            switch (stat) {
+                case STAMINA: return STA;
+                case STRENGTH: return STR;
+                case AGILITY: return AGI;
+                case INTELLIGENCE: return INT;
+                case LUCK: return LUCK;
+            }
+        } else if (value == SubtractableValue.Value.CURRENT_VALUE) {
+            // TODO implement current values for Stats & Substats
+        }
+        throw new IllegalArgumentException();
+    }
+
+    private int getSubtatsState(Substats stat, SubtractableValue.Value value) {
+        if (value == SubtractableValue.Value.MAX_VALUE) {
+            switch (stat) {
+                case DODGE: return dodgeRate;
+                case ANTI_DODGE: return antiDodgeRate;
+                case CRITICAL: return critical;
+                case ANTI_CRITICAL: return antiCritical;
+                case CRITICAL_DAMAGE: return (int) (criticalDamage * 100);
+                case DEFENCE: return defence;
+                case MAGICAL_DEFENCE: return magic_defence;
+            }
+        } else if (value == SubtractableValue.Value.CURRENT_VALUE) {
+            // TODO implement current values for Stats & Substats
+        }
+        throw new IllegalArgumentException();
+    }
+
+    private int getMainScaleState(MainScales type, SubtractableValue.Value value) {
+        if (value == SubtractableValue.Value.MAX_VALUE) {
             switch (type) {
                 case HP: return maxHP;
                 case MP: return maxMP;
                 case SP: return maxSP;
             }
-        } else if (value == MainScales.Value.CURRENT_VALUE) {
+        } else if (value == SubtractableValue.Value.CURRENT_VALUE) {
             switch (type) {
                 case HP: return HP;
                 case SP: return SP;

@@ -2,10 +2,9 @@ package com.example.user.carnage.logic.main.attack;
 
 import com.example.user.carnage.logic.main.BodyPart;
 import com.example.user.carnage.logic.main.PlayCharacter;
-import com.example.user.carnage.logic.main.attack.effect.AttackEffect;
-import com.example.user.carnage.logic.main.attack.effect.MainScalesSubtraction;
 import com.example.user.carnage.logic.main.attack.effect.Subtraction;
-import com.example.user.carnage.logic.skills.Skill;
+import com.example.user.carnage.logic.main.attack.effect.Subtractor;
+import com.example.user.carnage.logic.skills.SkillNew;
 
 public final class AttackFactory {
     public static NormalAttack newNormalAttack(Subtraction actorSubtraction,
@@ -15,16 +14,19 @@ public final class AttackFactory {
         return new NormalAttack(actorSubtraction, enemySubtraction, status, target);
     }
 
-    public static NormalAttack newNormalAttack(AttackEffect effect,
+    public static NormalAttack newNormalAttack(Subtractor subtractor,
                                                PlayCharacter.RoundStatus status,
                                                BodyPart.BodyPartNames target) {
-        return new NormalAttack(effect.getSubtraction_actor(), effect.getSubtraction_enemy(),
-                status, target); // wrong
+        return new NormalAttack(subtractor, status, target);
     }
 
     public static SkillAttack newSkillAttack(Subtraction actorSub,
                                              Subtraction enemySub,
-                                             Skill skill) {
+                                             SkillNew skill) {
         return new SkillAttack(actorSub, enemySub, skill);
+    }
+
+    public static SkillAttack newSkillAttack(Subtractor subtractor, SkillNew skill) {
+        return new SkillAttack(subtractor, skill);
     }
 }

@@ -1,18 +1,36 @@
 package com.example.user.carnage.logic.main.attack;
 
-import com.example.user.carnage.logic.main.attack.effect.MainScalesSubtraction;
 import com.example.user.carnage.logic.main.attack.effect.Subtraction;
-import com.example.user.carnage.logic.skills.Skill;
+import com.example.user.carnage.logic.main.attack.effect.Subtractor;
+import com.example.user.carnage.logic.skills.SkillNew;
 
 public class SkillAttack extends AbstractAttack {
-    private final Skill skill;
+    private final SkillNew skill;
+    private final SkillNew.SkillTypes skillType;
 
-    SkillAttack(Subtraction actorSubtraction, Subtraction enemySubtraction, Skill skill) {
+    SkillAttack(Subtraction actorSubtraction, Subtraction enemySubtraction, SkillNew skill) {
         super(actorSubtraction, enemySubtraction);
         this.skill = skill;
+        skillType = skill.getType();
     }
 
-    public Skill getSkill() {
+    SkillAttack(Subtractor subtractor, SkillNew skill) {
+        super(subtractor);
+        this.skill = skill;
+        skillType = skill.getType();
+    }
+
+    SkillAttack(Subtractor subtractor, SkillNew.SkillTypes type) {
+        super(subtractor);
+        skillType = type;
+        skill = null;
+    }
+
+    public SkillNew getSkill() {
         return skill;
+    }
+
+    public SkillNew.SkillTypes getSkillType() {
+        return skillType;
     }
 }

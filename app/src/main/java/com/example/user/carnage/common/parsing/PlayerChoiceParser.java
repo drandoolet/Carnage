@@ -13,19 +13,17 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerChoiceParser extends JsonParser<PlayerChoice> {
+public class PlayerChoiceParser implements JsonParser {
 
     private PlayerChoiceParser() {}
-
 
     public static PlayerChoice fromJson(JSONObject object) throws JSONException {
         ArrayList<BodyPart.BodyPartNames> atk = new ArrayList<>();
         ArrayList<BodyPart.BodyPartNames> def = new ArrayList<>();
-        SkillNew skill = SkillNew.SkillTypes
-                .valueOf(object.getString(JsonField.SKILL.toString()))
-                .getSkill();
+        SkillNew skill = SkillParser.fromJson(object.getJSONObject(JsonField.SKILL.toString()));
         JSONArray atkObj = object.getJSONArray(JsonField.ATTACKS.toString());
         JSONArray defObj = object.getJSONArray(JsonField.DEFENDS.toString());
+
         for (int i = 0; i < atkObj.length(); i++) {
             atk.add(BodyPart.BodyPartNames.valueOf(atkObj.getString(i)));
         }
@@ -56,7 +54,7 @@ public class PlayerChoiceParser extends JsonParser<PlayerChoice> {
         return new JSONObject()
                 .put(JsonField.ATTACKS.toString(), atkArr)
                 .put(JsonField.DEFENDS.toString(), defArr)
-                .put(JsonField.SKILL.toString(), skillNew);
+                .put(JsonField.SKILL.toString(), SkillParser.toJson(skillNew));
     }
 
     private enum JsonField {

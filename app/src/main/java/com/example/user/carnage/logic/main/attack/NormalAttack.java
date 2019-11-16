@@ -3,8 +3,8 @@ package com.example.user.carnage.logic.main.attack;
 
 import com.example.user.carnage.logic.main.BodyPart;
 import com.example.user.carnage.logic.main.PlayCharacter;
-import com.example.user.carnage.logic.main.attack.effect.MainScalesSubtraction;
 import com.example.user.carnage.logic.main.attack.effect.Subtraction;
+import com.example.user.carnage.logic.main.attack.effect.Subtractor;
 
 public class NormalAttack extends AbstractAttack {
     private final PlayCharacter.RoundStatus status;
@@ -16,6 +16,14 @@ public class NormalAttack extends AbstractAttack {
                  BodyPart.BodyPartNames target)
     {
         super(actorSubtraction, enemySubtraction);
+        this.status = status;
+        this.target = target;
+    }
+
+    NormalAttack(Subtractor subtractor,
+                 PlayCharacter.RoundStatus status,
+                 BodyPart.BodyPartNames target) {
+        super(subtractor);
         this.status = status;
         this.target = target;
     }

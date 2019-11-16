@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
  * containing Subtractions for both players and affected stats (if any)
  */
 public class AttackEffect {
-    private final MainScalesSubtraction subtraction_actor, subtraction_enemy;
+    private final Subtraction subtraction_actor, subtraction_enemy;
     private final Map<Stats, Integer> statsAffectedMap_player, statsAffectedMap_enemy;
     private final Map<Substats, Integer> substatsAffectedMap_player, substatsAffectedMap_enemy;
 
@@ -26,13 +26,13 @@ public class AttackEffect {
                 substatsAffectedMap_enemy != null);
     }
 
-    public MainScalesSubtraction getSubtraction_actor() {
-        if (subtraction_actor == null) return MainScalesSubtraction.SubtractionFactory.empty();
+    public Subtraction getSubtraction_actor() {
+        if (subtraction_actor == null) return Subtraction.SubtractionFactory.empty();
         return subtraction_actor;
     }
 
-    public MainScalesSubtraction getSubtraction_enemy() {
-        if (subtraction_enemy == null) return MainScalesSubtraction.SubtractionFactory.empty();
+    public Subtraction getSubtraction_enemy() {
+        if (subtraction_enemy == null) return Subtraction.SubtractionFactory.empty();
         return subtraction_enemy;
     }
 
@@ -66,18 +66,18 @@ public class AttackEffect {
     }
 
     class Builder {
-        private MainScalesSubtraction subtraction_actor = null, subtraction_enemy = null;
+        private Subtraction subtraction_actor = null, subtraction_enemy = null;
         private Map<Stats, Integer> statsAffectedMap_player = null, statsAffectedMap_enemy = null;
         private Map<Substats, Integer> substatsAffectedMap_player = null, substatsAffectedMap_enemy = null;
 
         public Builder() {}
 
-        public Builder setSubtraction_actor(MainScalesSubtraction s) {
+        public Builder setSubtraction_actor(Subtraction s) {
             subtraction_actor = s;
             return this;
         }
 
-        public Builder setSubtraction_enemy(MainScalesSubtraction s) {
+        public Builder setSubtraction_enemy(Subtraction s) {
             subtraction_enemy = s;
             return this;
         }

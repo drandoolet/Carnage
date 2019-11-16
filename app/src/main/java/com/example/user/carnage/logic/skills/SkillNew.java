@@ -2,17 +2,16 @@ package com.example.user.carnage.logic.skills;
 
 import com.example.user.carnage.R;
 import com.example.user.carnage.logic.main.PlayCharacter;
-import com.example.user.carnage.logic.main.attack.effect.AttackEffect;
 import com.example.user.carnage.logic.main.PlayCharacter.Stats;
 import com.example.user.carnage.logic.main.PlayCharacter.Substats;
 import com.example.user.carnage.logic.main.attack.effect.Subtraction;
-import com.example.user.carnage.logic.skills.Skill.SkillTypes;
+import com.example.user.carnage.logic.main.attack.effect.Subtractor;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class SkillNew {
+public class SkillNew { // For now - only HP damage to enemy, SP/MP/HP sub to player
     private final SkillTypes type;
     private final int info;
     private final String icon;
@@ -23,13 +22,19 @@ public class SkillNew {
     /**
      * Uses SkillCalculations to create an AttackEffect based on PlayCharacter (actor) stats
      *
-     * @param character
+     * @param actor
+     * @param enemy
      * @return
      */
-    public AttackEffect getEffect(PlayCharacter character) {
+    public Subtractor getEffect(PlayCharacter actor, PlayCharacter enemy) {
+        Subtraction enemySub = isEffectOnPlayer() ?
+                Subtraction.SubtractionFactory.empty() :
+                calculations.getEnemySubtraction(actor, enemy);
 
-
-        return null;
+        return new SkillEffect.Builder(type)
+                .setActorSubtraction(calculations.getPlayerSubtraction())
+                .setEnemySubtraction(enemySub)
+                .build();
     }
 
     /**
@@ -119,9 +124,38 @@ public class SkillNew {
             addition = builder.addition;
             statsEngaged = builder.statsEngaged;
             subtraction = builder.subtractionBuilder.build();
+            defenceSubstat = builder.defenceSubstat;
         }
 
-        public static class Builder {
+        Subtraction getPlayerSubtraction() {
+            return subtraction;
+        }
+
+        Subtraction getEnemySubtraction(PlayCharacter character, PlayCharacter enemy) {
+            double hpCost = addition;
+
+            for (Stats stat: statsEngaged.keySet()) {
+                hpCost +=
+                        character.getState(stat, PlayCharacter.SubtractableValue.Value.CURRENT_VALUE)
+                                * statsEngaged.get(stat);
+            }
+            return new Subtraction.Builder(subtraction)
+                    .setSubtraction(
+                            PlayCharacter.MainScales.HP,
+                            calcHPCost((int) hpCost, enemy),
+                            Subtraction.SubtractionType.ABSOLUTE
+                    ).build();
+        }
+
+        private int calcHPCost(int cost, PlayCharacter enemy) {
+            int current = enemy.getHP();
+            int calc = cost - enemy.getState(defenceSubstat, PlayCharacter.SubtractableValue.Value.CURRENT_VALUE);
+            if (calc < 0) calc = 1;
+
+            return (calc < current) ? calc : (current - calc);
+        }
+
+        static class Builder {
             private double addition = 0.0;
             private Map<Stats, Double> statsEngaged = new HashMap<>();
             private Subtraction.Builder subtractionBuilder = new Subtraction.Builder();
@@ -159,9 +193,48 @@ public class SkillNew {
         }
     }
 
-    private class SkillEffect {
+    private static class SkillEffect implements Subtractor {
         private final Subtraction actorSub, enemySub;
         private final SkillTypes type;
+
+        private SkillEffect(Builder builder) {
+            actorSub = builder.actorSub;
+            enemySub = builder.enemySub;
+            type = builder.type;
+        }
+
+        @Override
+        public Subtraction getActorSubtraction() {
+            return actorSub;
+        }
+
+        @Override
+        public Subtraction getEnemySubtraction() {
+            return enemySub;
+        }
+
+        private static class Builder {
+            private Subtraction actorSub, enemySub;
+            private final SkillTypes type;
+
+             Builder(SkillTypes type) {
+                this.type = type;
+            }
+
+            Builder setActorSubtraction(Subtraction subtraction) {
+                 actorSub = subtraction;
+                 return this;
+            }
+
+            Builder setEnemySubtraction(Subtraction subtraction) {
+                 enemySub = subtraction;
+                 return this;
+            }
+
+            SkillEffect build() {
+                 return new SkillEffect(this);
+            }
+        }
     }
 
     public enum SkillTypes {
@@ -178,6 +251,6 @@ public class SkillNew {
             }
         };
 
-        public abstract SkillNew getSkill();
+        abstract SkillNew getSkill();
     }
 }

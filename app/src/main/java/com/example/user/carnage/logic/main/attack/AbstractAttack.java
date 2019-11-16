@@ -1,6 +1,5 @@
 package com.example.user.carnage.logic.main.attack;
 
-import com.example.user.carnage.logic.main.attack.effect.MainScalesSubtraction;
 import com.example.user.carnage.logic.main.attack.effect.Subtraction;
 import com.example.user.carnage.logic.main.attack.effect.Subtractor;
 
@@ -10,6 +9,11 @@ abstract class AbstractAttack implements Subtractor {
     AbstractAttack(Subtraction actorSubtraction, Subtraction enemySubtraction) {
         this.actorSubtraction = actorSubtraction;
         this.enemySubtraction = enemySubtraction;
+    }
+
+    AbstractAttack(Subtractor subtractor) {
+        actorSubtraction = subtractor.getActorSubtraction();
+        enemySubtraction = subtractor.getEnemySubtraction();
     }
 
     @Override
