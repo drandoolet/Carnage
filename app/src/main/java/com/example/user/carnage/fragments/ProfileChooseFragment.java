@@ -95,15 +95,12 @@ public class ProfileChooseFragment extends Fragment {
                 dialogFragment.show(getFragmentManager(), "ALLOCATE STATS DIALOG");
             } else {
                 MainActivity.animateChangeWindow();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        RPGBattleFragment fragment = new RPGBattleFragment();
-                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                        transaction.replace(R.id.container, fragment, "MAIN BATTLE FRAGMENT");
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                    }
+                new Handler().postDelayed(() -> {
+                    RPGBattleFragment fragment = new RPGBattleFragment();
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.container, fragment, "MAIN BATTLE FRAGMENT");
+                    transaction.addToBackStack(null);
+                    transaction.commit();
                 }, MainActivity.getChangeAnimationDuration()-100);
             }
         });
@@ -126,12 +123,9 @@ public class ProfileChooseFragment extends Fragment {
                 }
             } else profile = null;
             view.setClickable(false);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    view.setClickable(true);
-                }
-            }, AnimateGame.AnimationTypes.ANIMATION_PROFILE_SELECTED.getFullDuration());
+            new Handler().postDelayed(
+                    () -> view.setClickable(true),
+                    AnimateGame.AnimationTypes.ANIMATION_PROFILE_SELECTED.getFullDuration());
 
             handleChosenProfile(profile);
         }

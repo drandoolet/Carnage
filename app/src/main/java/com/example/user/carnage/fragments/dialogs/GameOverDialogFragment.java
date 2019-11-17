@@ -17,19 +17,13 @@ public class GameOverDialogFragment extends DialogFragment {
     private boolean isWinner;
 
 
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.gameover_dialog_title);
         builder.setCancelable(false);
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                MainActivity.createExitDialog(getFragmentManager());
-            }
-        });
+        builder.setOnDismissListener(dialogInterface -> MainActivity.createExitDialog(getFragmentManager()));
 
         winner = MainActivity.getSharedWinner();
         rounds = MainActivity.getSharedRounds();
@@ -63,19 +57,16 @@ public class GameOverDialogFragment extends DialogFragment {
         });
         */
         if (levels.isLevelUp) {
-            builder.setPositiveButton("LEVEL UP!("+MainActivity.player.getLevel()+")", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("LEVEL UP!(" + MainActivity.player.getLevel() + ")", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     MainActivity.updatePlayerStatsSharedPreferences(MainActivity.player.getMainStats(), MainActivity.currentProfile);
                     MainActivity.levelUp(getFragmentManager());
                 }
             });
-        } else builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                MainActivity.updatePlayerStatsSharedPreferences(MainActivity.player.getMainStats(), MainActivity.currentProfile);
-                MainActivity.newGame(getFragmentManager());
-            }
+        } else builder.setPositiveButton("OK", (dialogInterface, i) -> {
+            MainActivity.updatePlayerStatsSharedPreferences(MainActivity.player.getMainStats(), MainActivity.currentProfile);
+            MainActivity.newGame(getFragmentManager());
         });
 
         return builder.create();

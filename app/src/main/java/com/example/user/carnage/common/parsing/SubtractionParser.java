@@ -10,10 +10,10 @@ import org.json.JSONObject;
 
 import java.util.Map;
 
-public class SubtractionParser implements JsonParser {
+class SubtractionParser implements JsonParser {
     private SubtractionParser() {}
 
-    public static JSONObject toJson(Subtraction subtraction) throws JSONException {
+    static JSONObject toJson(Subtraction subtraction) throws JSONException {
         Map<SubtractableValue, Subtraction.Entry> map = subtraction.getEntries();
         JSONArray array = new JSONArray();
 
@@ -27,7 +27,7 @@ public class SubtractionParser implements JsonParser {
                 .put(JsonField.SUBTRACTION_MAP.toString(), array);
     }
 
-    public static Subtraction fromJson(JSONObject object) throws JSONException {
+    static Subtraction fromJson(JSONObject object) throws JSONException {
         JSONArray array = object.getJSONArray(JsonField.SUBTRACTION_MAP.toString());
         Subtraction.Builder builder = new Subtraction.Builder();
 

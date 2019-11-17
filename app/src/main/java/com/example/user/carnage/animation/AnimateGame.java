@@ -243,9 +243,6 @@ public class AnimateGame {
 
     protected final long ANIMATE_SKILLS_FRAGMENT_DURATION = 400;
 
-    protected long ANIMATE_POINTS_DURATION_1 = 200;
-    protected long ANIMATE_POINTS_DURATION_2 = 1000;
-
     public AnimateGame() {
         AnimationTypes.ANIMATION_BATTLE_ATTACK.setDuration(Attack.getDurationToPoints());
         AnimationTypes.ANIMATION_BATTLE_ATTACK.setFullDuration(Attack.getFullDuration());
@@ -620,14 +617,7 @@ public class AnimateGame {
                 set = getAnimateAttack(view, enView, playerOrEnemy);
                 break;
             }
-            case ANIMATION_BATTLE_HIT: {
-                set = new AnimatorSet();
-                set.playSequentially(
-                        animateHitOnReceivedDmg(view, Hit.DURATION_1, playerOrEnemy),
-                        animateHitOnRecoverFromDmg(view, Hit.DURATION_2, playerOrEnemy)
-                );
-                break;
-            }
+            case ANIMATION_BATTLE_HIT:
             default: {
                 set = new AnimatorSet();
                 set.playSequentially(

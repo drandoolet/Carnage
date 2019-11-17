@@ -32,8 +32,6 @@ public class SkillsFragment extends Fragment {
 
     private HashMap<ImageButton, Skill> skillButtonMap;
 
-    private int selectedSkillIdx = 0;
-
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_skills, container, false);
@@ -41,20 +39,10 @@ public class SkillsFragment extends Fragment {
         activity = (OnSelectedButtonListener) getActivity();
 
         useSkillButton = view.findViewById(R.id.exitButton);
-        useSkillButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                activity.onUseSkillButtonPressed(skill);
-            }
-        });
+        useSkillButton.setOnClickListener(view1 -> activity.onUseSkillButtonPressed(skill));
 
         closeButton = view.findViewById(R.id.closeSkillsButton);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activity.onUseSkillButtonPressed(null);
-            }
-        });
+        closeButton.setOnClickListener(v -> activity.onUseSkillButtonPressed(null));
 
         skillButton1 = view.findViewById(R.id.skillButton1);
         skillButton2 = view.findViewById(R.id.skillButton2);

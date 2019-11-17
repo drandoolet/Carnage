@@ -29,8 +29,6 @@ public class PlayerChoice {
     private int[] defStatistics = {neural_def_head, neural_def_body, neural_def_waist, neural_def_legs};
 
     public BodyPart.BodyPartNames getAttack() { return attack; }
-    public BodyPart.BodyPartNames getDefend_1() { return defend_1; }
-    public BodyPart.BodyPartNames getDefend_2() { return defend_2; }
 
     public ArrayList<BodyPart.BodyPartNames> getDefended() {
         return defended;

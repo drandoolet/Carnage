@@ -230,13 +230,13 @@ public class MainActivity extends AppCompatActivity
     public static void setSharedWinner(String winner) {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putString(APP_PREFERENCES_WINNER, winner);
-        editor.commit();
+        editor.apply();
     }
 
     public static void setSharedRounds(int rounds) {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putInt(APP_PREFERENCES_ROUNDS, rounds);
-        editor.commit();
+        editor.apply();
     }
     public static int getSharedRounds() {
         return getPrefs().getInt(APP_PREFERENCES_ROUNDS, 0);
@@ -251,7 +251,7 @@ public class MainActivity extends AppCompatActivity
         editor.putInt(APP_PREFERENCES_ROUNDS, rounds);
         editor.putInt(APP_PREFERENCES_DAMAGE_INFLICTED, damage);
         editor.putBoolean(APP_PREFERENCES_WINNER_BOOLEAN, isWinner);
-        editor.commit();
+        editor.apply();
     }
 
     public static void addStatisticsToNeuralNet(int[] stats, String profile) {
@@ -266,7 +266,7 @@ public class MainActivity extends AppCompatActivity
         editor.putInt(NEURAL_NET_DEF_ATTACKED_WAIST, getPrefs().getInt(NEURAL_NET_DEF_ATTACKED_WAIST, 1)+stats[6]);
         editor.putInt(NEURAL_NET_DEF_ATTACKED_LEGS, getPrefs().getInt(NEURAL_NET_DEF_ATTACKED_LEGS, 1)+stats[7]);
 
-        editor.commit();
+        editor.apply();
     }
     public static int[] getNeuralNetStatistics(String profile) {
         int[] stats = new int[8];
@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity
         editor.putInt(NEURAL_NET_DEF_ATTACKED_WAIST, 1);
         editor.putInt(NEURAL_NET_DEF_ATTACKED_LEGS, 1);
 
-        editor.commit();
+        editor.apply();
 
 
     }
@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity
     private void setTrackStatistics(boolean track) { // TODO : on start, "track stats" is always true
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putBoolean(APP_PREFERENCES_TRACK_STATS, track);
-        editor.commit();
+        editor.apply();
     }
 
     private static SharedPreferences getRPGPrefs() {
@@ -341,7 +341,7 @@ public class MainActivity extends AppCompatActivity
         editor.putInt(RPG_STATS_LEVEL, stats[5]);
         editor.putInt(RPG_STATS_CURRENT_EXP, stats[6]);
         editor.putInt(RPG_STATS_AVAILABLE_STAT_POINTS, stats[7]);
-        editor.commit();
+        editor.apply();
     }
 
     public static void updatePlayerLevel(String profile, int level, int exp, int statPoints) {
@@ -349,7 +349,7 @@ public class MainActivity extends AppCompatActivity
         editor.putInt(RPG_STATS_LEVEL, level);
         editor.putInt(RPG_STATS_CURRENT_EXP, exp);
         editor.putInt(RPG_STATS_AVAILABLE_STAT_POINTS, statPoints);
-        editor.commit();
+        editor.apply();
     }
 
     private int getRPGStatsSum(String profile) {
@@ -439,12 +439,9 @@ public class MainActivity extends AppCompatActivity
                 //ObjectAnimator.ofFloat(changeImageView2, View.TRANSLATION_X, changeImageView2.getWidth()*2).setDuration(duration)
         );
         set.start();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                changeImageView.setVisibility(View.INVISIBLE);
-                changeImageView2.setVisibility(View.INVISIBLE);
-            }
+        new Handler().postDelayed(() -> {
+            changeImageView.setVisibility(View.INVISIBLE);
+            changeImageView2.setVisibility(View.INVISIBLE);
         }, ANIMATION_WINDOW_CHANGE_DURATION);
     }
 

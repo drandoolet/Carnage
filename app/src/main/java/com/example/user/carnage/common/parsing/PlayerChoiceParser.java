@@ -13,11 +13,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerChoiceParser implements JsonParser {
+class PlayerChoiceParser implements JsonParser {
 
-    private PlayerChoiceParser() {}
+    private PlayerChoiceParser() {
+    }
 
-    public static PlayerChoice fromJson(JSONObject object) throws JSONException {
+    static PlayerChoice fromJson(JSONObject object) throws JSONException {
         ArrayList<BodyPart.BodyPartNames> atk = new ArrayList<>();
         ArrayList<BodyPart.BodyPartNames> def = new ArrayList<>();
         SkillNew skill = SkillParser.fromJson(object.getJSONObject(JsonField.SKILL.toString()));
@@ -34,7 +35,7 @@ public class PlayerChoiceParser implements JsonParser {
         return new PlayerChoice(atk, def, skill);
     }
 
-    public static JSONObject toJson(PlayerChoice playerChoice) throws JSONException {
+    static JSONObject toJson(PlayerChoice playerChoice) throws JSONException {
         SkillNew skillNew = playerChoice.getSkill();
         List<BodyPart.BodyPartNames> atk = new ArrayList<>(playerChoice.getAttacked());
         List<BodyPart.BodyPartNames> def = new ArrayList<>(playerChoice.getDefended());
@@ -63,6 +64,7 @@ public class PlayerChoiceParser implements JsonParser {
         SKILL("skill");
 
         private final String name;
+
         JsonField(String n) {
             name = n;
         }

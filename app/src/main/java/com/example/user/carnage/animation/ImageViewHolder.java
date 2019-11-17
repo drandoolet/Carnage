@@ -3,10 +3,6 @@ package com.example.user.carnage.animation;
 import android.animation.AnimatorSet;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -55,7 +51,9 @@ public class ImageViewHolder implements AnimationQueueListener {
         this.enemy = enemy;
     }
 
-    public void setEnemy(ImageViewHolder holder) { enemy = holder; }
+    public void setEnemy(ImageViewHolder holder) {
+        enemy = holder;
+    }
 
     public int getCurrentX() {
         int result;
@@ -73,8 +71,13 @@ public class ImageViewHolder implements AnimationQueueListener {
         return result;
     }
 
-    public int getBaseX() { return main_x; }
-    public int getBaseY() { return main_y; }
+    public int getBaseX() {
+        return main_x;
+    }
+
+    public int getBaseY() {
+        return main_y;
+    }
 
     public void animateAttack(DefenceAnimation type, String effect) {
         taskList.add(new Thread() {
@@ -130,7 +133,7 @@ public class ImageViewHolder implements AnimationQueueListener {
             };
             producer.start();
 
-            for (int i=0; i<taskList.size(); i++) {
+            for (int i = 0; i < taskList.size(); i++) {
                 try {
                     queue.take().start();
                 } catch (InterruptedException e) {
@@ -165,7 +168,7 @@ public class ImageViewHolder implements AnimationQueueListener {
                 AnimationTypes.Common.POINTS.getSet(points, !leftToRight, false, effect).start();
                 type.getSet(!leftToRight, view).start();
             });
-            logger.info("DEF thread sleeps for: "+type.getDuration());
+            logger.info("DEF thread sleeps for: " + type.getDuration());
             Thread.sleep(type.getDuration());
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -177,5 +180,6 @@ public class ImageViewHolder implements AnimationQueueListener {
 
 interface AnimationQueueListener {
     ImageView getView();
+
     void animateHit(DefenceAnimation type, String effect, Semaphore semaphore);
 }

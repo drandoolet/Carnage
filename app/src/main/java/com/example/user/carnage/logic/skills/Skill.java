@@ -47,10 +47,10 @@ public class Skill { // [0] STA, [1] STR, [2] AGI, [3] LUCK, [4] INT
 
     public int getEffect() {
         if (enemyChar == null)
-            return (int) (playerChar.valueOf(magnifiedStat) * magnification + addition);
+            return (int) (playerChar.getState(magnifiedStat, SubtractableValue.Value.CURRENT_VALUE) * magnification + addition);
 
-        int effect = (int) (playerChar.valueOf(magnifiedStat) * magnification + addition
-                - enemyChar.valueOf(affectedSubstat));
+        int effect = (int) (playerChar.getState(magnifiedStat, SubtractableValue.Value.CURRENT_VALUE) * magnification + addition
+                - enemyChar.getState(affectedSubstat, SubtractableValue.Value.CURRENT_VALUE));
         return (effect > 0) ? effect : 0;
     }
 

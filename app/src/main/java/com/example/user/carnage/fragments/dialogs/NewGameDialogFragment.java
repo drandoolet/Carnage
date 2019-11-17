@@ -16,19 +16,11 @@ public class NewGameDialogFragment extends DialogFragment {
         builder.setTitle(R.string.dialog_newgame_title);
         builder.setCancelable(false);
 
-        builder.setPositiveButton(R.string.common_no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+        builder.setPositiveButton(R.string.common_no, (dialogInterface, i) -> {});
 
-            }
-        });
-
-        builder.setNegativeButton(R.string.common_yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                MainActivity.newGame(getFragmentManager());
-            }
-        });
+        builder.setNegativeButton(
+                R.string.common_yes,
+                (dialogInterface, i) -> MainActivity.newGame(getFragmentManager()));
 
 
         return builder.create();

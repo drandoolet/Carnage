@@ -1,7 +1,6 @@
 package com.example.user.carnage.fragments.dialogs;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,11 +10,9 @@ import android.support.v7.app.AlertDialog;
 
 import com.example.user.carnage.MainActivity;
 import com.example.user.carnage.R;
-import com.example.user.carnage.fragments.MenuChooseFragment;
 import com.example.user.carnage.fragments.ProfileChooseFragment;
 
 public class ExitDialog extends DialogFragment {
-    //private String message;
 
     @NonNull
     @Override
@@ -24,23 +21,15 @@ public class ExitDialog extends DialogFragment {
         builder.setTitle(R.string.dialog_exit_title);
         builder.setCancelable(false);
 
-        builder.setPositiveButton(R.string.common_no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+        builder.setPositiveButton(R.string.common_no, (dialogInterface, i) -> {});
 
-            }
-        });
+        builder.setNegativeButton(R.string.common_yes, (dialogInterface, i) -> {
+            Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+            homeIntent.addCategory( Intent.CATEGORY_HOME );
+            homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(homeIntent);
 
-        builder.setNegativeButton(R.string.common_yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Intent homeIntent = new Intent(Intent.ACTION_MAIN);
-                homeIntent.addCategory( Intent.CATEGORY_HOME );
-                homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(homeIntent);
-
-                goToMainMenu();
-            }
+            goToMainMenu();
         });
 
 

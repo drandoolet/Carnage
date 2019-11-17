@@ -102,12 +102,6 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         notify();
     }
 
-
-    private Button testAnimButton;
-
-    public RPGBattleFragment() {
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -215,7 +209,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         for (CheckBox x : boxes) x.setOnCheckedChangeListener(defCheckBoxListener);
 
         attackButton = view.findViewById(R.id.buttonAttack);
-        attackButton.setOnClickListener(attackButtonListener3);
+        attackButton.setOnClickListener(attackButtonListener);
 
         skillsButton = view.findViewById(R.id.buttonSkills);
         skillsButton.setOnClickListener(view1 -> showSkillsFragment());
@@ -352,7 +346,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         }
     };
 
-    private View.OnClickListener attackButtonListener3 = new View.OnClickListener() {
+    private View.OnClickListener attackButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (defCheckBoxCounter != defCounterBound || atkCheckBoxCounter != atkCounterBound) {
@@ -521,8 +515,6 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
 
         isRoundAdded = false;
 
-        player.clearBodyPartsSelection();
-        enemy.clearBodyPartsSelection();
         CheckBox[] atkboxes = {checkBox_atk_head, checkBox_atk_body, checkBox_atk_waist, checkBox_atk_legs};
         for (CheckBox box : atkboxes) box.setChecked(false);
         CheckBox[] boxes = {checkBox_def_body, checkBox_def_head, checkBox_def_waist, checkBox_def_legs};
@@ -822,254 +814,6 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
     @Override
     public void animationEnded() {
         waiter.setAnimatingNow(false);
-    }
-
-
-
-
-
-    //       --- DEPRECATED METHODS, FIELDS BELOW ---
-
-    @Deprecated
-    private View.OnClickListener attackButtonListener2 = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (defCheckBoxCounter != defCounterBound || atkCheckBoxCounter != atkCounterBound) {
-                //throw new NullPointerException("thrown by if");
-                Toast.makeText(getContext(), getString(R.string.toast_choose_atk, defCounterBound, atkCounterBound),
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                setButtonsEnabled(false);
-                final AnimationQueueThread thread = new AnimationQueueThread();
-                addRound();
-                final PlayerChoice plCh = new PlayerChoice(playerAttacked, playerDefended);
-                final PlayerChoice enCh = new PlayerChoice(1);
-                ArrayList<PlayCharacterHelper.Result> enemyResult = enemyHelper.handle(enCh, plCh);
-
-                for (PlayCharacterHelper.Result result : enemyResult) {
-                    totalDamage += result.getAttack();
-                    updateGUI(enemy, player, result, thread, null);
-                }
-                if (enemy.getHP() > 0) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            ArrayList<PlayCharacterHelper.Result> playerResult
-                                    = playerHelper.handle(plCh, enCh);
-
-                            for (PlayCharacterHelper.Result result : playerResult) {
-                                //addLogTextAndAnimate(player, enemy, result);
-                                //player_hp_view.setText(new Integer(player.getHP()).toString());
-                                //player_HP_bar.setProgress(player.getHP());
-                                updateGUI(player, enemy, result, thread, null);
-
-                                if (player.getHP() <= 0) {
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            System.out.println("\n*** GAME OVER. YOU LOSE ***");
-                                            setGameOver(enemy.getName(), false);
-                                        }
-                                    }, currentAnimationDuration);
-                                    break;
-                                }
-                            }
-                            if (player.getHP() > 0) {
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        setButtonsEnabled(true);
-                                        setArgsReadyForNextRound();
-                                    }
-                                }, currentAnimationDuration);
-                            }
-
-                        }
-                    }, currentAnimationDuration);
-                } else {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            System.out.println("\n*** GAME OVER. YOU WIN ***");
-                            setGameOver(player.getName(), true);
-                        }
-                    }, currentAnimationDuration);
-                }
-                thread.start();
-            }
-        }
-    };
-
-    @Deprecated
-    private View.OnClickListener attackButtonListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            //try {
-            if (defCheckBoxCounter != defCounterBound || atkCheckBoxCounter != atkCounterBound) {
-                //throw new NullPointerException("thrown by if");
-                Toast.makeText(getContext(), R.string.toast_choose_atk, Toast.LENGTH_SHORT).show();
-            } else {
-                setButtonsEnabled(false);
-                roundCounter++;
-                addRound();
-                playerChoice = new PlayerChoice(selectedAtk, selectedDef);
-                enemyChoice = new PlayerChoice();
-
-                player.getChoices(playerChoice, enemyChoice);
-                enemy.getChoices(enemyChoice, playerChoice);
-
-                enemy.damageReceived(player);
-                totalDamage += player.getCurrentKick();
-                addLogText(player, enemy);
-                enemy_HP_bar.setProgress(enemy.getHP()); // animate - true ?!
-                enemy_hp_view.setText(Integer.toString(enemy.getHP()));
-
-                if (enemy.getHP() > 0) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            player.damageReceived(enemy);
-                            addLogText(enemy, player);
-                            player_hp_view.setText(new Integer(player.getHP()).toString());
-                            player_HP_bar.setProgress(player.getHP());
-
-                            if (player.getHP() <= 0) {
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        System.out.println("\n*** GAME OVER. YOU LOSE ***");
-                                        setGameOver(enemy.getName(), false);
-                                    }
-                                }, currentAnimationDuration);
-                            } else {
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        setButtonsEnabled(true);
-                                        setArgsReadyForNextRound();
-                                    }
-                                }, currentAnimationDuration);
-                            }
-                        }
-                    }, currentAnimationDuration);
-                } else {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            System.out.println("\n*** GAME OVER. YOU WIN ***");
-                            setGameOver(player.getName(), true);
-                        }
-                    }, currentAnimationDuration);
-                }
-                if (player.getHP() <= 0) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            System.out.println("\n*** GAME OVER. YOU LOSE ***");
-                            setGameOver(enemy.getName(), false);
-                        }
-                    }, currentAnimationDuration);
-                }
-
-            }
-            //} catch (NullPointerException exc) {
-            //    Log.e(MainActivity.TAG, "error in inClick: " + exc);
-            //    Toast.makeText(getContext(), R.string.toast_choose_atk, Toast.LENGTH_SHORT).show();
-            //}
-        }
-    };
-
-    @Deprecated
-    private void addLogText(final PlayCharacter character, PlayCharacter enemy) {
-        String text;
-        final ImageView imgToAnimate, playerImage;
-        final boolean isPlayer;
-        final TextView pointsTextView;
-        if (character == player) {
-            imgToAnimate = enemy_img;
-            playerImage = player_img;
-            isPlayer = true;
-            pointsTextView = enemy_points;
-        } else {
-            imgToAnimate = player_img;
-            playerImage = enemy_img;
-            isPlayer = false;
-            pointsTextView = player_points;
-        }
-        switch (character.getRoundStatus()) {
-            case NORMAL:
-                text = getString(R.string.battle_text_normal, character.getName(), character.getTarget(), character.getCurrentKick());
-                hits++;
-                animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        animateGame.animateHit(imgToAnimate, isPlayer);
-                        pointsTextView.setText(String.format(Locale.ENGLISH, Integer.toString(-character.getCurrentKick())));
-                        animateGame.animateDamagePoints(pointsTextView, isPlayer, false);
-                    }
-                }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
-                currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_HIT.getDuration();
-                break;
-            case BLOCK:
-                text = getString(R.string.battle_text_blocked, character.getName(), character.getTarget(), enemy.getName());
-                blocks++;
-                animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        animateGame.animateBlock(imgToAnimate, isPlayer);
-                        pointsTextView.setText(getString(R.string.battle_points_block));
-                        animateGame.animateDamagePoints(pointsTextView, isPlayer, false);
-                    }
-                }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
-                currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_BLOCK.getDuration();
-                break;
-            case DODGE:
-                text = getString(R.string.battle_text_dodged, character.getName(), character.getTarget(), enemy.getName());
-                dodges++;
-                animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        animateGame.animateDodge(imgToAnimate, isPlayer);
-                    }
-                }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
-                currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_DODGE.getDuration();
-                break;
-            case CRITICAL:
-                text = getString(R.string.battle_text_critical, character.getName(), character.getTarget(), enemy.getName(), character.getCurrentKick());
-                criticals++;
-                animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        animateGame.animateCriticalHit(imgToAnimate, isPlayer);
-                        pointsTextView.setText(getString(R.string.battle_points_critical, -character.getCurrentKick()));
-                        animateGame.animateDamagePoints(pointsTextView, isPlayer, false);
-                    }
-                }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
-                currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_CRITICAL.getDuration();
-                break;
-            case BLOCK_BREAK:
-                text = getString(R.string.battle_text_block_break, character.getName(), character.getTarget(), enemy.getName(), character.getCurrentKick());
-                blockBreaks++;
-                animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        animateGame.animateBlockBreak(imgToAnimate, isPlayer);
-                        pointsTextView.setText(getString(R.string.battle_points_block_break, -character.getCurrentKick()));
-                        animateGame.animateDamagePoints(pointsTextView, isPlayer, false);
-                    }
-                }, AnimationTypes.ANIMATION_BATTLE_ATTACK.getDuration());
-                currentAnimationDuration = AnimationTypes.ANIMATION_BATTLE_BLOCK_BREAK.getDuration();
-                break;
-            default:
-                text = '\n' + '\n' + "  ERROR in round " + roundCounter;
-        }
-
-        battle_textView.append(text);
     }
 }
 

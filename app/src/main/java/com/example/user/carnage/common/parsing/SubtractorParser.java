@@ -11,10 +11,10 @@ import com.example.user.carnage.logic.main.attack.effect.Subtractor;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SubtractorParser implements JsonParser {
+class SubtractorParser implements JsonParser {
     private SubtractorParser() {}
 
-    public static JSONObject toJson(Subtractor subtractor) throws JSONException {
+    static JSONObject toJson(Subtractor subtractor) throws JSONException {
         JSONObject object = new JSONObject();
 
         if (subtractor instanceof NormalAttack) {
@@ -31,7 +31,7 @@ public class SubtractorParser implements JsonParser {
                 .put(JsonField.SUBTRACTION_PLAYER_2.toString(), SubtractionParser.toJson(subtractor.getEnemySubtraction()));
     }
 
-    public static Subtractor fromJson(JSONObject object) throws JSONException {
+    static Subtractor fromJson(JSONObject object) throws JSONException {
         Subtraction sp1 = SubtractionParser.fromJson(object.getJSONObject(JsonField.SUBTRACTION_PLAYER_1.toString()));
         Subtraction sp2 = SubtractionParser.fromJson(object.getJSONObject(JsonField.SUBTRACTION_PLAYER_2.toString()));
 

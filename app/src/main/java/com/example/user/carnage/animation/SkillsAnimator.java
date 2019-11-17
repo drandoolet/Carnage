@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.user.carnage.fragments.RPGBattleFragment;
 import com.example.user.carnage.logic.skills.Skill;
@@ -23,12 +22,14 @@ public class SkillsAnimator extends AnimateGame {
         }
 
         private final long duration;
+
         @Override
         public long getDuration() {
             return duration;
         }
+
         public static long getDurationToPoints() {
-            return DURATION_1.duration +DURATION_2.duration;
+            return DURATION_1.duration + DURATION_2.duration;
         }
     }
 
@@ -64,7 +65,8 @@ public class SkillsAnimator extends AnimateGame {
             case FIREBALL: {
                 mainSet = animateFireBall();
                 break;
-            } case HEAL_SMALL: {
+            }
+            case HEAL_SMALL: {
                 mainSet = doNothing();
                 break;
             }
@@ -87,12 +89,7 @@ public class SkillsAnimator extends AnimateGame {
                 setDefault();
             }
         });
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                magicCallBack.animatePointsNow(skill);
-            }
-        }, animDurationToPoints);
+        new Handler().postDelayed(() -> magicCallBack.animatePointsNow(skill), animDurationToPoints);
 
     }
 
@@ -132,8 +129,8 @@ public class SkillsAnimator extends AnimateGame {
 
         set.playSequentially(
                 state1,
-                animateTranslation(imageView, enemyImg.getX()-imageView.getX(),
-                        (enemyImg.getBottom() - enemyImg.getTop())/(-2) + imageView.getHeight()/2, Fireball.DURATION_2),
+                animateTranslation(imageView, enemyImg.getX() - imageView.getX(),
+                        (enemyImg.getBottom() - enemyImg.getTop()) / (-2) + imageView.getHeight() / 2, Fireball.DURATION_2),
                 animateChangeScale(imageView, 1f, 2f, Fireball.DURATION_3),
                 ObjectAnimator.ofFloat(imageView, View.ALPHA, 1, 0).setDuration(Fireball.DURATION_4.getDuration()),
                 state2
@@ -158,18 +155,23 @@ public class SkillsAnimator extends AnimateGame {
         long duration;
         switch (type) {
             case FIREBALL:
-                duration = Fireball.getDurationToPoints(); break;
-            case HEAL_SMALL: duration = 0; break;
-            default: duration = 0;
+                duration = Fireball.getDurationToPoints();
+                break;
+            case HEAL_SMALL:
+                duration = 0;
+                break;
+            default:
+                duration = 0;
         }
         animDurationToPoints = duration;
     }
 
 
-
     public interface MagicCallBack {
         boolean isSkillUsable(Skill skill);
+
         void magicUsed(Skill skill, AnimatorSet set);
+
         void animatePointsNow(Skill skill);
     }
 

@@ -4,22 +4,14 @@ package com.example.user.carnage.animation;
 import android.animation.AnimatorSet;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import com.example.user.carnage.animation.AnimateGame.AnimationTypes;
-import com.example.user.carnage.fragments.RPGBattleFragment;
 
 public class AnimationQueueThread extends Thread {
     private AnimationEndListener listener;
     private ArrayList<Test> testArrayList = new ArrayList<>();
-    long delay = 0;
-    Handler mHandler;
+    private Handler mHandler;
 
-    private ImageView pl_view, en_view;
 
     private class Test {
         private AnimatorSet set;
@@ -49,7 +41,7 @@ public class AnimationQueueThread extends Thread {
     @Override
     public void run() {
         for (final Test test : testArrayList) {
-            delay = test.getDuration();
+            long delay = test.getDuration();
 
             mHandler.post(() -> test.getSet().start());
             //System.out.println("thread delay = "+delay);
@@ -71,6 +63,7 @@ public class AnimationQueueThread extends Thread {
     public void registerListener(AnimationEndListener listener) {
         this.listener = listener;
     }
+
     public interface AnimationEndListener {
         void animationEnded();
     }
