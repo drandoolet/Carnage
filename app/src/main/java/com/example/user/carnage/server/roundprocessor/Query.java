@@ -1,6 +1,6 @@
 package com.example.user.carnage.server.roundprocessor;
 
-import com.example.user.carnage.logic.main.PlayerChoice;
+import com.example.user.carnage.common.logic.main.PlayerChoice;
 import com.example.user.carnage.server.roundprocessor.roundelement.RoundResults;
 
 public class Query {

@@ -2,7 +2,7 @@ package com.example.user.carnage.server.roundprocessor;
 
 import com.example.user.carnage.common.parsing.QueryParser;
 import com.example.user.carnage.common.parsing.ResponseParser;
-import com.example.user.carnage.logic.main.PlayCharacter;
+import com.example.user.carnage.common.logic.main.PlayCharacter;
 
 import org.json.JSONException;
 import org.json.JSONObject;

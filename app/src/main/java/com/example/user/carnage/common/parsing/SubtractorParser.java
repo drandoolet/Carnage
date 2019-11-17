@@ -1,12 +1,12 @@
 package com.example.user.carnage.common.parsing;
 
-import com.example.user.carnage.logic.main.BodyPart;
-import com.example.user.carnage.logic.main.PlayCharacter;
-import com.example.user.carnage.logic.main.attack.AttackFactory;
-import com.example.user.carnage.logic.main.attack.NormalAttack;
-import com.example.user.carnage.logic.main.attack.SkillAttack;
-import com.example.user.carnage.logic.main.attack.effect.Subtraction;
-import com.example.user.carnage.logic.main.attack.effect.Subtractor;
+import com.example.user.carnage.common.logic.main.BodyPart;
+import com.example.user.carnage.common.logic.main.PlayCharacter;
+import com.example.user.carnage.common.logic.main.attack.AttackFactory;
+import com.example.user.carnage.common.logic.main.attack.NormalAttack;
+import com.example.user.carnage.common.logic.main.attack.SkillAttack;
+import com.example.user.carnage.common.logic.main.attack.effect.Subtraction;
+import com.example.user.carnage.common.logic.main.attack.effect.Subtractor;
 
 import org.json.JSONException;
 import org.json.JSONObject;

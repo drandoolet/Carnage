@@ -2,7 +2,7 @@ package com.example.user.carnage.server.roundprocessor.roundelement;
 
 import android.support.annotation.NonNull;
 
-import com.example.user.carnage.logic.main.attack.effect.Subtractor;
+import com.example.user.carnage.common.logic.main.attack.effect.Subtractor;
 
 import java.util.ArrayList;
 import java.util.List;

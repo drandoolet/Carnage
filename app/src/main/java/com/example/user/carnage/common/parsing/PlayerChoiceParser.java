@@ -2,9 +2,9 @@ package com.example.user.carnage.common.parsing;
 
 import android.os.Build;
 
-import com.example.user.carnage.logic.main.BodyPart;
-import com.example.user.carnage.logic.main.PlayerChoice;
-import com.example.user.carnage.logic.skills.SkillNew;
+import com.example.user.carnage.common.logic.main.BodyPart;
+import com.example.user.carnage.common.logic.main.PlayerChoice;
+import com.example.user.carnage.common.logic.skills.SkillNew;
 
 import org.json.JSONArray;
 import org.json.JSONException;

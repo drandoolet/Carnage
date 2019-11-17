@@ -1,8 +1,8 @@
 package com.example.user.carnage.common.parsing;
 
-import com.example.user.carnage.logic.main.PlayCharacter;
-import com.example.user.carnage.logic.main.PlayCharacter.SubtractableValue;
-import com.example.user.carnage.logic.main.attack.effect.Subtraction;
+import com.example.user.carnage.common.logic.main.PlayCharacter;
+import com.example.user.carnage.common.logic.main.PlayCharacter.SubtractableValue;
+import com.example.user.carnage.common.logic.main.attack.effect.Subtraction;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorBattleBackground"
     android:orientation="vertical"
-    tools:context=".fragments.MainActivityFragment">
+    tools:context=".client.fragments.MainActivityFragment">
 
     <LinearLayout
         android:id="@+id/playersNamesLinearLayout"

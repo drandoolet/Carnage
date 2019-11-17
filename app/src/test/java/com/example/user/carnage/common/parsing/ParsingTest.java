@@ -1,9 +1,9 @@
 package com.example.user.carnage.common.parsing;
 
-import com.example.user.carnage.logic.main.BodyPart;
-import com.example.user.carnage.logic.main.PlayerChoice;
-import com.example.user.carnage.logic.skills.SkillFactory;
-import com.example.user.carnage.logic.skills.SkillNew;
+import com.example.user.carnage.common.logic.main.BodyPart;
+import com.example.user.carnage.common.logic.main.PlayerChoice;
+import com.example.user.carnage.common.logic.skills.SkillFactory;
+import com.example.user.carnage.common.logic.skills.SkillNew;
 import com.example.user.carnage.server.roundprocessor.Query;
 import com.example.user.carnage.server.roundprocessor.roundelement.RoundResults;
 

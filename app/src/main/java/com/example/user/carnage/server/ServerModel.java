@@ -1,11 +1,10 @@
 package com.example.user.carnage.server;
 
 import android.os.Build;
-import android.provider.Settings;
 
-import com.example.user.carnage.logic.main.BodyPart;
-import com.example.user.carnage.logic.main.PlayCharacter;
-import com.example.user.carnage.logic.main.PlayerChoice;
+import com.example.user.carnage.common.logic.main.BodyPart;
+import com.example.user.carnage.common.logic.main.PlayCharacter;
+import com.example.user.carnage.common.logic.main.PlayerChoice;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,7 +14,6 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;

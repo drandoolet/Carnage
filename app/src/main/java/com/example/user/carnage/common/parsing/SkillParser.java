@@ -1,7 +1,7 @@
 package com.example.user.carnage.common.parsing;
 
-import com.example.user.carnage.logic.skills.SkillFactory;
-import com.example.user.carnage.logic.skills.SkillNew;
+import com.example.user.carnage.common.logic.skills.SkillFactory;
+import com.example.user.carnage.common.logic.skills.SkillNew;
 
 import org.json.JSONException;
 import org.json.JSONObject;

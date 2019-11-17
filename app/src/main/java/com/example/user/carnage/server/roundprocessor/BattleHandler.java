@@ -1,12 +1,12 @@
 package com.example.user.carnage.server.roundprocessor;
 
-import com.example.user.carnage.logic.main.BodyPart;
-import com.example.user.carnage.logic.main.PlayCharacter;
-import com.example.user.carnage.logic.main.PlayerChoice;
-import com.example.user.carnage.logic.main.attack.AttackFactory;
-import com.example.user.carnage.logic.main.attack.effect.Subtraction;
-import com.example.user.carnage.logic.main.attack.effect.Subtractor;
-import com.example.user.carnage.logic.skills.SkillNew;
+import com.example.user.carnage.common.logic.main.BodyPart;
+import com.example.user.carnage.common.logic.main.PlayCharacter;
+import com.example.user.carnage.common.logic.main.PlayerChoice;
+import com.example.user.carnage.common.logic.main.attack.AttackFactory;
+import com.example.user.carnage.common.logic.main.attack.effect.Subtraction;
+import com.example.user.carnage.common.logic.main.attack.effect.Subtractor;
+import com.example.user.carnage.common.logic.skills.SkillNew;
 import com.example.user.carnage.server.roundprocessor.roundelement.RoundResults;
 
 import java.util.ArrayList;
