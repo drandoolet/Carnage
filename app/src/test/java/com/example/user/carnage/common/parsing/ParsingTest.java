@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -34,8 +33,8 @@ public class ParsingTest {
                 )
         );
         SkillNew skill = SkillFactory.newSkill(SkillNew.SkillTypes.FIREBALL);
-        PlayerChoice playerChoice1 = new PlayerChoice(attacked, defended, skill);
-        PlayerChoice playerChoice2 = new PlayerChoice(attacked, defended, skill);
+        PlayerChoice playerChoice1 = new PlayerChoice(attacked, defended);
+        PlayerChoice playerChoice2 = new PlayerChoice(attacked, defended);
 
         Query query = new Query(playerChoice1, playerChoice2, RoundResults.Players.PLAYER_1);
 

@@ -1,24 +1,28 @@
 package com.example.user.carnage.server;
 
-import android.os.Build;
-
-import com.example.user.carnage.common.logic.main.BodyPart;
 import com.example.user.carnage.common.logic.main.PlayCharacter;
+import com.example.user.carnage.common.logic.main.PlayCharacterFactory;
 import com.example.user.carnage.common.logic.main.PlayerChoice;
+import com.example.user.carnage.common.parsing.PlayerChoiceParser;
+import com.example.user.carnage.common.parsing.ResponseParser;
+import com.example.user.carnage.server.roundprocessor.BattleRoundProcessor;
+import com.example.user.carnage.server.roundprocessor.Query;
+import com.example.user.carnage.server.roundprocessor.roundelement.GameOverException;
+import com.example.user.carnage.server.roundprocessor.roundelement.RoundResults;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ServerModel {
     private final ExecutorService executor;
@@ -26,7 +30,7 @@ public class ServerModel {
     private final Map<Integer, Session.Builder> waitingForPlayersSessions;
     private final Random random = new SecureRandom();
 
-    private final int MAX_ROOM_NUMBER = 999_999;
+    private final int MAX_ROOM_NUMBER = 999;
 
     public ServerModel(int threads) {
         this.executor = Executors.newFixedThreadPool(threads);
@@ -38,27 +42,93 @@ public class ServerModel {
      * Connects PlayCharacter to Session.Builder and waits for it to build a Session,
      * then returns it.
      *
-     * @param character
-     * @param sessionNumber
-     * @return
+     * @param playerProfile : String value stored in SharedPrefs (TODO impl DB)
+     * @param sessionNumber : room number
+     * @return Session
      */
-    public Session connect(PlayCharacter character, int sessionNumber) {
-        // check if session is waiting for players
-        if (Build.VERSION.SDK_INT >23 ?
-                waitingForPlayersSessions.keySet().stream().anyMatch((v) -> v == sessionNumber) :
-                waitingForPlayersSessions.keySet().contains(sessionNumber))
-        {
-            Session.Builder builder = waitingForPlayersSessions
-                    .get(sessionNumber)
-                    .connect(character);
-            while (true) { // TODO awful
-                try {
-                    return builder.build();
-                } catch (IllegalStateException e) {
-                    Thread.yield();
-                }
-            }
-        } else throw new IllegalStateException("No such session number: "+sessionNumber+"!");
+    public SessionAdapter connectToExisting(String playerProfile, int sessionNumber) {
+        if (!waitingForPlayersSessions.containsKey(sessionNumber))
+            throw new IllegalArgumentException("No opened Session with number " + sessionNumber);
+
+        try {
+            return new SessionAdapter(
+                    waitingForPlayersSessions
+                            .get(sessionNumber)
+                            .connect(PlayCharacterFactory.findInDB(playerProfile))
+                            .build(),
+                    RoundResults.Players.PLAYER_2,
+                    sessionNumber);
+        } catch (BrokenBarrierException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        throw new IllegalStateException("Error in connect()");
+    }
+
+    public SessionAdapter connectPlayer(String playerProfile, int sessionNumber) {
+        if (!waitingForPlayersSessions.containsKey(sessionNumber))
+            throw new IllegalArgumentException("No opened Session with number " + sessionNumber);
+
+        try {
+            return new SessionAdapter(
+                    waitingForPlayersSessions
+                            .get(sessionNumber)
+                            .connect(PlayCharacterFactory.findInDB(playerProfile))
+                            .build(),
+                    RoundResults.Players.PLAYER_1,
+                    sessionNumber);
+        } catch (BrokenBarrierException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        throw new IllegalStateException("Error in connect()");
+    }
+
+    public SessionAdapter connectEnemy(int sessionNumber) {
+        if (!waitingForPlayersSessions.containsKey(sessionNumber))
+            throw new IllegalArgumentException();
+
+        try {
+            return SessionAdapter.newInstance(
+                    waitingForPlayersSessions
+                            .get(sessionNumber)
+                            .connectAsEnemy()
+                            .build(),
+                    RoundResults.Players.PLAYER_2,
+                    sessionNumber
+            );
+        } catch (BrokenBarrierException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        throw new IllegalStateException();
+    }
+
+
+
+    public static class SessionAdapter {
+        private final Session session;
+        private final RoundResults.Players player;
+        private final int sessionNumber;
+
+        public Session getSession() {
+            return session;
+        }
+
+        public RoundResults.Players getPlayer() {
+            return player;
+        }
+
+        public int getSessionNumber() {
+            return sessionNumber;
+        }
+
+        private SessionAdapter(Session session, RoundResults.Players player, int sessionNumber) {
+            this.session = session;
+            this.player = player;
+            this.sessionNumber = sessionNumber;
+        }
+
+        public static SessionAdapter newInstance(Session session, RoundResults.Players player, int sessionNumber) {
+            return new SessionAdapter(session, player, sessionNumber);
+        }
     }
 
     /**
@@ -68,7 +138,7 @@ public class ServerModel {
      * @return int = session number, yet non-existing until second player enters
      */
     public int newSession() {
-        int sessionNumber = random.nextInt(MAX_ROOM_NUMBER+1);
+        int sessionNumber = random.nextInt(MAX_ROOM_NUMBER + 1);
         waitingForPlayersSessions.put(sessionNumber, new Session.Builder(sessionNumber));
         return sessionNumber;
     }
@@ -78,21 +148,76 @@ public class ServerModel {
      * Clients get updates from Session.
      * Clients connect to Session via ServerModel.connect(int).
      * PlayCharacters return updates after interacting with each other.
-     *
      */
-    private static class Session {
-        private final PlayCharacter player_1, player_2;
+    public static class Session {
         private final int sessionNumber;
+        private final BattleRoundProcessor processor;
+        private RoundResults results;
+        private PlayerChoice playerChoice_1, playerChoice_2;
+        private RoundResults.Players firstPlayer;
+        private final CyclicBarrier barrier;
+        private final AtomicBoolean isOpen = new AtomicBoolean(true);
 
         private Session(Builder builder) {
-            this.player_1 = builder.player_1;
-            this.player_2 = builder.player_2;
             this.sessionNumber = builder.sessionNumber;
+            firstPlayer = RoundResults.Players.PLAYER_2;
+
+            processor = new BattleRoundProcessor(builder.player_1, builder.player_2);
+
+            barrier = new CyclicBarrier(2,
+                    () -> {
+                        try {
+                            results = processor.getResponse(getNextQuery());
+                        } catch (GameOverException e) {
+                            isOpen.set(false);
+                        }
+                    }
+            );
+        }
+
+        public int getSessionNumber() {
+            return sessionNumber;
+        }
+
+        private Query getNextQuery() {
+            if (firstPlayer == RoundResults.Players.PLAYER_1) {
+                firstPlayer = RoundResults.Players.PLAYER_2;
+            }
+            else firstPlayer = RoundResults.Players.PLAYER_1;
+
+            return new Query(playerChoice_1, playerChoice_2, firstPlayer);
+        }
+
+        boolean isOpen() {
+            return isOpen.get();
+        }
+
+        public JSONObject getResponse(JSONObject playerChoice) throws BrokenBarrierException, InterruptedException, JSONException, GameOverException {
+            RoundResults.Players player = RoundResults.Players.valueOf(playerChoice.getString("PLAYER"));
+
+            if (player == RoundResults.Players.PLAYER_1)
+                playerChoice_1 = PlayerChoiceParser.fromJson(playerChoice);
+            else if (player == RoundResults.Players.PLAYER_2)
+                playerChoice_2 = PlayerChoiceParser.fromJson(playerChoice);
+            else throw new IllegalArgumentException();
+
+            barrier.await();
+            if (!isOpen())
+                throw new GameOverException("Game over: "+Thread.currentThread().getName());
+            try {
+                return ResponseParser.toJson(results);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            throw new IllegalStateException("Error in getResponse()");
         }
 
         static class Builder {
             private PlayCharacter player_1, player_2;
             private final int sessionNumber;
+            private final CyclicBarrier barrier = new CyclicBarrier(2,
+                    () -> session = new Session(this));
+            private Session session;
 
             Builder(int sessionNumber) {
                 this.sessionNumber = sessionNumber;
@@ -104,90 +229,25 @@ public class ServerModel {
                 return this;
             }
 
-            Session build() { // TODO CountDownLatch or smth
-                if (player_1 != null && player_2 != null)
-                    return new Session(this);
-                else throw new IllegalStateException(String.format("Session.Builder is not ready: player(s) %snot set.",
-                        (player_1==null? "1 ":"") + (player_2==null? "2 ":"")));
-            }
-        }
-
-        /**
-         *
-         * @param player
-         * JSON string: hit power, phys/magic, atks, defs
-         *
-         * @return
-         * JSON string: { dmg received, round status, body part } x0-4
-         */
-        public JSONObject getResponse(JSONObject player) {
-            return new JSONObject();
-        }
-    }
-
-    class FightProcessor {
-        private final PlayCharacter player_1, player_2;
-
-        FightProcessor(PlayCharacter player_1, PlayCharacter player_2) {
-            this.player_1 = player_1;
-            this.player_2 = player_2;
-        }
-
-        void process(JSONObject player1Turn, JSONObject player2Turn) {
-
-        }
-    }
-
-    public static class JsonTurnParser {
-        public static PlayerChoice parsePlayerChoice(JSONObject parse) throws JSONException {
-            return JsonPlayerChoice.getPlayerChoice(parse);
-        }
-
-        public static JSONObject convert(PlayerChoice choice) throws JSONException {
-            return JsonPlayerChoice.getJson(choice);
-        }
-
-        /**
-         * @format { "attacked" : {"BodyPartNames", ...}, "defended" : {...}, "skills" : {...} }
-         */
-        private static class JsonPlayerChoice {
-
-            private static BodyPart.BodyPartNames getBodyPartName(String s) {
-                return BodyPart.BodyPartNames.valueOf(s);
-            }
-
-            private static <T> void fill(JSONArray array, List<T> list) {
-                if (Build.VERSION.SDK_INT >23) list.forEach(array::put);
-                else {
-                    for (T o : list) array.put(o);
+            /**
+             * Attempts to connect as Player_2 in cycle (blocking)
+             * @return this
+             */
+            Builder connectAsEnemy() {
+                while (player_1 == null) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-            private static void fillPlayerChoiceJson(List<BodyPart.BodyPartNames> list, JSONArray array) throws JSONException {
-                for (int i = 0; i < array.length(); i++) {
-                    list.add(getBodyPartName(array.get(i).toString()));
-                }
+                player_2 = PlayCharacterFactory.createEnemy(player_1);
+                return this;
             }
 
-            static PlayerChoice getPlayerChoice(JSONObject object) throws JSONException {
-                ArrayList<BodyPart.BodyPartNames> attacked = new ArrayList<>(), defended = new ArrayList<>();
-                JSONArray atk = object.getJSONArray("attacked");
-                JSONArray def = object.getJSONArray("defended");
-
-                fillPlayerChoiceJson(attacked, atk);
-                fillPlayerChoiceJson(defended, def);
-
-                return new PlayerChoice(attacked, defended);
-            }
-
-            static JSONObject getJson(PlayerChoice choice) throws JSONException {
-                JSONObject o = new JSONObject();
-                JSONArray atk = new JSONArray();
-                JSONArray def = new JSONArray();
-
-                fill(atk, choice.getAttacked());
-                fill(def, choice.getDefended());
-
-                return o.put("attacked", atk).put("defended", def);
+            Session build() throws BrokenBarrierException, InterruptedException {
+                barrier.await();
+                return session;
             }
         }
     }

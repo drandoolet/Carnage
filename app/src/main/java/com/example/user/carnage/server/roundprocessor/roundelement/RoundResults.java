@@ -1,5 +1,6 @@
 package com.example.user.carnage.server.roundprocessor.roundelement;
 
+import android.os.Build;
 import android.support.annotation.NonNull;
 
 import com.example.user.carnage.common.logic.main.attack.effect.Subtractor;
@@ -39,6 +40,23 @@ public class RoundResults {
         return stages;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        if (Build.VERSION.SDK_INT > 23)
+            stages
+                    .stream()
+                    .map(stage -> stage.toString() + '\n')
+                    .forEach(builder::append);
+        else {
+            for (RoundStage stage : getStages())
+                builder.append(stage.toString()).append('\n');
+        }
+
+        return builder.toString();
+    }
+
     /**
      * An entity that represents a single kick or magic usage.
      * i.e. "Player 1 aims at Head, dealing 100 points of damage."
@@ -70,11 +88,17 @@ public class RoundResults {
             actor = builder.actor;
         }
 
+        @Override
+        public String toString() {
+            return String.format("  --- STAGE RESULTS ---\n\nFirst player: %s\nSubtractor:\n %s\n",
+                    actor, subtractor.toString());
+        }
+
         public static class Builder {
             private final Subtractor subtractor;
             private final Players actor;
 
-            public Builder(Subtractor subtractor, Players actor) {
+            private Builder(Subtractor subtractor, Players actor) {
                 this.subtractor = subtractor;
                 this.actor = actor;
             }

@@ -6,7 +6,9 @@ import com.example.user.carnage.common.logic.main.PlayerChoice;
 import com.example.user.carnage.common.logic.main.attack.AttackFactory;
 import com.example.user.carnage.common.logic.main.attack.effect.Subtraction;
 import com.example.user.carnage.common.logic.main.attack.effect.Subtractor;
+import com.example.user.carnage.common.logic.skills.SkillFactory;
 import com.example.user.carnage.common.logic.skills.SkillNew;
+import com.example.user.carnage.server.roundprocessor.roundelement.GameOverException;
 import com.example.user.carnage.server.roundprocessor.roundelement.RoundResults;
 
 import java.util.ArrayList;
@@ -16,28 +18,34 @@ import java.util.Random;
 final class BattleHandler {
     private final PlayCharacter player_1, player_2;
     private final Random random = new Random();
+    private final PlayCharacterHolder holder;
 
     BattleHandler(PlayCharacter player_1, PlayCharacter player_2) {
         this.player_1 = player_1;
         this.player_2 = player_2;
+        holder = new PlayCharacterHolder(player_1, player_2);
     }
 
-    RoundResults process(Query query) {
-        return process(query.getPlayerChoice(), query.getPlayerChoice(), query.getFirstPlayer());
+    RoundResults process(Query query) throws GameOverException {
+        return process(query.getPlayerChoice(), query.getEnemyChoice(), query.getFirstPlayer());
     }
 
     private RoundResults process(PlayerChoice player1Choice, PlayerChoice player2Choice,
-                                 RoundResults.Players firstPlayer) {
+                                 RoundResults.Players firstPlayer) throws GameOverException {
         RoundResults.Builder builder = RoundResults.Builder.newInstance();
 
-        for (Atk atk : mergePlayerChoicesToAtkList(player_1, player_2, player1Choice, player2Choice, firstPlayer)) {
-            if (atk.skill == null)
+        List<Atk> atks = mergePlayerChoicesToAtkList(player_1, player_2, player1Choice, player2Choice, firstPlayer);
+        for (Atk atk : atks) {
+            if (atk.skillType == SkillNew.SkillTypes.NULL)
                 builder.addStage(getStage(atk.atk, atk.def, atk.player, atk.enemy, atk.firstPlayer));
             else
-                builder.addStage(getStage(atk.skill, atk.player, atk.enemy, atk.firstPlayer));
+                builder.addStage(getStage(atk.skillType, atk.player, atk.enemy, atk.firstPlayer));
         }
 
-        return builder.build();
+        RoundResults roundResults = builder.build();
+        holder.update(roundResults);
+
+        return roundResults;
     }
 
     private List<Atk> mergePlayerChoicesToAtkList(PlayCharacter pc1, PlayCharacter pc2,
@@ -69,34 +77,46 @@ final class BattleHandler {
         if (max < enemyChoice.getAttacked().size())
             max = enemyChoice.getAttacked().size();
 
+        addSkillIfExists(list, playerChoice, player, playerChar, enemyChar);
+        addSkillIfExists(list, enemyChoice, enemy, enemyChar, playerChar);
+
         for (int i = 0; i < max; i++) {
             if (i < playerChoice.getAttacked().size())
                 list.add(new Atk(
                         playerChoice.getAttacked().get(i),
                         enemyChoice.getDefended(),
                         player, playerChar, enemyChar,
-                        playerChoice.getSkill()));
+                        SkillNew.SkillTypes.NULL));
             if (i < enemyChoice.getAttacked().size())
                 list.add(new Atk(
                         enemyChoice.getAttacked().get(i),
-                        enemyChoice.getDefended(),
+                        playerChoice.getDefended(),
                         enemy, enemyChar, playerChar,
-                        enemyChoice.getSkill()));
+                        SkillNew.SkillTypes.NULL));
         }
 
         return list;
     }
 
+    private void addSkillIfExists(List<Atk> list, PlayerChoice choice, RoundResults.Players firstPlayer,
+                                  PlayCharacter player, PlayCharacter enemy) {
+        if (choice.getSkill() != SkillNew.SkillTypes.NULL) {
+            list.add(new Atk(
+                    null, null, firstPlayer, player, enemy, choice.getSkill()
+            ));
+        }
+    }
+
     private RoundResults.RoundStage getStage(
-            SkillNew skill,
+            SkillNew.SkillTypes skill,
             PlayCharacter pc1,
             PlayCharacter pc2,
             RoundResults.Players turn)
     {
         return RoundResults.RoundStage.newStageBuilder(
                 AttackFactory.newSkillAttack(
-                        skill.getEffect(pc1, pc2),
-                        skill
+                        SkillFactory.newSkill(skill).getEffect(pc1, pc2),
+                        SkillFactory.newSkill(skill)
                 ), turn
         ).build();
     }
@@ -108,7 +128,7 @@ final class BattleHandler {
             PlayCharacter pc2,
             RoundResults.Players turn)
     {
-        return new RoundResults.RoundStage.Builder(
+        return RoundResults.RoundStage.newStageBuilder(
                 calculateAttack(
                         pc1, pc2,
                         getRoundStatus(pc1, pc2, attack, defended),
@@ -196,17 +216,18 @@ final class BattleHandler {
         List<BodyPart.BodyPartNames> def;
         RoundResults.Players firstPlayer;
         PlayCharacter player, enemy;
-        SkillNew skill;
+        SkillNew.SkillTypes skillType;
 
 
         private Atk(BodyPart.BodyPartNames atk, List<BodyPart.BodyPartNames> def,
                     RoundResults.Players firstPlayer, PlayCharacter player, PlayCharacter enemy,
-                    SkillNew skill) {
+                    SkillNew.SkillTypes skill) {
             this.atk = atk;
             this.def = def;
             this.firstPlayer = firstPlayer;
             this.player = player;
             this.enemy = enemy;
+            this.skillType = skill;
         }
     }
 }

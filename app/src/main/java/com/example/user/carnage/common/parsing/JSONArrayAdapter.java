@@ -19,7 +19,7 @@ class JSONArrayAdapter {
     static class Iterator<T> {
         private final JSONArray array;
         private final int length;
-        private int pos = 0;
+        private int pos = -1;
 
         private Iterator(JSONArray array) {
             this.array = array;

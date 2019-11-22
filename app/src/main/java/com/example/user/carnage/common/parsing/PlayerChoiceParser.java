@@ -4,6 +4,7 @@ import android.os.Build;
 
 import com.example.user.carnage.common.logic.main.BodyPart;
 import com.example.user.carnage.common.logic.main.PlayerChoice;
+import com.example.user.carnage.common.logic.skills.SkillFactory;
 import com.example.user.carnage.common.logic.skills.SkillNew;
 
 import org.json.JSONArray;
@@ -13,15 +14,15 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-class PlayerChoiceParser implements JsonParser {
+public class PlayerChoiceParser implements JsonParser {
 
     private PlayerChoiceParser() {
     }
 
-    static PlayerChoice fromJson(JSONObject object) throws JSONException {
+    public static PlayerChoice fromJson(JSONObject object) throws JSONException {
         ArrayList<BodyPart.BodyPartNames> atk = new ArrayList<>();
         ArrayList<BodyPart.BodyPartNames> def = new ArrayList<>();
-        SkillNew skill = SkillParser.fromJson(object.getJSONObject(JsonField.SKILL.toString()));
+        SkillNew.SkillTypes skill = SkillParser.fromJson(object.getJSONObject(JsonField.SKILL.toString()));
         JSONArray atkObj = object.getJSONArray(JsonField.ATTACKS.toString());
         JSONArray defObj = object.getJSONArray(JsonField.DEFENDS.toString());
 
@@ -35,8 +36,7 @@ class PlayerChoiceParser implements JsonParser {
         return new PlayerChoice(atk, def, skill);
     }
 
-    static JSONObject toJson(PlayerChoice playerChoice) throws JSONException {
-        SkillNew skillNew = playerChoice.getSkill();
+    public static JSONObject toJson(PlayerChoice playerChoice) throws JSONException {
         List<BodyPart.BodyPartNames> atk = new ArrayList<>(playerChoice.getAttacked());
         List<BodyPart.BodyPartNames> def = new ArrayList<>(playerChoice.getDefended());
         JSONArray atkArr = new JSONArray();
@@ -55,7 +55,7 @@ class PlayerChoiceParser implements JsonParser {
         return new JSONObject()
                 .put(JsonField.ATTACKS.toString(), atkArr)
                 .put(JsonField.DEFENDS.toString(), defArr)
-                .put(JsonField.SKILL.toString(), SkillParser.toJson(skillNew));
+                .put(JsonField.SKILL.toString(), SkillParser.toJson(playerChoice.getSkill()));
     }
 
     private enum JsonField {

@@ -9,16 +9,17 @@ import org.json.JSONObject;
 class SkillParser implements JsonParser {
     private SkillParser() {}
 
-    static JSONObject toJson(SkillNew skill) throws JSONException {
-        return new JSONObject().put(JsonField.TYPE.toString(), skill.getType().toString());
+    static JSONObject toJson(SkillNew.SkillTypes skill) throws JSONException {
+        return new JSONObject().put(JsonField.TYPE.toString(), skill.toString());
     }
 
-    static SkillNew fromJson(JSONObject object) throws JSONException {
-        return SkillFactory.newSkill(
-                SkillNew.SkillTypes.valueOf(
-                        object.getString(JsonField.TYPE.toString())
-                )
-        );
+    static SkillNew.SkillTypes fromJson(JSONObject object) throws JSONException {
+        return SkillNew.SkillTypes.valueOf(
+                        object.getString(JsonField.TYPE.toString()));
+    }
+
+    static boolean isSkillNull(JSONObject object) throws JSONException {
+        return false;
     }
 
     private enum JsonField {

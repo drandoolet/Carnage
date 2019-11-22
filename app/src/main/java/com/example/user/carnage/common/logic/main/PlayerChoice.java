@@ -6,27 +6,21 @@ import com.example.user.carnage.common.logic.skills.SkillNew;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class PlayerChoice {
-    String str_att, str_def;
-    BodyPart.BodyPartNames attack;
-    BodyPart.BodyPartNames defend_1;
-    BodyPart.BodyPartNames defend_2;
-
     //private ArrayList<BodyPart.BodyPartNames> defended = new ArrayList<>(),
     //        attacked = new ArrayList<>();
     private ArrayList<BodyPart.BodyPartNames> defended, attacked;
     private SecureRandom random = new SecureRandom();
 
     // added for new compat
-    private SkillNew skill = null;
+    private SkillNew.SkillTypes skillType = SkillNew.SkillTypes.NULL;
 
     private int neural_atk_head, neural_atk_body, neural_atk_waist, neural_atk_legs;
     private int neural_def_head, neural_def_body, neural_def_waist, neural_def_legs;
     private int[] atkStatistics = {neural_atk_head, neural_atk_body, neural_atk_waist, neural_atk_legs};
     private int[] defStatistics = {neural_def_head, neural_def_body, neural_def_waist, neural_def_legs};
-
-    public BodyPart.BodyPartNames getAttack() { return attack; }
 
     public ArrayList<BodyPart.BodyPartNames> getDefended() {
         return defended;
@@ -38,9 +32,9 @@ public class PlayerChoice {
 
     public PlayerChoice(ArrayList<BodyPart.BodyPartNames> playerAttacked,
                         ArrayList<BodyPart.BodyPartNames> playerDefended,
-                        SkillNew skill) {
+                        SkillNew.SkillTypes skill) {
         this(playerAttacked, playerDefended);
-        this.skill = skill;
+        this.skillType = skill;
 
     }
 
@@ -50,61 +44,14 @@ public class PlayerChoice {
         attacked = playerAttacked;
     }
 
-    @Deprecated
-    public PlayerChoice(String jcb_name_att, String jcb_name_def) {
-        str_att = jcb_name_att;
-        str_def = jcb_name_def;
 
-        if (str_def.contains("HEAD")) defended.add(BodyPart.BodyPartNames.HEAD);
-        if (str_def.contains("BODY")) defended.add(BodyPart.BodyPartNames.BODY);
-        if (str_def.contains("WAIST")) defended.add(BodyPart.BodyPartNames.WAIST);
-        if (str_def.contains("LEGS")) defended.add(BodyPart.BodyPartNames.LEGS);
-
-        if (str_att.contains("HEAD")) attacked.add(BodyPart.BodyPartNames.HEAD);
-        if (str_att.contains("BODY")) attacked.add(BodyPart.BodyPartNames.BODY);
-        if (str_att.contains("WAIST")) attacked.add(BodyPart.BodyPartNames.WAIST);
-        if (str_att.contains("LEGS")) attacked.add(BodyPart.BodyPartNames.LEGS);
-        System.out.println("defended list: "+defended.toString());
-
-        if(str_att.contains("HEAD")) attack = BodyPart.BodyPartNames.HEAD;
-        else if(str_att.contains("BODY")) attack = BodyPart.BodyPartNames.BODY;
-        else if(str_att.contains("WAIST")) attack = BodyPart.BodyPartNames.WAIST;
-        else if(str_att.contains("LEGS")) attack = BodyPart.BodyPartNames.LEGS;
-
-        if(str_def.contains("HEAD")) {
-            defend_1 = BodyPart.BodyPartNames.HEAD;
-            if(str_def.contains("BODY")) defend_2 = BodyPart.BodyPartNames.BODY;
-            else if(str_def.contains("WAIST")) defend_2 = BodyPart.BodyPartNames.WAIST;
-            else if(str_def.contains("LEGS")) defend_2 = BodyPart.BodyPartNames.LEGS;
-        }
-        else if(str_def.contains("BODY")) {
-            defend_1 = BodyPart.BodyPartNames.BODY;
-            if(str_def.contains("HEAD")) defend_2 = BodyPart.BodyPartNames.HEAD;
-            else if(str_def.contains("WAIST")) defend_2 = BodyPart.BodyPartNames.WAIST;
-            else if(str_def.contains("LEGS")) defend_2 = BodyPart.BodyPartNames.LEGS;
-        }
-        else if(str_def.contains("WAIST")) {
-            defend_1 = BodyPart.BodyPartNames.WAIST;
-            if(str_def.contains("BODY")) defend_2 = BodyPart.BodyPartNames.BODY;
-            else if(str_def.contains("HEAD")) defend_2 = BodyPart.BodyPartNames.HEAD;
-            else if(str_def.contains("LEGS")) defend_2 = BodyPart.BodyPartNames.LEGS;
-        }
-        else if(str_def.contains("LEGS")) {
-            defend_1 = BodyPart.BodyPartNames.LEGS;
-            if(str_def.contains("BODY")) defend_2 = BodyPart.BodyPartNames.BODY;
-            else if(str_def.contains("WAIST")) defend_2 = BodyPart.BodyPartNames.WAIST;
-            else if(str_def.contains("HEAD")) defend_2 = BodyPart.BodyPartNames.HEAD;
-        }
-        //System.out.println("ATT: "+attack+". DEF_1: "+defend_1+". DEF_2: "+defend_2);
-    }
-
-    public PlayerChoice(int i) {
+    public PlayerChoice() {
         attacked = new ArrayList<>();
         defended = new ArrayList<>();
         ArrayList<BodyPart.BodyPartNames> availableAtk = new ArrayList<>(Arrays.asList(BodyPart.BodyPartNames.getAll()));
         ArrayList<BodyPart.BodyPartNames> availableDef = new ArrayList<>(Arrays.asList(BodyPart.BodyPartNames.getAll()));
 
-        int attacks = 1; // randomize
+        int attacks = 1; // TODO randomize
         int defends = 2;
 
         for (int a=0; a<attacks; a++) {
@@ -119,113 +66,15 @@ public class PlayerChoice {
         }
     }
 
-    @Deprecated
-    public PlayerChoice() { // for COMP only
-        random = new SecureRandom();
-        handleNeuralNetStatistics(MainActivity.getNeuralNetStatistics(MainActivity.currentProfile));
-
-        int att = random.nextInt(100);
-        int def_1 = random.nextInt(100);
-        int def_2;
-
-        System.out.println("att = "+att+". def_1 = "+def_1);
-
-        if (att < atkStatistics[0]) {
-            attack = BodyPart.BodyPartNames.HEAD;
-        } else if (att < atkStatistics[1] && att >= atkStatistics[0]) {
-            attack = BodyPart.BodyPartNames.BODY;
-        } else if (att < atkStatistics[2] && att >= atkStatistics[1]) {
-            attack = BodyPart.BodyPartNames.WAIST;
-        } else if (att < atkStatistics[3] && att >= atkStatistics[2]) {
-            attack = BodyPart.BodyPartNames.LEGS;
-        } else {
-            System.out.println("error making ATK choice");
-        }
-
-        if (def_1 < defStatistics[0]) {
-            defend_1 = BodyPart.BodyPartNames.HEAD;
-        } else if (def_1 < defStatistics[1] && def_1 >= defStatistics[0]) {
-            defend_1 = BodyPart.BodyPartNames.BODY;
-        } else if (def_1 < defStatistics[2] && def_1 >= defStatistics[1]) {
-            defend_1 = BodyPart.BodyPartNames.WAIST;
-        } else if (def_1 < defStatistics[3] && def_1 >= defStatistics[2]) {
-            defend_1 = BodyPart.BodyPartNames.LEGS;
-        } else {
-            System.out.println("error making DEF_1 choice");
-        }
-
-        do {
-            def_2 = random.nextInt(100);
-            System.out.println("def_2 = "+def_2);
-            if (def_2 < defStatistics[0]) {
-                defend_2 = BodyPart.BodyPartNames.HEAD;
-            } else if (def_2 < defStatistics[1] && def_2 >= defStatistics[0]) {
-                defend_2 = BodyPart.BodyPartNames.BODY;
-            } else if (def_2 < defStatistics[2] && def_2 >= defStatistics[1]) {
-                defend_2 = BodyPart.BodyPartNames.WAIST;
-            } else if (def_2 < defStatistics[3] && def_2 >= defStatistics[2]) {
-                defend_2 = BodyPart.BodyPartNames.LEGS;
-            } else {
-                System.out.println("error making DEF_2 choice");
-            }
-            System.out.println("ATK: "+attack.getRuName()+". DEF_1: "+defend_1.getRuName()+". DEF_2: "+defend_2.getRuName());
-        } while (defend_1 == defend_2);
-
-        int num_att = 1 + random.nextInt(3);  // IT WORKS - don't delete (no neural net here)
-        int num_def_1 = 1 + random.nextInt(3);
-        int num_def_2 = 1 + random.nextInt(3);
-        while (num_def_1 == num_def_2) num_def_2 = 1 + random.nextInt(3);
-
-        switch (num_att) {
-            case 1:
-                attack = BodyPart.BodyPartNames.HEAD;
-                break;
-            case 2:
-                attack = BodyPart.BodyPartNames.BODY;
-                break;
-            case 3:
-                attack = BodyPart.BodyPartNames.WAIST;
-                break;
-            case 4:
-                attack = BodyPart.BodyPartNames.LEGS;
-                break;
-            default:
-                break;
-        }
-
-        switch(num_def_1) {
-            case 1:
-                defend_1 = BodyPart.BodyPartNames.HEAD;
-                break;
-            case 2:
-                defend_1 = BodyPart.BodyPartNames.BODY;
-                break;
-            case 3:
-                defend_1 = BodyPart.BodyPartNames.WAIST;
-                break;
-            case 4:
-                defend_1 = BodyPart.BodyPartNames.LEGS;
-                break;
-        }
-        switch(num_def_2) {
-            case 1:
-                defend_2 = BodyPart.BodyPartNames.HEAD;
-                break;
-            case 2:
-                defend_2 = BodyPart.BodyPartNames.BODY;
-                break;
-            case 3:
-                defend_2 = BodyPart.BodyPartNames.WAIST;
-                break;
-            case 4:
-                defend_2 = BodyPart.BodyPartNames.LEGS;
-                break;
-        }
-        //System.out.println("ATT: "+num_att+". DEF_1: "+num_def_1+". DEF_2: "+num_def_2);
-        //System.out.println("ATT: "+attack+". DEF_1: "+defend_1+". DEF_2: "+defend_2);
+    @Override
+    public String toString() {
+        return String.format("Attacked list: %s\nDefended list: %s\nSkill: %s",
+                Arrays.toString(attacked.toArray()),
+                Arrays.toString(defended.toArray()),
+                skillType.toString());
     }
 
-    public SkillNew getSkill() { return skill; }
+    public SkillNew.SkillTypes getSkill() { return skillType; }
 
     private void handleNeuralNetStatistics(int[] stats) {
         for (int i=0; i<4; i++) atkStatistics[i] = stats[i];
@@ -330,7 +179,7 @@ public class PlayerChoice {
                 }
                 stats[i] = stat;
             }
-            System.out.println("getStats() stats: "+ Arrays.toString(stats));
+            //System.out.println("getStats() stats: "+ Arrays.toString(stats));
 
             return stats;
         }
@@ -361,16 +210,6 @@ public class PlayerChoice {
             runames = new String[] {Chars.BALANCED.getPlayerClass(), Chars.BERSERKER.getPlayerClass(),
                     Chars.TANK.getPlayerClass(), Chars.RANDOM.getPlayerClass()};
             return runames;
-        }
-        synchronized public void refreshRandom(Chars c) {
-            random = new SecureRandom();
-            c.HP = 700 + random.nextInt(800);
-            c.attack_from = random.nextInt(99);
-            c.attack_to = c.attack_from + random.nextInt(100);
-            if (c.attack_to > 100) c.attack_to = 100;
-            c.crit_chance = random.nextInt(50);
-            c.crit_dmg = 1.0 + random.nextDouble(); // probable mistake
-            notify();
         }
 
         public void setCustom(int STA, int STR, int AGI, int LUCK, int INT) {

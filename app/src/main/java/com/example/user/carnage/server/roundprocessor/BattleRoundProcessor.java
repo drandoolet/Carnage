@@ -3,6 +3,8 @@ package com.example.user.carnage.server.roundprocessor;
 import com.example.user.carnage.common.parsing.QueryParser;
 import com.example.user.carnage.common.parsing.ResponseParser;
 import com.example.user.carnage.common.logic.main.PlayCharacter;
+import com.example.user.carnage.server.roundprocessor.roundelement.GameOverException;
+import com.example.user.carnage.server.roundprocessor.roundelement.RoundResults;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,7 +18,7 @@ import org.json.JSONObject;
  * Pass to Parser
  * Create JSON, return to Server
  */
-class BattleRoundProcessor {
+public class BattleRoundProcessor {
     private final BattleHandler handler;
 
     public BattleRoundProcessor(PlayCharacter player_1, PlayCharacter player_2) {
@@ -53,22 +55,13 @@ class BattleRoundProcessor {
      * @return RoundResults in JSON
      * @throws JSONException
      */
-    public JSONObject getResponse(JSONObject queryObj) throws JSONException {
+    public JSONObject getResponse(JSONObject queryObj) throws JSONException, GameOverException {
         Query query = QueryParser.fromJson(queryObj);
-        /*
-        for (RoundResults.RoundStage stage: results.getStages()) {
-            array.put(new JSONObject()
-                    .put("subtraction", new JSONArray().put(new JSONObject()
-                            .put("player1", stage.getSubtraction_player_1().toJson())
-                            .put("player2", stage.getSubtraction_player_2().toJson())))
-                    .put("actor", stage.getActor())
-                    .put("skill", stage.getSkill())
-                    .put("status", stage.getStatus())
-                    .put("target", stage.getTarget())
-            );
-        }
-        */
         return ResponseParser.toJson(handler.process(query));
+    }
+
+    public RoundResults getResponse(Query query) throws GameOverException {
+        return handler.process(query);
     }
 
 }

@@ -31,6 +31,7 @@ import com.example.user.carnage.client.fragments.dialogs.WipeStatisticsDialogFra
 import com.example.user.carnage.common.logic.main.PlayCharacter;
 import com.example.user.carnage.common.logic.skills.Skill;
 import com.example.user.carnage.common.logic.skills.SkillFactory;
+import com.example.user.carnage.server.ServerModel;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +41,8 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity
         implements SkillsFragment.OnSelectedButtonListener, ProfileChooseFragment.OnProfileSelectedListener {
     public static PlayCharacter player, enemy;
+
+    private static final ServerModel serverModel = new ServerModel(2);
 
     public static final String TAG = "CARNAGE";
     public static Context mContext;
@@ -91,6 +94,10 @@ public class MainActivity extends AppCompatActivity
 
     public static HashMap<Skill, String> chosenSkillsSet;
     public static ArrayList<Skill> skills;
+
+    public static ServerModel server() {
+        return serverModel;
+    }
 
 
 
@@ -354,7 +361,7 @@ public class MainActivity extends AppCompatActivity
     private int getRPGStatsSum(String profile) {
         int sum = 0;
         int[] stats = getInitialStats(profile);
-        for (int i=0; i<stats.length; i++) sum += stats[i];
+        for (int stat : stats) sum += stat;
         return sum;
     }
 

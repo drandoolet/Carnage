@@ -139,7 +139,7 @@ public class SkillNew { // For now - only HP damage to enemy, SP/MP/HP sub to pl
                         character.getState(stat, PlayCharacter.SubtractableValue.Value.CURRENT_VALUE)
                                 * statsEngaged.get(stat);
             }
-            return new Subtraction.Builder(subtraction)
+            return new Subtraction.Builder()
                     .setSubtraction(
                             PlayCharacter.MainScales.HP,
                             calcHPCost((int) hpCost, enemy),
@@ -238,6 +238,12 @@ public class SkillNew { // For now - only HP damage to enemy, SP/MP/HP sub to pl
     }
 
     public enum SkillTypes {
+        NULL {
+            @Override
+            SkillNew getSkill() {
+                return null;
+            }
+        },
         FIREBALL {
             @Override
             SkillNew getSkill() {

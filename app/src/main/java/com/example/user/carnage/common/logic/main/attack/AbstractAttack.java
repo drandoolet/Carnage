@@ -17,6 +17,14 @@ abstract class AbstractAttack implements Subtractor {
     }
 
     @Override
+    public String toString() {
+        return String.format("Player subtraction:\n%s\n" +
+                "Enemy subtraction: \n%s",
+                actorSubtraction.toString(),
+                enemySubtraction.toString());
+    }
+
+    @Override
     public Subtraction getActorSubtraction() {
         return actorSubtraction;
     }

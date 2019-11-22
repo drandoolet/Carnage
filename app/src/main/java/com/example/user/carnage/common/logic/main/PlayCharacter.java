@@ -6,11 +6,13 @@ import java.util.Map;
 import java.util.Random;
 
 import com.example.user.carnage.client.MainActivity;
-import com.example.user.carnage.common.logic.main.BodyPart.*;
 import com.example.user.carnage.common.logic.main.PlayerChoice.*;
+import com.example.user.carnage.common.logic.main.attack.effect.Subtraction;
 import com.example.user.carnage.common.logic.skills.Skill;
+import com.example.user.carnage.server.roundprocessor.roundelement.GameOverException;
 
 public class PlayCharacter {
+    private final State state;
     private int currentExp, level, availableStatPoints = 0;
     private int maxHP, maxMP, maxSP;
     private int HP;
@@ -30,11 +32,6 @@ public class PlayCharacter {
     private int neural_ok_atk_head, neural_ok_atk_body, neural_ok_atk_waist, neural_ok_atk_legs;
     private int neural_attacked_head, neural_attacked_body, neural_attacked_waist, neural_attacked_legs;
 
-    private BodyPart bpHead = new BodyPart(BodyPartNames.HEAD);
-    private BodyPart bpBody = new BodyPart(BodyPartNames.BODY);
-    private BodyPart bpWaist = new BodyPart(BodyPartNames.WAIST);
-    private BodyPart bpLegs = new BodyPart(BodyPartNames.LEGS);
-
     public PlayCharacter(String profile, String name) {
         int[] stats = MainActivity.getInitialStats(profile);
         this.name = name;
@@ -47,6 +44,54 @@ public class PlayCharacter {
         currentExp = stats[6];
         availableStatPoints = stats[7];
         setStatsFromMainStats();
+        state = null;
+    }
+
+    public static PlayCharacter newTestPlayer(String name) {
+        return new PlayCharacter(name);
+    }
+
+    private PlayCharacter(String name) { // TEST ONLY
+        int[] stats = new int[] {10, 11, 12, 13, 14, 100, 1, 0};
+        this.name = "TEST PLAYER : " + name;
+        STR = stats[0];
+        STA = stats[1];
+        AGI = stats[2];
+        LUCK = stats[3];
+        INT = stats[4];
+        level = stats[5];
+        currentExp = stats[6];
+        availableStatPoints = stats[7];
+        setStatsFromMainStats();
+
+        state = initState();
+    }
+
+    private State initState() {
+        Map<MainScales, Integer> mainScales = new HashMap<>();
+        Map<Stats, Integer> stats = new HashMap<>();
+        Map<Substats, Integer> substats = new HashMap<>();
+        mainScales.put(MainScales.HP, maxHP);
+        mainScales.put(MainScales.SP, maxSP);
+        mainScales.put(MainScales.MP, maxMP);
+
+        stats.put(Stats.STAMINA, STA);
+        stats.put(Stats.STRENGTH, STR);
+        stats.put(Stats.AGILITY, AGI);
+        stats.put(Stats.INTELLIGENCE, INT);
+        stats.put(Stats.LUCK, LUCK);
+
+        substats.put(Substats.POWER_FROM, power[0]);
+        substats.put(Substats.POWER_TO, power[1]);
+        substats.put(Substats.CRITICAL, critical);
+        substats.put(Substats.ANTI_CRITICAL, antiCritical);
+        substats.put(Substats.CRITICAL_DAMAGE, (int) (criticalDamage * 100));
+        substats.put(Substats.DODGE, dodgeRate);
+        substats.put(Substats.ANTI_DODGE, antiDodgeRate);
+        substats.put(Substats.DEFENCE, defence);
+        substats.put(Substats.MAGICAL_DEFENCE, magic_defence);
+
+        return new State(mainScales, stats, substats);
     }
 
     public PlayCharacter(PlayCharacter playCharacter, String name) {
@@ -76,6 +121,16 @@ public class PlayCharacter {
         neural_attacked_body = 0;
         neural_attacked_waist = 0;
         neural_attacked_legs = 0;
+
+        state = initState();
+    }
+
+    public void applySubtraction(Subtraction subtraction) throws GameOverException {
+        state.update(subtraction);
+    }
+
+    public String getStateInfo() {
+        return state.toString();
     }
 
     public void restoreHPby(int by) {
@@ -203,7 +258,7 @@ public class PlayCharacter {
         return stats;
     }
 
-    public void setStatsFromMainStats() {
+    private void setStatsFromMainStats() {
         Chars statHandler = Chars.CUSTOM;
         statHandler.setCustom(STA, STR, AGI, LUCK, INT);
         /*maxHP = statHandler.getHP();
@@ -308,7 +363,8 @@ public class PlayCharacter {
     public enum Substats implements SubtractableValue {
         CRITICAL, ANTI_CRITICAL, CRITICAL_DAMAGE,
         DODGE, ANTI_DODGE,
-        DEFENCE, MAGICAL_DEFENCE
+        DEFENCE, MAGICAL_DEFENCE,
+        POWER_FROM, POWER_TO
     }
 
     private static Map<String, SubtractableValue> SUBTRACTABLE_VALUE_ALIAS_MAP = new HashMap<>();
@@ -325,78 +381,17 @@ public class PlayCharacter {
         return SUBTRACTABLE_VALUE_ALIAS_MAP.get(s);
     }
 
-    public int getState(SubtractableValue type, SubtractableValue.Value value) { // i have no choice
-        if (type instanceof MainScales)
-            return getMainScaleState((MainScales) type, value);
-        else if (type instanceof Stats)
-            return getStatsState((Stats) type, value);
-        else if (type instanceof Substats)
-            return getSubtatsState((Substats) type, value);
-        else throw new IllegalArgumentException();
+    public int getState(SubtractableValue type, SubtractableValue.Value value) {
+        switch (value) {
+            case MAX_VALUE: return state.getMax(type);
+            case CURRENT_VALUE: return state.getCurrent(type);
+            default: throw new IllegalArgumentException();
+        }
     }
 
-    private int getStatsState(Stats stat, SubtractableValue.Value value) {
-        if (value == SubtractableValue.Value.MAX_VALUE) {
-            switch (stat) {
-                case STAMINA: return STA;
-                case STRENGTH: return STR;
-                case AGILITY: return AGI;
-                case INTELLIGENCE: return INT;
-                case LUCK: return LUCK;
-            }
-        } else if (value == SubtractableValue.Value.CURRENT_VALUE) {
-            // TODO implement current values for Stats & Substats
-            switch (stat) {
-                case STAMINA: return STA;
-                case STRENGTH: return STR;
-                case AGILITY: return AGI;
-                case INTELLIGENCE: return INT;
-                case LUCK: return LUCK;
-            }
-        }
-        throw new IllegalArgumentException();
-    }
-
-    private int getSubtatsState(Substats stat, SubtractableValue.Value value) {
-        if (value == SubtractableValue.Value.MAX_VALUE) {
-            switch (stat) {
-                case DODGE: return dodgeRate;
-                case ANTI_DODGE: return antiDodgeRate;
-                case CRITICAL: return critical;
-                case ANTI_CRITICAL: return antiCritical;
-                case CRITICAL_DAMAGE: return (int) (criticalDamage * 100);
-                case DEFENCE: return defence;
-                case MAGICAL_DEFENCE: return magic_defence;
-            }
-        } else if (value == SubtractableValue.Value.CURRENT_VALUE) {
-            // TODO implement current values for Stats & Substats
-            switch (stat) {
-                case DODGE: return dodgeRate;
-                case ANTI_DODGE: return antiDodgeRate;
-                case CRITICAL: return critical;
-                case ANTI_CRITICAL: return antiCritical;
-                case CRITICAL_DAMAGE: return (int) (criticalDamage * 100);
-                case DEFENCE: return defence;
-                case MAGICAL_DEFENCE: return magic_defence;
-            }
-        }
-        throw new IllegalArgumentException();
-    }
-
-    private int getMainScaleState(MainScales type, SubtractableValue.Value value) {
-        if (value == SubtractableValue.Value.MAX_VALUE) {
-            switch (type) {
-                case HP: return maxHP;
-                case MP: return maxMP;
-                case SP: return maxSP;
-            }
-        } else if (value == SubtractableValue.Value.CURRENT_VALUE) {
-            switch (type) {
-                case HP: return HP;
-                case SP: return SP;
-                case MP: return MP;
-            }
-        }
-        throw new IllegalArgumentException();
+    @Override
+    public String toString() {
+        return String.format("PlayCharacter // name = %s,\nState: %s\n",
+                name, state.toString());
     }
 }

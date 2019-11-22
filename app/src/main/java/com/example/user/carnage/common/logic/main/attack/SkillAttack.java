@@ -26,6 +26,12 @@ public class SkillAttack extends AbstractAttack {
         skill = null;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() +
+                String.format("Skill: %s", skillType.toString());
+    }
+
     public SkillNew getSkill() {
         return skill;
     }

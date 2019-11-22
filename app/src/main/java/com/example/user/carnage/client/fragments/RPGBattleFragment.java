@@ -358,7 +358,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 thread.registerListener(RPGBattleFragment.this);
                 addRound();
                 final PlayerChoice plCh = new PlayerChoice(playerAttacked, playerDefended);
-                final PlayerChoice enCh = new PlayerChoice(1);
+                final PlayerChoice enCh = new PlayerChoice();
                 ArrayList<PlayCharacterHelper.Result> enemyResult = enemyHelper.handle(enCh, plCh);
 
                 for (PlayCharacterHelper.Result result : enemyResult) {

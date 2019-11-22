@@ -24,4 +24,12 @@ public class Query {
     public RoundResults.Players getFirstPlayer() {
         return firstPlayer;
     }
+
+    @Override
+    public String toString() {
+        return String.format("PlayerChoice(player):\n%s\n\nPlayerChoice(enemy):\n%s\n\nFirst player: %s",
+                playerChoice.toString(),
+                enemyChoice.toString(),
+                firstPlayer.toString());
+    }
 }

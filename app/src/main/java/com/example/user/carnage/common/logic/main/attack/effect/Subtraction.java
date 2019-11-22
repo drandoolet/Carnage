@@ -1,5 +1,7 @@
 package com.example.user.carnage.common.logic.main.attack.effect;
 
+import android.os.Build;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,6 +21,29 @@ public class Subtraction {
         entries = builder.map;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        if (Build.VERSION.SDK_INT > 23)
+            entries.forEach((value, entry) -> {
+                builder.append(String.format("Value: %s. Effect: %d. Type: %s\n",
+                        value.toString(),
+                        entry.getEffect(),
+                        entry.getType().toString()));
+            });
+        else {
+            for (SubtractableValue value: entries.keySet()) {
+                Entry entry = entries.get(value);
+                builder.append(String.format("Value: %s. Effect: %d. Type: %s\n",
+                        value.toString(),
+                        entry.getEffect(),
+                        entry.getType().toString()));
+            }
+        }
+        return builder.toString();
+    }
+
     public static class Entry {
         private int effect;
         private SubtractionType type;
@@ -28,8 +53,8 @@ public class Subtraction {
             this.type = type;
         }
 
-        int getEffect() { return effect; }
-        SubtractionType getType() { return type; }
+        public int getEffect() { return effect; }
+        public SubtractionType getType() { return type; }
 
         static Entry newEntry(int effect, SubtractionType type) {
             return new Entry(effect, type);

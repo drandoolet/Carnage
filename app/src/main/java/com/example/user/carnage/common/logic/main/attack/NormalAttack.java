@@ -28,6 +28,14 @@ public class NormalAttack extends AbstractAttack {
         this.target = target;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() +
+                String.format("\nRoundStatus: %s\nTarget: %s",
+                        getRoundStatus().toString(),
+                        target.toString());
+    }
+
     public PlayCharacter.RoundStatus getRoundStatus() {
         return status;
     }
