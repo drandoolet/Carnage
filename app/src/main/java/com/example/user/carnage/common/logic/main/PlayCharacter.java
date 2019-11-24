@@ -129,6 +129,10 @@ public class PlayCharacter {
         state.update(subtraction);
     }
 
+    public State.MainScalesState getMainScalesState() {
+        return state.getMainScalesState();
+    }
+
     public String getStateInfo() {
         return state.toString();
     }

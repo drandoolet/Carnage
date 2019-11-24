@@ -37,12 +37,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements SkillsFragment.OnSelectedButtonListener, ProfileChooseFragment.OnProfileSelectedListener {
     public static PlayCharacter player, enemy;
 
     private static final ServerModel serverModel = new ServerModel(2);
+    public static ServerConnector playerConnector;
 
     public static final String TAG = "CARNAGE";
     public static Context mContext;
@@ -86,14 +88,12 @@ public class MainActivity extends AppCompatActivity
 
     public static boolean trackStatistics;
     public static String currentProfile = RPG_PROFILE_1;
-    public static Skill.SkillTypes currentSkill;
 
     public static Drawable player_image;
 
     private static ImageView changeImageView, changeImageView2;
 
     public static HashMap<Skill, String> chosenSkillsSet;
-    public static ArrayList<Skill> skills;
 
     public static ServerModel server() {
         return serverModel;
@@ -325,7 +325,7 @@ public class MainActivity extends AppCompatActivity
 
     public static int[] getInitialStats(String profile) {
         SharedPreferences preferences = mContext.getSharedPreferences(profile, Context.MODE_PRIVATE);
-        int stats[] = new int[8];
+        int[] stats = new int[8];
         stats[0] = preferences.getInt(RPG_STATS_STR, 1);
         stats[1] = preferences.getInt(RPG_STATS_STA, 1);
         stats[2] = preferences.getInt(RPG_STATS_AGI, 1);
@@ -413,7 +413,7 @@ public class MainActivity extends AppCompatActivity
         //transaction.replace(R.id.container, fragment, "MAIN BATTLE FRAGMENT");
         //transaction.addToBackStack(null);
         //transaction.commit();
-        skills = new ArrayList<>();
+        List<Skill> skills = new ArrayList<>();
         skills.add(SkillFactory.newSkill(Skill.SkillTypes.HEAL_SMALL, player));
         skills.add(SkillFactory.newSkill(Skill.SkillTypes.FIREBALL, player, enemy));
 
@@ -422,6 +422,8 @@ public class MainActivity extends AppCompatActivity
         for (Skill skill : skills) {
             chosenSkillsSet.put(skill, skill.getIcon());
         }
+
+        playerConnector = ServerConnector.connectSinglePlayer(profile);
     }
 
     public static void animateChangeWindow() {

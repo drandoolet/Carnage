@@ -14,7 +14,7 @@ import java.util.concurrent.BrokenBarrierException;
 /**
  * Imitation of HTML layer
  */
-final class ServerConnector {
+public final class ServerConnector {
     private final ServerModel.Session session;
     private final RoundResults.Players turn;
 
@@ -59,12 +59,21 @@ final class ServerConnector {
         }).start();
     }
 
-    RoundResults getResults(PlayerChoice choice) throws JSONException, BrokenBarrierException, InterruptedException, GameOverException {
+
+
+    public RoundResults getResults(PlayerChoice choice) throws JSONException, BrokenBarrierException, InterruptedException, GameOverException {
         return ResponseParser.fromJson(
                 session.getResponse(
                         PlayerChoiceParser.toJson(choice)
                                 .put("PLAYER", turn.toString()))
         );
+    }
+
+    public RoundResults.Players getTurn() { return turn; }
+
+    public RoundResults.Players getEnemyTurn() {
+        return turn == RoundResults.Players.PLAYER_1?
+                RoundResults.Players.PLAYER_2 : RoundResults.Players.PLAYER_1;
     }
 
     private static class Builder {

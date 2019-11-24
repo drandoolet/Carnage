@@ -35,15 +35,26 @@ import com.example.user.carnage.common.logic.main.PlayCharacter;
 import com.example.user.carnage.common.logic.main.PlayCharacterHelper;
 import com.example.user.carnage.common.logic.main.PlayerChoice;
 import com.example.user.carnage.client.animation.AnimateGame.AnimationTypes;
+import com.example.user.carnage.common.logic.main.State;
+import com.example.user.carnage.common.logic.main.attack.NormalAttack;
+import com.example.user.carnage.common.logic.main.attack.SkillAttack;
+import com.example.user.carnage.common.logic.main.attack.effect.Subtractor;
 import com.example.user.carnage.common.logic.skills.Skill;
+import com.example.user.carnage.server.roundprocessor.roundelement.GameOverException;
+import com.example.user.carnage.server.roundprocessor.roundelement.RoundResults;
+
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
@@ -62,24 +73,20 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
     private TextView player_max_hp_view, enemy_max_hp_view, player_max_sp_view, player_max_mp_view;
     private TextView enemy_MP_view, enemy_SP_view;
     public TextView player_points, enemy_points;
-    private RadioGroup atk_group, def_group;
     private CheckBox checkBox_def_head, checkBox_def_body, checkBox_def_waist, checkBox_def_legs;
     private CheckBox checkBox_atk_head, checkBox_atk_body, checkBox_atk_waist, checkBox_atk_legs;
     private Button attackButton, skillsButton;
     private ProgressBar player_HP_bar, enemy_HP_bar, player_SP_bar, player_MP_bar;
     private ProgressBar enemy_MP_bar, enemy_SP_bar;
     public ImageView player_img, enemy_img, skillEffect_img;
-    private SecureRandom random;
     public LinearLayout skillsFragmentContainer;
 
-    private String selectedAtk, selectedDef;
     private int defCheckBoxCounter, atkCheckBoxCounter;
     private int roundCounter;
     private int maxHP_pl, maxHP_en, maxSP_pl, maxMP_pl;
     private String maxHP_pl_string;
-    private boolean isAtkSelected, isRoundAdded;
+    private boolean isRoundAdded;
 
-    private PlayerChoice playerChoice, enemyChoice;
     private ArrayList<BodyPart.BodyPartNames> playerAttacked = new ArrayList<>();
     private ArrayList<BodyPart.BodyPartNames> playerDefended = new ArrayList<>();
 
@@ -90,17 +97,10 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
 
     private PlayCharacterHelper playerHelper, enemyHelper;
 
-    private boolean isAnimating = false;
     private AnimationEndWaiter waiter;
     private ImageViewHolder playerImageHolder, enemyImageHolder;
-    private Executor oneThreadExecutor;
 
-
-
-    public synchronized void setAnimating(boolean set) {
-        isAnimating = set;
-        notify();
-    }
+    private ExecutorService executorService;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -108,9 +108,8 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         View view = inflater.inflate(R.layout.fragment_main_rpg, container, false);
 
         animateGame = new AnimateGame();
-        random = new SecureRandom();
+        executorService = Executors.newSingleThreadExecutor();
 
-        oneThreadExecutor = Executors.newSingleThreadExecutor();
         //defCheckBoxCounter = 0;
         //atkCheckBoxCounter = 0;
         roundCounter = 0;
@@ -127,7 +126,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         totalDamage = 0;
 
         maxHP_pl = player.getHP();
-        maxHP_pl_string = new Integer(maxHP_pl).toString();
+        maxHP_pl_string = Integer.toString(maxHP_pl);
         maxHP_en = enemy.getHP();
         maxSP_pl = player.getSP();
         maxMP_pl = player.getMP();
@@ -153,10 +152,6 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         player_points = view.findViewById(R.id.player1PointsTextView);
         enemy_points = view.findViewById(R.id.player2PointsTextView);
         enemy_hp_view = view.findViewById(R.id.player2HPTextView);
-        //player_subtitle = view.findViewById(R.id.player1Subtitile);
-        //enemy_subtitle = view.findViewById(R.id.player2Subtitle);
-
-        //handlePlayerClasses(player, enemy);
 
         enemy_hp_view.setText(Integer.toString(maxHP_en));
         player_hp_view.setText(maxHP_pl_string);
@@ -222,9 +217,6 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         setArgsReadyForNextRound();
         waiter = new AnimationEndWaiter();
 
-        //AnimationQueueThread testThread = new AnimationQueueThread();
-        //testThread.start();
-
         synchronized (this) {
             playerImageHolder = new ImageViewHolder(player_img, true, enemyImageHolder,
                     player_points, skillEffect_img);
@@ -250,23 +242,18 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             int id = compoundButton.getId();
-            //String text = "";
             BodyPart.BodyPartNames bodyPart = null;
             switch (id) {
                 case R.id.checkBoxAtkHead:
-                    //text = "HEAD";
                     bodyPart = BodyPart.BodyPartNames.HEAD;
                     break;
                 case R.id.checkBoxAtkBody:
-                    //text = "BODY";
                     bodyPart = BodyPart.BodyPartNames.BODY;
                     break;
                 case R.id.checkBoxAtkWaist:
-                    //text = "WAIST";
                     bodyPart = BodyPart.BodyPartNames.WAIST;
                     break;
                 case R.id.checkBoxAtkLegs:
-                    //text = "LEGS";
                     bodyPart = BodyPart.BodyPartNames.LEGS;
                     break;
             }
@@ -275,7 +262,6 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                     compoundButton.setChecked(false);
                 } else if (atkCheckBoxCounter < atkCounterBound && defCheckBoxCounter >= 0) {
                     atkCheckBoxCounter++;
-                    //selectedAtk += text;
                     try {
                         playerAttacked.add(bodyPart);
                     } catch (NullPointerException e) {
@@ -286,7 +272,6 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 }
             } else {
                 atkCheckBoxCounter--;
-                //selectedAtk = selectedAtk.replace(text, "");
                 try {
                     playerAttacked.remove(bodyPart);
                 } catch (NullPointerException e) {
@@ -300,23 +285,18 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             int id = compoundButton.getId();
-            //String text = "";
             BodyPart.BodyPartNames bodyPart = null;
             switch (id) {
                 case R.id.checkBoxDefHead:
-                    //text = "HEAD";
                     bodyPart = BodyPart.BodyPartNames.HEAD;
                     break;
                 case R.id.checkBoxDefBody:
-                    //text = "BODY";
                     bodyPart = BodyPart.BodyPartNames.BODY;
                     break;
                 case R.id.checkBoxDefWaist:
-                    //text = "WAIST";
                     bodyPart = BodyPart.BodyPartNames.WAIST;
                     break;
                 case R.id.checkBoxDefLegs:
-                    //text = "LEGS";
                     bodyPart = BodyPart.BodyPartNames.LEGS;
                     break;
             }
@@ -325,7 +305,6 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                     compoundButton.setChecked(false);
                 } else if (defCheckBoxCounter < defCounterBound && defCheckBoxCounter >= 0) {
                     defCheckBoxCounter++;
-                    //selectedDef += text;
                     try {
                         playerDefended.add(bodyPart);
                     } catch (NullPointerException e) {
@@ -336,7 +315,6 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 }
             } else {
                 defCheckBoxCounter--;
-                //selectedDef = selectedDef.replace(text, "");
                 try {
                     playerDefended.remove(bodyPart);
                 } catch (NullPointerException e) {
@@ -346,66 +324,94 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         }
     };
 
+    private View.OnClickListener attackButtonListenerNew = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (!isCheckBoxesReady()) return;
+
+            final AnimationQueueThread thread = new AnimationQueueThread();
+            thread.registerListener(RPGBattleFragment.this);
+            addRound();
+
+            executorService.execute(() -> {
+                try {
+                    RoundResults results = MainActivity.playerConnector.getResults(PlayerChoice.of(playerAttacked, playerDefended));
+                    updateGUI(results);
+                } catch (JSONException | BrokenBarrierException | InterruptedException e) {
+                    e.printStackTrace();
+                } catch (GameOverException e) {
+                    // TODO GAMEOVER here
+                }
+            });
+        }
+    };
+
     private View.OnClickListener attackButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (defCheckBoxCounter != defCounterBound || atkCheckBoxCounter != atkCounterBound) {
-                Toast.makeText(getContext(), getString(R.string.toast_choose_atk, defCounterBound, atkCounterBound),
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                setButtonsEnabled(false);
-                final AnimationQueueThread thread = new AnimationQueueThread();
-                thread.registerListener(RPGBattleFragment.this);
-                addRound();
-                final PlayerChoice plCh = new PlayerChoice(playerAttacked, playerDefended);
-                final PlayerChoice enCh = new PlayerChoice();
-                ArrayList<PlayCharacterHelper.Result> enemyResult = enemyHelper.handle(enCh, plCh);
+            if (!isCheckBoxesReady()) return;
 
-                for (PlayCharacterHelper.Result result : enemyResult) {
-                    totalDamage += result.getAttack();
-                    updateGUI(enemy, player, result, thread, playerImageHolder);
-                    //playerImageHolder.animate();
-                    addAnimation(playerImageHolder.animate());
-                }
-                if (enemy.getHP() > 0) {
-                    ArrayList<PlayCharacterHelper.Result> playerResult
-                            = playerHelper.handle(plCh, enCh);
+            setButtonsEnabled(false);
+            final AnimationQueueThread thread = new AnimationQueueThread();
+            thread.registerListener(RPGBattleFragment.this);
+            addRound();
+            final PlayerChoice plCh = PlayerChoice.of(playerAttacked, playerDefended);
+            final PlayerChoice enCh = PlayerChoice.newEnemyChoice();
+            List<PlayCharacterHelper.Result> enemyResult = enemyHelper.handle(enCh, plCh);
 
-                    for (PlayCharacterHelper.Result result : playerResult) {
-                        updateGUI(player, enemy, result, thread, enemyImageHolder);
-                        //enemyImageHolder.animate();
-                        addAnimation(enemyImageHolder.animate());
-
-                        if (player.getHP() <= 0) {
-                            System.out.println("\n*** GAME OVER. YOU LOSE ***");
-                            setGameOver(enemy.getName(), false);
-                            break;
-                        }
-                    }
-                    //if (player.getHP() > 0) {
-                    //    setButtonsEnabled(true);
-                    //    setArgsReadyForNextRound();
-                    // }
-                } else {
-                    System.out.println("\n*** GAME OVER. YOU WIN ***");
-                    setGameOver(player.getName(), true);
-                }
-                thread.start();
-
-
-                waiter.setAnimatingNow(true);
-
-                Thread thread1 = new Thread() {
-                    @Override
-                    public void run() {
-                        waiter.setArgsReady();
-                    }
-                };
-                thread1.start();
-                //animateNow();
+            for (PlayCharacterHelper.Result result : enemyResult) {
+                totalDamage += result.getAttack();
+                updateGUI(enemy, player, result, thread, playerImageHolder);
+                //playerImageHolder.animate();
+                addAnimation(playerImageHolder.animate());
             }
+            if (enemy.getHP() > 0) {
+                ArrayList<PlayCharacterHelper.Result> playerResult
+                        = playerHelper.handle(plCh, enCh);
+
+                for (PlayCharacterHelper.Result result : playerResult) {
+                    updateGUI(player, enemy, result, thread, enemyImageHolder);
+                    //enemyImageHolder.animate();
+                    addAnimation(enemyImageHolder.animate());
+
+                    if (player.getHP() <= 0) {
+                        System.out.println("\n*** GAME OVER. YOU LOSE ***");
+                        setGameOver(enemy.getName(), false);
+                        break;
+                    }
+                }
+                //if (player.getHP() > 0) {
+                //    setButtonsEnabled(true);
+                //    setArgsReadyForNextRound();
+                // }
+            } else {
+                System.out.println("\n*** GAME OVER. YOU WIN ***");
+                setGameOver(player.getName(), true);
+            }
+            thread.start();
+
+
+            waiter.setAnimatingNow(true);
+
+            Thread thread1 = new Thread() {
+                @Override
+                public void run() {
+                    waiter.setArgsReady();
+                }
+            };
+            thread1.start();
+            //animateNow();
         }
     };
+
+    private boolean isCheckBoxesReady() {
+        if (defCheckBoxCounter != defCounterBound || atkCheckBoxCounter != atkCounterBound) {
+            Toast.makeText(getContext(), getString(R.string.toast_choose_atk, defCounterBound, atkCounterBound),
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
 
     BlockingQueue<Runnable> animationQueue = new LinkedBlockingQueue<>(1);
 
@@ -477,7 +483,73 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         }
     }
 
+    private void updateGUI(RoundResults results) {
+        for (RoundResults.RoundStage stage: results.getStages()) {
+            updateStatsTextViewsAndBars(stage);
 
+            addLogText(stage);
+
+            animate(stage);
+        }
+    }
+
+    private void updateStatsTextViewsAndBars(RoundResults.RoundStage stage) {
+        State.MainScalesState ps = stage.getCurrentState(MainActivity.playerConnector.getTurn());
+        State.MainScalesState es = stage.getCurrentState(MainActivity.playerConnector.getEnemyTurn());
+
+        player_hp_view.setText(Integer.toString(ps.getState(PlayCharacter.MainScales.HP)));
+        player_mp_view.setText(Integer.toString(ps.getState(PlayCharacter.MainScales.MP)));
+        player_sp_view.setText(Integer.toString(ps.getState(PlayCharacter.MainScales.SP)));
+        player_HP_bar.setProgress(ps.getState(PlayCharacter.MainScales.HP));
+        player_MP_bar.setProgress(ps.getState(PlayCharacter.MainScales.MP));
+        player_SP_bar.setProgress(ps.getState(PlayCharacter.MainScales.SP));
+
+        enemy_hp_view.setText(Integer.toString(es.getState(PlayCharacter.MainScales.HP)));
+        enemy_HP_bar.setProgress(es.getState(PlayCharacter.MainScales.HP));
+    }
+
+    private void addLogText(RoundResults.RoundStage stage) {
+        String text;
+
+        if (stage.getSubtractor() instanceof NormalAttack) {
+            NormalAttack attack = (NormalAttack) stage.getSubtractor();
+            int dmg = attack.getEnemySubtraction().getEntries().get(PlayCharacter.MainScales.HP).getEffect();
+            switch (attack.getRoundStatus()) {
+                case NORMAL:
+                    text = getString(R.string.battle_text_normal, enemy.getName(), attack.getTarget(), dmg);
+                    hits++;
+                    break;
+                case BLOCK:
+                    text = getString(R.string.battle_text_blocked, enemy.getName(), attack.getTarget(), character.getName());
+                    blocks++;
+                    break;
+                case DODGE:
+                    text = getString(R.string.battle_text_dodged, enemy.getName(), attack.getTarget(), character.getName());
+                    dodges++;
+                    break;
+                case CRITICAL:
+                    text = getString(R.string.battle_text_critical, enemy.getName(), attack.getTarget(),
+                            character.getName(), dmg);
+                    criticals++;
+                    break;
+                case BLOCK_BREAK:
+                    text = getString(R.string.battle_text_block_break, enemy.getName(), attack.getTarget(),
+                            character.getName(), dmg);
+                    blockBreaks++;
+                    break;
+                default:
+                    text = '\n' + '\n' + "  ERROR in round " + roundCounter;
+            }
+        } else if (stage.getSubtractor() instanceof SkillAttack) {
+
+        }
+
+        battle_textView.append(text);
+    }
+
+    private void animate(RoundResults.RoundStage stage) {
+
+    }
 
     private void updateGUI(PlayCharacter playCh, PlayCharacter playEn,
                            PlayCharacterHelper.Result result, AnimationQueueThread destinationThread,
@@ -508,8 +580,6 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
 
 
     private void setArgsReadyForNextRound() {
-        selectedAtk = "";
-        selectedDef = "";
         playerAttacked.clear();
         playerDefended.clear();
 
@@ -570,7 +640,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                                       final PlayCharacterHelper.Result result,
                                       AnimationQueueThread destinationThread,
                                       ImageViewHolder holder) {
-        String text = "";
+        String text;
         final ImageView imgToAnimate, playerImage;
         final boolean isPlayer;
         final TextView pointsTextView;
@@ -595,7 +665,7 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
                 text = getString(R.string.battle_text_normal, enemy.getName(), result.getBodyPart(), result.getAttack());
                 hits++;
                 //animateGame.animateAttack(playerImage, imgToAnimate, isPlayer);
-                textForPoints = String.format(Locale.ENGLISH, Integer.toString(-result.getAttack()));
+                textForPoints = Integer.toString(-result.getAttack());
                 break;
             case ANIMATION_BATTLE_BLOCK:
                 defenceStatus = AnimationTypes.Defence.ANIMATION_BATTLE_BLOCK;
@@ -792,12 +862,9 @@ public class RPGBattleFragment extends Fragment implements SkillsAnimator.MagicC
         atkCounterBound -= skill.getBoundTakers()[1];
 
         if (enemy.getHP() <= 0) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    System.out.println("\n*** GAME OVER. YOU WIN ***");
-                    setGameOver(player.getName(), true);
-                }
+            new Handler().postDelayed(() -> {
+                System.out.println("\n*** GAME OVER. YOU WIN ***");
+                setGameOver(player.getName(), true);
             }, currentAnimationDuration);
         }
     }

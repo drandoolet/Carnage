@@ -81,7 +81,7 @@ public class ClientTest {
                 )
         );
         SkillNew skill = SkillFactory.newSkill(SkillNew.SkillTypes.FIREBALL);
-        return new PlayerChoice(attacked, defended, skill.getType());
+        return PlayerChoice.of(attacked, defended, skill.getType());
     }
 
     public static PlayerChoice getTestPlayerChoice2() {
@@ -96,7 +96,7 @@ public class ClientTest {
                         BodyPart.BodyPartNames.WAIST
                 )
         );
-        return new PlayerChoice(attacked, defended, SkillNew.SkillTypes.NULL);
+        return PlayerChoice.of(attacked, defended, SkillNew.SkillTypes.NULL);
     }
 
     public static RoundResults getRoundResults(PlayCharacter character, PlayCharacter enemy) throws JSONException {
@@ -112,12 +112,12 @@ public class ClientTest {
                 )
         );
         SkillNew skill = SkillFactory.newSkill(SkillNew.SkillTypes.FIREBALL);
-        PlayerChoice playerChoice1 = new PlayerChoice(new ArrayList<>(
+        PlayerChoice playerChoice1 = PlayerChoice.of(new ArrayList<>(
                 Arrays.asList(
                         BodyPart.BodyPartNames.HEAD,
                         BodyPart.BodyPartNames.WAIST
                 )), defended, skill.getType());
-        PlayerChoice playerChoice2 = new PlayerChoice(attacked, defended);
+        PlayerChoice playerChoice2 = PlayerChoice.of(attacked, defended);
 
         Query query = new Query(playerChoice1, playerChoice2, RoundResults.Players.PLAYER_1);
 

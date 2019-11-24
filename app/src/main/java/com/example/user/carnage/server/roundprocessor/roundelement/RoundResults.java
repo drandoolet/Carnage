@@ -3,6 +3,7 @@ package com.example.user.carnage.server.roundprocessor.roundelement;
 import android.os.Build;
 import android.support.annotation.NonNull;
 
+import com.example.user.carnage.common.logic.main.State;
 import com.example.user.carnage.common.logic.main.attack.effect.Subtractor;
 
 import java.util.ArrayList;
@@ -68,9 +69,13 @@ public class RoundResults {
         private final Subtractor subtractor;
         @NonNull
         private final Players actor; // or maybe a String? boolean?
+        private final State.MainScalesState currentPlayerState, currentEnemyState;
 
-        public static Builder newStageBuilder(Subtractor subtractor, Players actor) {
-            return new Builder(subtractor, actor);
+        public static RoundStage of(Subtractor subtractor,
+                                    Players actor,
+                                    State.MainScalesState currentPlayerState,
+                                    State.MainScalesState currentEnemyState) {
+            return new RoundStage(subtractor, actor, currentPlayerState, currentEnemyState);
         }
 
         @NonNull
@@ -83,29 +88,28 @@ public class RoundResults {
             return actor;
         }
 
-        private RoundStage(Builder builder) {
-            subtractor = builder.subtractor;
-            actor = builder.actor;
+        public State.MainScalesState getCurrentState(Players player) {
+            switch (player) {
+                case PLAYER_1: return currentPlayerState;
+                case PLAYER_2: return currentEnemyState;
+                default: throw new IllegalArgumentException();
+            }
+        }
+
+        private RoundStage(Subtractor subtractor,
+                           Players actor,
+                           State.MainScalesState currentPlayerState,
+                           State.MainScalesState currentEnemyState) {
+            this.subtractor = subtractor;
+            this.actor = actor;
+            this.currentPlayerState = currentPlayerState;
+            this.currentEnemyState = currentEnemyState;
         }
 
         @Override
         public String toString() {
             return String.format("  --- STAGE RESULTS ---\n\nFirst player: %s\nSubtractor:\n %s\n",
                     actor, subtractor.toString());
-        }
-
-        public static class Builder {
-            private final Subtractor subtractor;
-            private final Players actor;
-
-            private Builder(Subtractor subtractor, Players actor) {
-                this.subtractor = subtractor;
-                this.actor = actor;
-            }
-
-            public RoundStage build() {
-                return new RoundStage(this);
-            }
         }
     }
 

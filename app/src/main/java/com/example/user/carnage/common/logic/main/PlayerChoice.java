@@ -7,11 +7,12 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class PlayerChoice {
     //private ArrayList<BodyPart.BodyPartNames> defended = new ArrayList<>(),
     //        attacked = new ArrayList<>();
-    private ArrayList<BodyPart.BodyPartNames> defended, attacked;
+    private List<BodyPart.BodyPartNames> defended, attacked;
     private SecureRandom random = new SecureRandom();
 
     // added for new compat
@@ -22,24 +23,39 @@ public class PlayerChoice {
     private int[] atkStatistics = {neural_atk_head, neural_atk_body, neural_atk_waist, neural_atk_legs};
     private int[] defStatistics = {neural_def_head, neural_def_body, neural_def_waist, neural_def_legs};
 
-    public ArrayList<BodyPart.BodyPartNames> getDefended() {
+    public List<BodyPart.BodyPartNames> getDefended() {
         return defended;
     }
 
-    public ArrayList<BodyPart.BodyPartNames> getAttacked() {
+    public List<BodyPart.BodyPartNames> getAttacked() {
         return attacked;
     }
 
-    public PlayerChoice(ArrayList<BodyPart.BodyPartNames> playerAttacked,
-                        ArrayList<BodyPart.BodyPartNames> playerDefended,
+    private PlayerChoice(List<BodyPart.BodyPartNames> playerAttacked,
+                        List<BodyPart.BodyPartNames> playerDefended,
                         SkillNew.SkillTypes skill) {
         this(playerAttacked, playerDefended);
         this.skillType = skill;
 
     }
 
-    public PlayerChoice(ArrayList<BodyPart.BodyPartNames> playerAttacked,
-                        ArrayList<BodyPart.BodyPartNames> playerDefended) {
+    public static PlayerChoice of(List<BodyPart.BodyPartNames> playerAttacked,
+                                  List<BodyPart.BodyPartNames> playerDefended,
+                                  SkillNew.SkillTypes skill) {
+        return new PlayerChoice(playerAttacked, playerDefended, skill);
+    }
+
+    public static PlayerChoice of(List<BodyPart.BodyPartNames> playerAttacked,
+                                  List<BodyPart.BodyPartNames> playerDefended) {
+        return new PlayerChoice(playerAttacked, playerDefended);
+    }
+
+    public static PlayerChoice newEnemyChoice() {
+        return new PlayerChoice();
+    }
+
+    private PlayerChoice(List<BodyPart.BodyPartNames> playerAttacked,
+                        List<BodyPart.BodyPartNames> playerDefended) {
         defended = playerDefended;
         attacked = playerAttacked;
     }

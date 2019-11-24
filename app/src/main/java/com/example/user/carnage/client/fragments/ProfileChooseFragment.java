@@ -119,7 +119,7 @@ public class ProfileChooseFragment extends Fragment {
                 switch (view.getId()) {
                     case R.id.profile1ImageButton : profile = MainActivity.RPG_PROFILE_1; break;
                     case R.id.profile2ImageButton : profile = MainActivity.RPG_PROFILE_2; break;
-                    default: profile = MainActivity.RPG_PROFILE_1;
+                    default: profile = MainActivity.RPG_PROFILE_1; break;
                 }
             } else profile = null;
             view.setClickable(false);
@@ -150,9 +150,9 @@ public class ProfileChooseFragment extends Fragment {
 
             new Handler().postDelayed(() -> {
                 TextView[] views = {strTextView, staTextView, agiTextView, luckTextView, intTextView, levelTextView, expTextView};
-                for (int i=0; i<views.length; i++) {
+                for (TextView view : views) {
                     //views[i].setText(Integer.toString(stats[i]));
-                    views[i].setVisibility(View.VISIBLE);
+                    view.setVisibility(View.VISIBLE);
                 }
                 okButton.setVisibility(View.VISIBLE);
                 View[] views1 = {strTextView, staTextView, agiTextView, luckTextView, intTextView, levelTextView, expTextView, okButton};

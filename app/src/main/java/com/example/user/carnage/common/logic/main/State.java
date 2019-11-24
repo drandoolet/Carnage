@@ -86,6 +86,10 @@ public class State {
         throw new IllegalArgumentException("No such value: "+value.toString());
     }
 
+    MainScalesState getMainScalesState() {
+        return new MainScalesState(mainScales);
+    }
+
     @Override
     public String toString() {
         return String.format("Main:\n%s\nStats:\n%s\nSubstats:\n%s\n",
@@ -134,5 +138,17 @@ public class State {
         final Map<Substats, Integer> substats = new HashMap<>(this.substats);
 
         return new State(mainScales, stats, substats);
+    }
+
+    public static class MainScalesState {
+        private final Map<MainScales, Integer> map;
+
+        public MainScalesState(Map<MainScales, Integer> map) {
+            this.map = map;
+        }
+
+        public int getState(MainScales scale) {
+            return map.get(scale);
+        }
     }
 }

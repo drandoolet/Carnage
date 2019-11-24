@@ -113,12 +113,12 @@ final class BattleHandler {
             PlayCharacter pc2,
             RoundResults.Players turn)
     {
-        return RoundResults.RoundStage.newStageBuilder(
+        return RoundResults.RoundStage.of(
                 AttackFactory.newSkillAttack(
                         SkillFactory.newSkill(skill).getEffect(pc1, pc2),
                         SkillFactory.newSkill(skill)
-                ), turn
-        ).build();
+                ), turn, pc1.getMainScalesState(), pc2.getMainScalesState()
+        );
     }
 
     private RoundResults.RoundStage getStage(
@@ -128,13 +128,12 @@ final class BattleHandler {
             PlayCharacter pc2,
             RoundResults.Players turn)
     {
-        return RoundResults.RoundStage.newStageBuilder(
+        return RoundResults.RoundStage.of(
                 calculateAttack(
                         pc1, pc2,
                         getRoundStatus(pc1, pc2, attack, defended),
                         attack),
-                turn)
-                .build();
+                turn, pc1.getMainScalesState(), pc2.getMainScalesState());
     }
 
     private Subtractor calculateAttack(PlayCharacter pc1, PlayCharacter pc2,

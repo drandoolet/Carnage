@@ -32,21 +32,28 @@ public class ResponseParser implements JsonParser {
     private static JSONObject roundStageToJson(RoundResults.RoundStage stage) throws JSONException {
         return new JSONObject()
                 .put(JsonField.SUBTRACTOR.toString(), SubtractorParser.toJson(stage.getSubtractor()))
-                .put(JsonField.FIRST_PLAYER.toString(), stage.getActor());
+                .put(JsonField.FIRST_PLAYER.toString(), stage.getActor())
+                .put(JsonField.PLAYER_1_STATE.toString(), CurrentStateParser.toJson(
+                        stage.getCurrentState(RoundResults.Players.PLAYER_1)))
+                .put(JsonField.PLAYER_2_STATE.toString(), CurrentStateParser.toJson(
+                        stage.getCurrentState(RoundResults.Players.PLAYER_2)));
     }
 
     private static RoundResults.RoundStage roundStageFromJson(JSONObject object) throws JSONException {
-        return RoundResults.RoundStage.newStageBuilder(
+        return RoundResults.RoundStage.of(
                 SubtractorParser.fromJson(object.getJSONObject(JsonField.SUBTRACTOR.toString())),
-                RoundResults.Players.valueOf(object.getString(JsonField.FIRST_PLAYER.toString()))
-        )
-                .build();
+                RoundResults.Players.valueOf(object.getString(JsonField.FIRST_PLAYER.toString())),
+                CurrentStateParser.fromJson(object.getJSONObject(JsonField.PLAYER_1_STATE.toString())),
+                CurrentStateParser.fromJson(object.getJSONObject(JsonField.PLAYER_2_STATE.toString()))
+        );
     } 
 
     private enum JsonField {
         STAGES("stages"),
         SUBTRACTOR("subtractor"),
-        FIRST_PLAYER("actor");
+        FIRST_PLAYER("actor"),
+        PLAYER_1_STATE("player 1 state"),
+        PLAYER_2_STATE("player 2 state");
 
         private final String name;
 

@@ -4,6 +4,7 @@ import com.example.user.carnage.client.animation.AnimateGame;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PlayCharacterHelper {
     private SecureRandom random = new SecureRandom();
@@ -105,7 +106,7 @@ public class PlayCharacterHelper {
     private boolean hasReceivedCritical() { return random.nextInt(100) < incomingCritRate; }
 
     private boolean hasBlocked(BodyPart.BodyPartNames attack,
-                                       ArrayList<BodyPart.BodyPartNames> defended) {
+                                       List<BodyPart.BodyPartNames> defended) {
         return defended.contains(attack);
     }
 

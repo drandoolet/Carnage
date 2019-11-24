@@ -33,7 +33,7 @@ public class PlayerChoiceParser implements JsonParser {
             def.add(BodyPart.BodyPartNames.valueOf(defObj.getString(i)));
         }
 
-        return new PlayerChoice(atk, def, skill);
+        return PlayerChoice.of(atk, def, skill);
     }
 
     public static JSONObject toJson(PlayerChoice playerChoice) throws JSONException {
