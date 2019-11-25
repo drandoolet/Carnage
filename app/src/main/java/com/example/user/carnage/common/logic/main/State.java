@@ -18,7 +18,7 @@ public class State {
     private final Map<Substats, Integer> substats;
     // TODO: add smth like List<Effect> effects (e.g. if "Strength is damaged by 10% for 3 rounds")
 
-    State(Map<MainScales, Integer> mainScales, Map<Stats, Integer> stats, Map<Substats, Integer> substats) {
+    public State(Map<MainScales, Integer> mainScales, Map<Stats, Integer> stats, Map<Substats, Integer> substats) {
         this.mainScales = mainScales;
         this.stats = stats;
         this.substats = substats;
@@ -70,7 +70,7 @@ public class State {
         }
     }
 
-    int getMax(SubtractableValue value) {
+    public int getMax(SubtractableValue value) {
         if (value instanceof MainScales)    return maxMainScales.get(value);
         if (value instanceof Stats)         return maxStats.get(value);
         if (value instanceof Substats)      return maxSubstats.get(value);
